@@ -35,7 +35,8 @@ Task SetupPaths {
 
 Task MakeBuildDir {
     Write-Host "Creating new build-artifacts directory"
-    rm -R $buildDir -force
+    rm -R $buildDir -force -ea SilentlyContinue
+    New-Item -ItemType Directory -Force -Path $buildDir
     New-Item -ItemType Directory -Force -Path $buildPublishDir
 }
 
