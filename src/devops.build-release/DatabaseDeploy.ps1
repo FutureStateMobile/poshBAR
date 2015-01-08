@@ -4,7 +4,7 @@
         configuration file found in the environments folder.
 
     .EXAMPLE
-        Invoke-DatabaseDeploy "local" "GCTS_CommonData"
+        Invoke-DatabaseDeploy "local" "MY_Database"
 
     .PARAMETER buildEnvironment
         The name of the environment we are deploying to, must match one of the configuration

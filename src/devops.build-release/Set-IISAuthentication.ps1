@@ -3,7 +3,7 @@
        Will set the specified Authentication value for the specified applicaiton or website
 
     .EXAMPLE
-        Set-IISAuthentication "windowsAuthentication" true "apps.tcpl.ca/GCTS"
+        Set-IISAuthentication "windowsAuthentication" true "apps.tcpl.ca/MyApp"
 
     .PARAMETER settingName
         The name of the Authentication setting that we are changing
