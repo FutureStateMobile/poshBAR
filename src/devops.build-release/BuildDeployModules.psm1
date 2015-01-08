@@ -12,6 +12,7 @@ Push-Location $psScriptRoot
 . .\Expand-ZipFile.ps1
 . .\Format-TaskNameToHost.ps1
 . .\Get-EnvironmentSettings.ps1
+. .\Helpers.ps1
 . .\Install-IISRewriteModule.ps1
 . .\Install-WebApplication.ps1
 . .\Invoke-ElevatedCommand.ps1
@@ -87,4 +88,10 @@ Export-ModuleMember `
           'Get-Applications',
           'Write-TaskTimeSummary',
           'Initialize-TaskTimer',
-          'Set-TaskTimeStamp')
+          'Set-TaskTimeStamp',
+          'Invoke-DBMigration',
+          'Invoke-Nunit',
+          'Invoke-NUnitWithCoverage',
+          'Invoke-SpecFlow',
+          'Get-TestFileName',
+          'Get-WarningsFromMSBuildLog')
