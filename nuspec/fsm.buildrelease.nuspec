@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>fsm.buildrelease</id>
+    <version>0.1.1</version>
+    <title>FSM Build-Release Modules</title>
+    <description>Reusables modules used in the aid of a .NET build and release cycle</description>
+    <summary>FSM Build-Release Modules v-0.1.1</summary>
+    <tags>devops, build-release, ci, continuous integration</tags>
+    <authors>Keith Larsen, Chase Florell</authors>
+    <owners>FutureState Mobile Inc.</owners>
+    <projectUrl>https://github.com/FutureStateMobile/fsm-posh</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright 2014 FutureState Mobile Inc.</copyright>
+  </metadata>
+  <files>
+    <file src="..\src\devops.build-release\**\*.*" target="tools\modules" />
+  </files>
+</package>

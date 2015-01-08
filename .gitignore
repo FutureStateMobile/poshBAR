@@ -1,0 +1,4 @@
+[B|b]in
+*.nupkg
+Thumbs.db
+[Bb]uild-[Aa]rtifacts
