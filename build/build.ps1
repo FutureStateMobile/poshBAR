@@ -47,3 +47,8 @@ Task PackageBuildRelease -depends SetupPaths, MakeBuildDir {
 
     exec { NuGet.exe Pack $devopsNugetPackage -Version "$version.$buildNumber" -OutputDirectory $buildPublishDir -NoPackageAnalysis } "Failed to package the Devops Scripts."
 }
+
+FormatTaskName {
+    param($taskName)
+    Format-TaskNameToHost $taskName
+}

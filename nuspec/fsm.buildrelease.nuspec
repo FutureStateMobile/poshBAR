@@ -15,5 +15,7 @@
   </metadata>
   <files>
     <file src="..\src\devops.build-release\**\*.*" target="tools\modules" />
+    <file src="..\build\files\fsm-buildrelease-init.ps1" target="tools\init.ps1" />
+    <file src="..\build\files\fsm.buildrelease-templates\**\*.*" target="tools\templates\" />
   </files>
 </package>
