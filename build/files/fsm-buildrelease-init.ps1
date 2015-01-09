@@ -8,12 +8,12 @@ Get-Childitem "$toolsPath\templates" -recurse | % {
         $copyPath = Join-Path $rootDir $subPath
         
         if(-not (Test-Path $copyPath)) {
-            mkdir $copyPath
+            New-Item -path $copyPath -itemtype Directory
         }
         
         if(-not (Test-Path "$copyPath\$($_.Name)")){
             Write-Host "Copying $($_.Name) to $copyPath"
-            Copy-Item $_.FullName $copyPath
+            Copy-Item $_.FullName $copyPath -force
         }
     }
  }
