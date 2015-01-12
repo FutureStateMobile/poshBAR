@@ -17,6 +17,7 @@ $PSVersionTable.PSVersion | % {
 Push-Location $psScriptRoot
 
 . .\Add-HostsFileEntry.ps1
+. .\Add-IISMimeType.ps1
 . .\Add-LoopbackFix.ps1
 . .\Add-SybaseLinkedServer.ps1
 . .\ApplicationAdministration.ps1
@@ -33,6 +34,7 @@ Push-Location $psScriptRoot
 . .\Invoke-ExternalCommand.ps1
 . .\Invoke-Using.ps1
 . .\Set-IISAuthentication.ps1
+. .\Set-IISCustomHeader.ps1
 . .\Set-WebApplicationSecurity.ps1
 . .\SiteAdministration.ps1
 . .\SqlHelpers.ps1
@@ -50,6 +52,7 @@ Export-ModuleMember `
         '*') `
     -Function @(
           'Add-HostsFileEntry',
+          'Add-IISMimeType',
           'Add-LoopbackFix',
           'Add-SybaseLinkedServer',
           'Expand-NugetPackage',
@@ -99,6 +102,7 @@ Export-ModuleMember `
           'Remove-Application',
           'Start-Application',
           'Stop-Application',
+          'Set-IISCustomHeader',
           'Get-Application',
           'Get-Applications',
           'Write-TaskTimeSummary',
