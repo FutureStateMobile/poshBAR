@@ -3,7 +3,7 @@ $ErrorActionPreference = "Stop"
 if(-NOT (Get-Module sqlps -erroraction silentlycontinue)){
     # Pushing and Poping because SQLPS changes the directory to SQLSERVER:\
     Push-Location
-    Import-Module sqlps -DisableNameChecking | Out-Null
+    Import-Module sqlps -DisableNameChecking 3> $null
     Pop-Location
 }
 
