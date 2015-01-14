@@ -11,9 +11,17 @@ $PSVersionTable.PSVersion | % {
           Write-Host "`t> choco install Powershell" -f Cyan
           Write-Host "After installing Powershell, you may need to reboot your computer."
           throw "Powershell V4 is required to use these modules."
+          exit 1
      }
 }
 
+$script:fsmbr = @{}
+$fsmbr.version = "1.1.1" # contains the current version of fsm.buildrelease
+$fsmbr.context = new-object system.collections.stack # holds onto the current state of all variables
+
+ Write-Host "fsm.buildrelease version $($fsmbr.version) `nCopyright $([char]0x00A9) Future State Mobile Inc. & Contributors`n"
+
+Write-Host  $fsmbr.context.count
 Push-Location $psScriptRoot
 
 . .\Add-HostsFileEntry.ps1
@@ -26,6 +34,7 @@ Push-Location $psScriptRoot
 . .\Expand-NugetPackage.ps1
 . .\Expand-ZipFile.ps1
 . .\Format-TaskNameToHost.ps1
+. .\Write-BuildInformation.ps1
 . .\Get-EnvironmentSettings.ps1
 . .\Helpers.ps1
 . .\Install-IISRewriteModule.ps1
@@ -69,7 +78,7 @@ Export-ModuleMember `
           'Set-WebApplicationSecurity',
           'Test-RunAsAdmin',
           'Update-AssemblyVersions',
-          'Update-ConfigValues',
+          'Update-XmlConfigValues',
           'Invoke-FromBase64', 
           'Invoke-ToBase64', 
           'Invoke-UrlDecode', 
@@ -105,13 +114,17 @@ Export-ModuleMember `
           'Set-IISCustomHeader',
           'Get-Application',
           'Get-Applications',
+          'Write-BuildInformation',
           'Write-TaskTimeSummary',
           'Initialize-TaskTimer',
           'Set-TaskTimeStamp',
           'Invoke-DBMigration',
           'Invoke-Nunit',
-          'Invoke-NUnitWithCoverage',
+          'Invoke-NUnitWithCoverage'
+          'Invoke-XUnit',
+          'Invoke-XUnitWithCoverage',
           'Invoke-SpecFlow',
+          'Invoke-Grunt',
           'Get-TestFileName',
           'Get-WarningsFromMSBuildLog', 
           'Update-JsonConfigValues')

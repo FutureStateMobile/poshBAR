@@ -1,11 +1,4 @@
 properties { 
-
-    # These params are passed in via the calling script
-    Write-Host " "
-    Write-Host " * Version: $version" -ForegroundColor Magenta
-    Write-Host " * BuildNumber: $buildNumber" -ForegroundColor Magenta
-    Write-Host " "
-
     $buildScriptDir  = resolve-path .
     $baseDir  = resolve-path "$buildScriptDir\.."
     $buildDir = "$baseDir\build-artifacts" 
@@ -22,7 +15,8 @@ properties {
     $devopsSummary = "FSM Build-Release Modules"
 
     # Dogfood
-     Import-Module "$modulesDir\BuildDeployModules" -force
+    Import-Module "$modulesDir\BuildDeployModules" -force
+    Write-BuildInformation (get-variable -scope 0)
 }
 
 Task default -depends Package
@@ -42,8 +36,8 @@ Task MakeBuildDir {
 
 Task PackageBuildRelease -depends SetupPaths, MakeBuildDir {
 
-    Update-ConfigValues $devopsNugetPackage "//*[local-name() = 'version']" $version
-    Update-ConfigValues $devopsNugetPackage "//*[local-name() = 'summary']" "$devopsSummary v-$version"
+    Update-XmlConfigValues $devopsNugetPackage "//*[local-name() = 'version']" $version
+    Update-XmlConfigValues $devopsNugetPackage "//*[local-name() = 'summary']" "$devopsSummary v-$version"
 
     exec { NuGet.exe Pack $devopsNugetPackage -Version "$version.$buildNumber" -OutputDirectory $buildPublishDir -NoPackageAnalysis } "Failed to package the Devops Scripts."
 }

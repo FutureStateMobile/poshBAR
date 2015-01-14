@@ -12,6 +12,9 @@
     <projectUrl>https://github.com/FutureStateMobile/fsm-posh</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright 2014 FutureState Mobile Inc.</copyright>
+    <dependencies>
+      <dependency id="psake" version="4.4.1" />
+    </dependencies>
   </metadata>
   <files>
     <file src="..\src\devops.build-release\**\*.*" target="tools\modules" />

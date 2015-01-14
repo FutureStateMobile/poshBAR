@@ -7,7 +7,7 @@ if(-NOT (Get-Module sqlps -erroraction silentlycontinue)){
     Pop-Location
 }
 
-Function Get-DatabaseConnectionProperties() {
+function Get-DatabaseConnectionProperties() {
     param(
         [parameter(Mandatory=$true,position=0)][string] $connectionString
     )
@@ -18,11 +18,11 @@ Function Get-DatabaseConnectionProperties() {
     return $connStringBuilder
 }
 
-Function Invoke-SqlStatement() {
+function Invoke-SqlStatement() {
     param(
         [parameter(Mandatory=$true,position=0)][string] $sqlToRun,
         [parameter(Mandatory=$true,position=1)][string] $connectionString,
-        [parameter(Mandatory=$false,position=2)][switch] $useMaster
+        [parameter(Mandatory=$false)][switch] $useMaster
     )
 
     try {
@@ -39,13 +39,12 @@ Function Invoke-SqlStatement() {
             Invoke-SqlCmd -Query $sqlToRun -serverinstance $conn["Server"] -database $conn["Database"]
         }
     } catch {
-        $errorMsg = $_
-        Write-Host $errorMsg   # will display the actual sql error in the console
-        throw $errorMsg
+        Write-Host $_ -f Red  # will display the actual sql error in the console
+        throw $_
     }
 }
 
-Function Invoke-SqlFile() {
+function Invoke-SqlFile() {
     param(
         [parameter(Mandatory=$true,position=0)][string] $sqlFile,
         [parameter(Mandatory=$true,position=1)][string] $connectionString,
@@ -66,13 +65,12 @@ Function Invoke-SqlFile() {
             Invoke-SqlCmd -InputFile $sqlFile -serverinstance $conn["Server"] -database $conn["Database"]
         }
     } catch {
-        $errorMsg = $_
-        Write-Host $errorMsg   # will display the actual sql error in the console
-        throw $errorMsg
+        Write-Host $_ -f Red  # will display the actual sql error in the console
+        throw $_
     }
 }
 
-Function Invoke-BulkCopy() {
+function Invoke-BulkCopy() {
     param(
         [parameter(Mandatory=$true,position=0)][string] $targetTable,
         [parameter(Mandatory=$true,position=1)][string] $inputFile,
@@ -90,8 +88,7 @@ Function Invoke-BulkCopy() {
         Invoke-SqlStatement $copySql $connectionString
 
     } catch {
-        $errorMsg = $_
-        Write-Host "Error loading $inputFile error: " $errorMsg   # will display the actual sql error in the console
-        throw $errorMsg
+        Write-Host "Error loading $inputFile error: " $_ -f Red   # will display the actual sql error in the console
+        throw $_
     }
 }

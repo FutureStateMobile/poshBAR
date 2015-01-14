@@ -20,7 +20,7 @@
     .NOTES
         Nothing yet...
 #>
-function Update-ConfigValues
+function Update-XmlConfigValues
 {
     param( 
         [parameter(Mandatory=$true,position=0)] [string] $configFile,

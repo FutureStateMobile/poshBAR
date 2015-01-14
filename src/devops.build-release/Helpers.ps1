@@ -1,11 +1,8 @@
+function Invoke-Grunt {
 
-# Invoke-DBMigration someAssembly.dll someAssembly.dll.config c:/outputFolder
-Function Invoke-DBMigration ([string] $targetAssembly, [string] $startupDirectory, [string] $connectionString){
-    Copy-Item "$entityFrameworkToolsDir\migrate.exe" $buildOutputDir
-    exec {migrate.exe $targetAssembly /StartUpDirectory=$startupDirectory /verbose /connectionString=$connectionString /connectionProviderName="System.Data.SqlClient"}
 }
 
-Function Invoke-Nunit ( [string] $targetAssembly, [string] $outputDir, [string] $runCommand, [string] $testAssemblyRootNamespace ) {
+function Invoke-Nunit ( [string] $targetAssembly, [string] $outputDir, [string] $runCommand, [string] $testAssemblyRootNamespace ) {
 
     if ( $includeCoverage ){
         Invoke-NUnitWithCoverage $targetAssembly $outputDir $runCommand $testAssemblyRootNamespace
@@ -19,7 +16,7 @@ Function Invoke-Nunit ( [string] $targetAssembly, [string] $outputDir, [string] 
     }    
 }
 
-Function Invoke-NUnitWithCoverage ( [string] $targetAssembly, [string] $outputDir, [string] $runCommand, [string] $testAssemblyRootNamespace){
+function Invoke-NUnitWithCoverage ( [string] $targetAssembly, [string] $outputDir, [string] $runCommand, [string] $testAssemblyRootNamespace){
     $fileName = Get-TestFileName $outputDir $runCommand
 
     $xmlFile = "$fileName-TestResults.xml"
@@ -33,7 +30,30 @@ Function Invoke-NUnitWithCoverage ( [string] $targetAssembly, [string] $outputDi
     Write-Host "##teamcity[importData type='dotNetCoverage' tool='dotcover' path='$coverageFile']"
 }
 
-Function Invoke-SpecFlow ( [string] $testProjectFile, [string] $outputDir, [string] $runCommand ) {
+function Invoke-XUnit ([string] $targetAssembly, [string] $outputDir, [string] $runCommand){
+        if ( $includeCoverage ){
+        Invoke-XUnitWithCoverage $targetAssembly $outputDir $runCommand
+    } else {
+        $fileName = Get-TestFileName $outputDir $runCommand
+        $xmlFile = "$fileName-TestResults.xml"
+        $txtFile = "$fileName-TestResults.txt"
+        
+        exec {xunit.console.exe $targetAssembly /xml $xmlFile}
+    }
+}
+
+function Invoke-XUnitWithCoverage  ([string] $targetAssembly, [string] $outputDir, [string] $runCommand){
+    $fileName = Get-TestFileName $outputDir $runCommand
+
+    $xmlFile = "$fileName-TestResults.xml"
+    $txtFile = "$fileName-TestResults.txt"
+    $coverageFile = "$fileName-CoverageResults.dcvr"
+
+    exec{ dotcover.exe cover /TargetExecutable=$xunitRunnerDir\xunit.console.exe /TargetArguments="$targetAssembly /xml $xmlFile" /Output=$coverageFile /ReportType=html} "Running code coverage '$runCommand' failed."
+    Write-Host "##teamcity[importData type='dotNetCoverage' tool='dotcover' path='$coverageFile']"
+}
+
+function Invoke-SpecFlow ( [string] $testProjectFile, [string] $outputDir, [string] $runCommand ) {
     $fileName = Get-TestFileName $outputDir $runCommand
 
     $xmlFile = "$fileName-TestResults.xml"
@@ -45,12 +65,12 @@ Function Invoke-SpecFlow ( [string] $testProjectFile, [string] $outputDir, [stri
     exec { specflow.exe nunitexecutionreport $testProjectFile /xmlTestResult:$xmlFile /testOutput:$txtFile /out:$htmlFile } "Publishing specflow results failed."
 }
 
-Function Get-TestFileName ( [string] $outputDir, [string] $runCommand ){
+function Get-TestFileName ( [string] $outputDir, [string] $runCommand ){
     $fileName = $runCommand -replace "\.", "-"
     return "$outputDir\$fileName"
 }
 
-Function Get-WarningsFromMSBuildLog {
+function Get-WarningsFromMSBuildLog {
     Param(
         [parameter(Mandatory=$true)] [alias("f")] $FilePath,
         [parameter()] [alias("ro")] $rawOutputPath,
