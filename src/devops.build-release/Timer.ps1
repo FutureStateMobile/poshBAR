@@ -1,4 +1,4 @@
-$script:initialTask
+[string]    $script:initialTask
 
 function Set-TaskTimeStamp{
     param(
@@ -8,9 +8,11 @@ function Set-TaskTimeStamp{
     if(-not $global:initialized){ return }
 
     $global:timeStampOutput += new-object PSObject -property @{ Duration = $global:timer.Elapsed; Name = $global:previousTask}
-    $global:totalElapsed += $global:timer.Elapsed
+    [timespan]$global:totalElapsed.Add($global:timer.Elapsed) | out-null
     $global:previousTask = $taskName
-    $global:timer.Restart()
+    #global:timer.Restart() not supported in PS2
+    $global:timer.Reset()
+    $global:timer.Start()
 }
 
 function Initialize-TaskTimer{
@@ -19,17 +21,16 @@ function Initialize-TaskTimer{
     )
     $script:initialTask = $initialTask
     $global:timer = [System.Diagnostics.Stopwatch]::StartNew()
-    $global:totalElapsed = 0
+    [timespan]$global:totalElapsed = 0
     $global:previousTask = "Initialize $initialTask"
     $global:timeStampOutput = @()
-    $global:timeStampOutput.Clear() # Ensure the array is empty
     $global:initialized = $true
 }
 
 function Clear-TaskTimer {    
     $global:timer.Stop()
     $global:timer.Reset()
-    $global:timeStampOutput.Clear()
+    $global:timeStampOutput = @()
     $global:initialized = $false
     $global:previousTask = $null
 }
@@ -39,13 +40,13 @@ function Write-TaskTimeSummary{
         [parameter(Mandatory=$true,position=0)] [string] $reportTitle
     )
     $global:timeStampOutput += new-object PSObject -property @{ Duration = $global:timer.Elapsed; Name = $global:previousTask}
-    $global:totalElapsed += $global:timer.Elapsed
+    [timespan]$global:totalElapsed.Add($global:timer.Elapsed) | out-null
     $global:timeStampOutput += new-object PSObject -property @{ Name = "Total:"; Duration = $global:totalElapsed}
 
     Write-Host "$script:initialTask Succeeded!" -f Green
     Write-Host ""
     Write-Host "----------------------------------------------------------------------"
-    $reportTitle
+    Write-Host $reportTitle
     Write-Host "----------------------------------------------------------------------"
 
     $global:timeStampOutput | ft -AutoSize -property Name,Duration | out-string -stream | where-object { $_ }

@@ -17,16 +17,19 @@ function Write-BuildInformation {
     param(
             [parameter(Mandatory=$true)] [array] $variables 
         )
+
     Write-Host "----------------------------------------------------------------------"
     Write-Host "Build Information"
     Write-Host "----------------------------------------------------------------------"
+    
+    $req = @("Version", 
+             "buildEnvironment", 
+             "buildNumber", 
+             "informationalVersion",
+             "includeCoverage")
 
     $variables | 
-    Where-Object {$_.Name -in @("Version", 
-                                "buildEnvironment", 
-                                "buildNumber", 
-                                "informationalVersion",
-                                "includeCoverage")} |
+    where-object {$req -contains $_.Name} |
     ft -autosize -property Name, Value | 
     out-string -stream | 
     where-object { $_ }

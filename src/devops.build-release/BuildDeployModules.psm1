@@ -1,27 +1,11 @@
 if (Get-Module BuildDeployModules) { return }
 
-$PSVersionTable.PSVersion | % {
-     if($_.Major -lt 4){
-          Write-Host "ERROR: You are running an incompatable version of Powershell." -f Red
-          Write-Host "A newer version of Powershell can be found at " -nonewline
-          Write-Host "http://www.microsoft.com/en-us/download/details.aspx?id=40855&WT.mc_id=rss_alldownloads_all" -f cyan
-          Write-Host "Or by installing through Chocolatey `(" -nonewline
-          Write-Host "http://chocolatey.org" -f Cyan -nonewline
-          Write-Host ")."
-          Write-Host "`t> choco install Powershell" -f Cyan
-          Write-Host "After installing Powershell, you may need to reboot your computer."
-          throw "Powershell V4 is required to use these modules."
-          exit 1
-     }
-}
-
 $script:fsmbr = @{}
 $fsmbr.version = "1.1.1" # contains the current version of fsm.buildrelease
 $fsmbr.context = new-object system.collections.stack # holds onto the current state of all variables
 
- Write-Host "fsm.buildrelease version $($fsmbr.version) `nCopyright $([char]0x00A9) Future State Mobile Inc. & Contributors`n"
+Write-Host "`nfsm.buildrelease version $($fsmbr.version) `nCopyright ($([char]0x00A9)) Future State Mobile Inc. & Contributors`n"
 
-Write-Host  $fsmbr.context.count
 Push-Location $psScriptRoot
 
 . .\Add-HostsFileEntry.ps1
@@ -30,11 +14,11 @@ Push-Location $psScriptRoot
 . .\Add-SybaseLinkedServer.ps1
 . .\ApplicationAdministration.ps1
 . .\AppPoolAdministration.ps1
+. .\Assert-PSVersion.ps1
 . .\DatabaseDeploy.ps1
 . .\Expand-NugetPackage.ps1
 . .\Expand-ZipFile.ps1
 . .\Format-TaskNameToHost.ps1
-. .\Write-BuildInformation.ps1
 . .\Get-EnvironmentSettings.ps1
 . .\Helpers.ps1
 . .\Install-IISRewriteModule.ps1
@@ -47,84 +31,87 @@ Push-Location $psScriptRoot
 . .\Set-WebApplicationSecurity.ps1
 . .\SiteAdministration.ps1
 . .\SqlHelpers.ps1
+. .\Test-PathExtended.ps1
 . .\Test-RunAsAdmin.ps1
 . .\TextUtils.ps1
 . .\Timer.ps1
 . .\Update-AssemblyVersions.ps1
 . .\Update-JsonConfigFile.ps1
 . .\Update-XmlConfigFile.ps1
+. .\Write-BuildInformation.ps1
 
 Pop-Location
 
 Export-ModuleMember `
     -Alias @(
         '*') `
-    -Function @(
-          'Add-HostsFileEntry',
+    -Function @('Add-HostsFileEntry',
           'Add-IISMimeType',
           'Add-LoopbackFix',
           'Add-SybaseLinkedServer',
+          'Assert-PSVersion',
+          'Confirm-ApplicationExists',
+          'Confirm-AppPoolExists',
+          'Confirm-SiteExists',
           'Expand-NugetPackage',
           'Expand-ZipFile',
           'Format-TaskNameToHost',
+          'Get-Application',
+          'Get-Applications',
+          'Get-AppPool',
+          'Get-AppPools',
+          'Get-DatabaseConnection',
           'Get-EnvironmentSettings',
+          'Get-Site',
+          'Get-Sites',
+          'Get-TestFileName',
+          'Get-WarningsFromMSBuildLog', 
+          'Initialize-TaskTimer',
           'Install-IISRewriteModule',
           'Install-WebApplication',
-          'Invoke-ElevatedCommand',
+          'Invoke-BulkCopy',
           'Invoke-DatabaseDeploy',
+          'Invoke-DBMigration',
+          'Invoke-ElevatedCommand',
           'Invoke-ExternalCommand',
-          'Invoke-Using',
-          'Set-IISAuthentication',
-          'Set-WebApplicationSecurity',
-          'Test-RunAsAdmin',
-          'Update-AssemblyVersions',
-          'Update-XmlConfigValues',
           'Invoke-FromBase64', 
+          'Invoke-Grunt',
+          'Invoke-HtmlDecode', 
+          'Invoke-HtmlEncode',
+          'Invoke-Nunit',
+          'Invoke-NUnitWithCoverage'
+          'Invoke-SpecFlow',
+          'Invoke-SqlFile',
+          'Invoke-SqlStatement',
           'Invoke-ToBase64', 
           'Invoke-UrlDecode', 
           'Invoke-UrlEncode', 
-          'Invoke-HtmlDecode', 
-          'Invoke-HtmlEncode',
-          'Get-DatabaseConnection',
-          'Invoke-SqlStatement',
-          'Invoke-SqlFile',
-          'Invoke-BulkCopy',
-          'New-Site',
-          'Update-Site',
-          'Confirm-SiteExists',
-          'Remove-Site',
-          'Start-Site',
-          'Stop-Site',
-          'Get-Site',
-          'Get-Sites',
-          'New-AppPool',
-          'Get-AppPool',
-          'Get-AppPools',
-          'Update-AppPool',
-          'Remove-AppPool',
-          'Start-AppPool',
-          'Stop-AppPool',
-          'Confirm-AppPoolExists',
-          'New-Application',
-          'Update-Application',
-          'Confirm-ApplicationExists',
-          'Remove-Application',
-          'Start-Application',
-          'Stop-Application',
-          'Set-IISCustomHeader',
-          'Get-Application',
-          'Get-Applications',
-          'Write-BuildInformation',
-          'Write-TaskTimeSummary',
-          'Initialize-TaskTimer',
-          'Set-TaskTimeStamp',
-          'Invoke-DBMigration',
-          'Invoke-Nunit',
-          'Invoke-NUnitWithCoverage'
+          'Invoke-Using',
           'Invoke-XUnit',
           'Invoke-XUnitWithCoverage',
-          'Invoke-SpecFlow',
-          'Invoke-Grunt',
-          'Get-TestFileName',
-          'Get-WarningsFromMSBuildLog', 
-          'Update-JsonConfigValues')
+          'New-Application',
+          'New-AppPool',
+          'New-Site',
+          'Remove-Application',
+          'Remove-AppPool',
+          'Remove-Site',
+          'Set-IISAuthentication',
+          'Set-IISCustomHeader',
+          'Set-TaskTimeStamp',
+          'Set-WebApplicationSecurity',
+          'Start-Application',
+          'Start-AppPool',
+          'Start-Site',
+          'Stop-Application',
+          'Stop-AppPool',
+          'Stop-Site',
+          'Test-PathExtended',
+          'Test-RunAsAdmin',
+          'Update-Application',
+          'Update-AppPool',
+          'Update-AssemblyVersions',
+          'Update-JsonConfigValues',
+          'Update-Site',
+          'Update-XmlConfigValues',
+          'Write-BuildInformation',
+          'Write-TaskTimeSummary')

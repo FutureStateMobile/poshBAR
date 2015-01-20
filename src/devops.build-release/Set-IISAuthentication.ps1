@@ -27,7 +27,7 @@ function Set-IISAuthentication
     )
 
     $ErrorActionPreference = "Stop"
-
+    Import-Module "WebAdministration"
     Write-Output "Setting $settingName to a value of $value."
     
     if ($settingName -ne "anonymousAuthentication")

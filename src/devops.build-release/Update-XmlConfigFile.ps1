@@ -30,7 +30,7 @@ function Update-XmlConfigValues
     )
 
     $ErrorActionPreference = "Stop"
-    
+
     $doc = New-Object System.Xml.XmlDocument;
     $doc.Load($configFile)
 

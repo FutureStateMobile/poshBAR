@@ -21,7 +21,8 @@
         Updates a JSON element with a new value
 
     .NOTES
-        Nothing yet...
+        If Powershell version => 3 is available, the final text will retain formatting. If only Powershell
+        version 2 is available, all formatting will be lost, and the output will be a single line.
 #>
 function Update-JsonConfigValues{
     param( 
@@ -30,9 +31,31 @@ function Update-JsonConfigValues{
         [parameter(Mandatory=$true,position=2)] [AllowEmptyString()] [string] $value
     )
     $ErrorActionPreference = "Stop"
+    
+    Write-Host "updating $configFile"
+    Write-Host "changing $node value to: `t$value"
 
-    $config = Get-Content -Path $configFile -Raw | ConvertFrom-Json
-    Invoke-Expression "`$config.$node = `$value"
+    if(Get-Command ConvertFrom-Json -ea SilentlyContinue){
+    #Powershell => 3 support
 
-    Set-Content $configFile $($config | ConvertTo-Json)
+        Assert-PSVersion 3 
+
+        $config = Get-Content -Path $configFile -Raw | ConvertFrom-Json
+        Invoke-Expression "`$config.$node = `$value"
+
+        Set-Content $configFile $($config | ConvertTo-Json)
+    } else {
+    #Powershell 2 support
+
+        [System.Reflection.Assembly]::LoadWithPartialName("System.Web.Extensions") | out-null
+        $ser = New-Object System.Web.Script.Serialization.JavaScriptSerializer
+
+        $json = Get-Content -Path $configFile  | Out-String
+        $config = $ser.DeserializeObject($json) 
+
+        Invoke-Expression "`$config.$node = `$value"
+
+        $json = $ser.Serialize($config)
+        Set-Content $configFile $json
+    }
 }
