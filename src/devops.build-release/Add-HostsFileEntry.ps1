@@ -64,7 +64,7 @@ function Add-HostsFileEntry
         $output += new-object PSObject -property @{ Info = "[ $hostName | $ipAddress ]"; Message = "TEST FAILED"}
 	}
 
-    $output | ft -autoSize -property Info,Message
+    $output | Format-Table -autoSize -property Info,Message | Out-Default
     
     if($includeLoopbackFix.IsPresent){
         Add-LoopbackFix $hostName

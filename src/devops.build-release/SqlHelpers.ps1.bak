@@ -3,7 +3,7 @@ $ErrorActionPreference = "Stop"
 if(-NOT (Get-Module sqlps -erroraction silentlycontinue)){
     # Pushing and Poping because SQLPS changes the directory to SQLSERVER:\
     Push-Location
-    Import-Module sqlps -DisableNameChecking -ErrorAction SilentlyContinue
+    Import-Module sqlps -DisableNameChecking -ErrorAction SilentlyContinue 3> $null
     Pop-Location
 }
 
@@ -14,11 +14,6 @@ function Get-DatabaseConnectionProperties() {
 
     $connStringBuilder = New-Object System.Data.Common.DbConnectionStringBuilder
     $connStringBuilder.set_ConnectionString($connectionString)
-    
-    # Fix to ensure we get the appropriate variables out of the connection string.
-    if(!$connStringBuilder['Server']){$connStringBuilder['Server'] = $connStringBuilder['Data Source']}
-    if(!$connStringBuilder['Database']){$connStringBuilder['Database'] = $connStringBuilder['Initial Catalog']}
-    if(!$connStringBuilder['Password']){$connStringBuilder['Password'] = $connStringBuilder['Pwd']}
 
     return $connStringBuilder
 }
