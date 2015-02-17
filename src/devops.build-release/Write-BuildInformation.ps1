@@ -18,9 +18,9 @@ function Write-BuildInformation {
             [parameter(Mandatory=$true)] [array] $variables 
         )
 
-    Write-Host "----------------------------------------------------------------------"
-    Write-Host "Build Information"
-    Write-Host "----------------------------------------------------------------------"
+    "-" * 70
+    "Build Information"
+    "-" * 70
     
     $req = @("Version", 
              "buildEnvironment", 

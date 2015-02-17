@@ -21,7 +21,7 @@
         Will Deploy a database using DatabaseDeploy.exe and the xml settings for the configured environment
 #>
 
-Function Invoke-DatabaseDeploy() {
+function Invoke-DatabaseDeploy() {
     param(
         [parameter(Mandatory=$true,position=0)][string] $buildEnvironment,
         [parameter(Mandatory=$true,position=1)][string] $targetDatabase,

@@ -32,7 +32,7 @@ function New-AppPool{
         [parameter(Mandatory=$false,position=2)] [int] $maxProcesses = 1,
         [parameter(Mandatory=$false,position=3)] [string] $username,
         [parameter(Mandatory=$false,position=4)] [string] $password,
-        [parameter(Mandatory=$false,position=5)] [string] $managedPipelineMode = "Integrated",
+        [parameter(Mandatory=$false,position=5)] [ValidateSet('Integrated','Classic')] [string] $managedPipelineMode = "Integrated",
         [parameter(Mandatory=$false,position=6)] [string] $managedRuntimeVersion = "v4.0"
     )
 

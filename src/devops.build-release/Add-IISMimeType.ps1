@@ -3,7 +3,7 @@
         Will register a mimetype for a file extension.
 
     .EXAMPLE
-        Add-IISMimeType "cls-w-85544.transcanada.com" "json" "application/json"
+        Add-IISMimeType "foo.example.com" "json" "application/json"
 
     .PARAMETER siteName
         The name of the IIS site.
@@ -27,12 +27,14 @@ function Add-IISMimeType
     )
 
     $ErrorActionPreference = "Stop"
+    Format-TaskNameToHost "Add IIS Mime Type"
 
-    Write-Output "Adding mime type $mimeType for extension $fileExtension to IIS site $siteName."
+    Write-Host "Adding mime type $mimeType for extension $fileExtension to IIS site $siteName."
 
     $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
 
-    & $appcmd set config $siteName /section:staticContent /+"[fileExtension='.$fileExtension',mimeType='$mimeType']"
 
-    Write-Output "Added mime type $mimeType for extension $fileExtension to IIS site $siteName."
+    & $appcmd set config $siteName /section:staticContent /-"[fileExtension='.$fileExtension']"
+    & $appcmd set config $siteName /section:staticContent /+"[fileExtension='.$fileExtension',mimeType='$mimeType']"
+   Write-Host "Added mime type $mimeType for extension $fileExtension to IIS site $siteName."
 }

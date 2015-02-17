@@ -21,7 +21,7 @@
 function Set-IISAuthentication
 {
     param(
-        [parameter(Mandatory=$true,position=0)] [string] $settingName,
+        [parameter(Mandatory=$true,position=0)] [string] [ValidateSet('anonymousAuthentication','windowsAuthentication','basicAuthentication','formsAuthentication')] $settingName,
         [parameter(Mandatory=$true,position=1)] [PSObject] $value,
         [parameter(Mandatory=$true,position=2)] [string] $location
     )

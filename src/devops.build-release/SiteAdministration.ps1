@@ -30,8 +30,8 @@ function New-Site{
         [parameter(Mandatory=$true,position=0)] [string] $siteName,
         [parameter(Mandatory=$true,position=1)] [string] $sitePath,
         [parameter(Mandatory=$true,position=2)] [string] $hostHeader,
-        [parameter(Mandatory=$true,position=3)] [string] $protocol,
-        [parameter(Mandatory=$true,position=4)] [string] $portNumber,
+        [parameter(Mandatory=$true,position=3)] [string] [ValidateSet('http','https')] $protocol,
+        [parameter(Mandatory=$true,position=4)] [int] $portNumber,
         [parameter(Mandatory=$true,position=5)] [string] $appPoolName,
         [parameter(Mandatory=$false,position=6)] [switch] $updateIfFound
     )

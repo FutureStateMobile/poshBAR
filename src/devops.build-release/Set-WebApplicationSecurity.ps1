@@ -2,7 +2,7 @@ Function Set-WebApplicationSecurity() {
     param( 
         [parameter(Mandatory=$true,position=0)] [string] $environment,
         [parameter(Mandatory=$true,position=1)] [System.Xml.XmlElement] $websiteSettings,
-        [parameter(Mandatory=$true,position=2)] [string] $version
+        [parameter(Mandatory=$true,position=2)] [ValidatePattern("^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})(\.[0-9]*?)?$")] [string] $version
     )
 
     Format-TaskNameToHost "Setting IIS Authentication for $($websiteSettings.siteName)"

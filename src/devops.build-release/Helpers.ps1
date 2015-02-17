@@ -1,7 +1,3 @@
-function Invoke-Grunt {
-
-}
-
 function Invoke-Nunit ( [string] $targetAssembly, [string] $outputDir, [string] $runCommand, [string] $testAssemblyRootNamespace ) {
 
     if ( $includeCoverage ){
@@ -68,6 +64,33 @@ function Invoke-SpecFlow ( [string] $testProjectFile, [string] $outputDir, [stri
 function Get-TestFileName ( [string] $outputDir, [string] $runCommand ){
     $fileName = $runCommand -replace "\.", "-"
     return "$outputDir\$fileName"
+}
+
+function Invoke-GruntTests ([string] $rootPath){
+        push-location $rootPath
+
+        # We're using npm install because of the nested node_modules path issue on Windows.
+        #There's a bug in karma whereby it doesn't kill the IE instance it creates.
+        exec { npm install grunt-cli -g}
+        exec { npm install karma-cli -g }
+        exec { npm install --save-dev}
+        exec { grunt test}
+
+        pop-location
+}
+
+function Invoke-GruntMinification {
+
+}
+
+function Invoke-EntityFrameworkMigrations ([string] $targetAssembly, [string] $startupDirectory, [string] $connectionString, [string] $databaseName, [switch] $dropDB){
+    if($dropDB.IsPresent){ 
+        Write-Host "Dropping current database."
+        Invoke-SqlStatement "DROP DATABASE $databaseName" $connectionString -useMaster -ea SilentlyContinue
+    }
+
+    Write-Host "Running Entity Framework Migrations."
+    exec {migrate.exe $targetAssembly /StartUpDirectory=$startupDirectory /connectionString=$connectionString /connectionProviderName="System.Data.SqlClient"}
 }
 
 function Get-WarningsFromMSBuildLog {

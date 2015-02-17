@@ -55,7 +55,7 @@ function New-Application
     }
 }
 
-Function Update-Application{
+function Update-Application{
     param(
         [parameter( Mandatory=$true, position=0 )] [string] $siteName,
         [parameter( Mandatory=$true, position=1 )] [string] $appName,

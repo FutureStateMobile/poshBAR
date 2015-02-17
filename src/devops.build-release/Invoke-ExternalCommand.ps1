@@ -17,7 +17,7 @@ The message you'd like to display on failure of the command.
 .EXAMPLE
   Invoke-ExternalCommand { svn info $repository_trunk } "Error executing SVN. Please verify SVN command-line client is installed"
 #>
-Function Invoke-ExternalCommand
+function Invoke-ExternalCommand
 {
     [CmdletBinding()]
     param(

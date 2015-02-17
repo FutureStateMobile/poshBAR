@@ -1,5 +1,3 @@
-if (Get-Module BuildDeployModules) { return }
-
 $script:fsmbr = @{}
 $fsmbr.version = "1.1.1" # contains the current version of fsm.buildrelease
 $fsmbr.context = new-object system.collections.stack # holds onto the current state of all variables
@@ -11,7 +9,6 @@ Push-Location $psScriptRoot
 . .\Add-HostsFileEntry.ps1
 . .\Add-IISMimeType.ps1
 . .\Add-LoopbackFix.ps1
-. .\Add-SybaseLinkedServer.ps1
 . .\ApplicationAdministration.ps1
 . .\AppPoolAdministration.ps1
 . .\Assert-PSVersion.ps1
@@ -23,6 +20,7 @@ Push-Location $psScriptRoot
 . .\Helpers.ps1
 . .\Install-IISRewriteModule.ps1
 . .\Install-WebApplication.ps1
+. .\Invoke-DeployOctopusNugetPackage.ps1
 . .\Invoke-ElevatedCommand.ps1
 . .\Invoke-ExternalCommand.ps1
 . .\Invoke-Using.ps1
@@ -45,10 +43,10 @@ Pop-Location
 Export-ModuleMember `
     -Alias @(
         '*') `
-    -Function @('Add-HostsFileEntry',
+    -Function @(
+          'Add-HostsFileEntry',
           'Add-IISMimeType',
           'Add-LoopbackFix',
-          'Add-SybaseLinkedServer',
           'Assert-PSVersion',
           'Confirm-ApplicationExists',
           'Confirm-AppPoolExists',
@@ -72,10 +70,13 @@ Export-ModuleMember `
           'Invoke-BulkCopy',
           'Invoke-DatabaseDeploy',
           'Invoke-DBMigration',
+          'Invoke-DeployOctopusNugetPackage',
           'Invoke-ElevatedCommand',
+          'Invoke-EntityFrameworkMigrations',
           'Invoke-ExternalCommand',
           'Invoke-FromBase64', 
-          'Invoke-Grunt',
+          'Invoke-GruntMinification',
+          'Invoke-GruntTests',
           'Invoke-HtmlDecode', 
           'Invoke-HtmlEncode',
           'Invoke-Nunit',
@@ -114,4 +115,5 @@ Export-ModuleMember `
           'Update-Site',
           'Update-XmlConfigValues',
           'Write-BuildInformation',
-          'Write-TaskTimeSummary')
+          'Write-TaskTimeSummary'
+          )

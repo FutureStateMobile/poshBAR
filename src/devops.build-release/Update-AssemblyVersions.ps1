@@ -24,7 +24,7 @@
 function Update-AssemblyVersions
 {
     param( 
-        [parameter(Mandatory=$true,position=0)] [string] $Version,
+        [parameter(Mandatory=$true,position=0)] [ValidatePattern("^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})(\.[0-9]*?)?$")] [string] $Version,
         [parameter(Mandatory=$true,position=1)] [string] $BuildNumber,
         [parameter(Mandatory=$true,position=2)] [string] $AssemblyInformationalVersion
     )

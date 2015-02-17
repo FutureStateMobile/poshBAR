@@ -20,7 +20,7 @@ if ($projectHelp.isPresent) {
         Write-Host "Incorrectly formatted Build Number, it must be formatted (n.n.n.n)"
         exit 1
     }
-
+    
     $version = "$($buildNumberParts[0]).$($buildNumberParts[1]).$($buildNumberParts[2])";
     $buildNumber = $($buildNumberParts[3]);
 
