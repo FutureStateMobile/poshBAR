@@ -1,12 +1,11 @@
-$script:fsmbr = @{}
-$fsmbr.version = "1.1.1" # contains the current version of fsm.buildrelease
-$fsmbr.context = new-object system.collections.stack # holds onto the current state of all variables
+$fsmbrVersion = "1.1.1" # contains the current version of fsm.buildrelease
 
-Write-Host "`nfsm.buildrelease version $($fsmbr.version) `nCopyright ($([char]0x00A9)) Future State Mobile Inc. & Contributors`n"
+Write-Host "`nfsm.buildrelease version $fsmbrVersion `nCopyright ($([char]0x00A9)) Future State Mobile Inc. & Contributors`n"
 
 Push-Location $psScriptRoot
 
 . .\Add-HostsFileEntry.ps1
+. .\Add-IISHttpVerb.ps1
 . .\Add-IISMimeType.ps1
 . .\Add-LoopbackFix.ps1
 . .\ApplicationAdministration.ps1
@@ -20,6 +19,7 @@ Push-Location $psScriptRoot
 . .\Helpers.ps1
 . .\Install-IISRewriteModule.ps1
 . .\Install-WebApplication.ps1
+. .\Invoke-Deployment.ps1
 . .\Invoke-DeployOctopusNugetPackage.ps1
 . .\Invoke-ElevatedCommand.ps1
 . .\Invoke-ExternalCommand.ps1
@@ -45,12 +45,14 @@ Export-ModuleMember `
         '*') `
     -Function @(
           'Add-HostsFileEntry',
+          'Add-IISHttpVerb',
           'Add-IISMimeType',
           'Add-LoopbackFix',
           'Assert-PSVersion',
           'Confirm-ApplicationExists',
           'Confirm-AppPoolExists',
           'Confirm-SiteExists',
+          'Exec',
           'Expand-NugetPackage',
           'Expand-ZipFile',
           'Format-TaskNameToHost',
@@ -70,6 +72,7 @@ Export-ModuleMember `
           'Invoke-BulkCopy',
           'Invoke-DatabaseDeploy',
           'Invoke-DBMigration',
+          'Invoke-Deployment',
           'Invoke-DeployOctopusNugetPackage',
           'Invoke-ElevatedCommand',
           'Invoke-EntityFrameworkMigrations',
@@ -103,6 +106,7 @@ Export-ModuleMember `
           'Start-Application',
           'Start-AppPool',
           'Start-Site',
+          'Step',
           'Stop-Application',
           'Stop-AppPool',
           'Stop-Site',

@@ -3,7 +3,7 @@ properties {
     $baseDir  = resolve-path "$buildScriptDir\.."
     $buildDir = "$baseDir\build-artifacts" 
     $buildPublishDir = "$buildDir\publish"
-    $nugetRunnerDir = "$packagesDir\NuGet.CommandLine.2.8.3\tools"
+    $packagesDir = "$baseDir\Packages"
     $modulesDir = "$baseDir\src\devops.build-release"
 
 
@@ -24,12 +24,12 @@ Task Package -depends PackageBuildRelease
 
 Task SetupPaths {
     Write-Host "Adding some of our tools to the Path so we can run them easier"
-    $env:Path += ";$nugetRunnerDir"
+    $env:Path += ";$packagesDir\NuGet.CommandLine.2.8.3\tools"
 }
 
 Task MakeBuildDir {
     Write-Host "Creating new build-artifacts directory"
-    rm -R $buildDir -force -ea SilentlyContinue
+    rm -r $buildDir -force -ea SilentlyContinue
     New-Item -ItemType Directory -Force -Path $buildDir
     New-Item -ItemType Directory -Force -Path $buildPublishDir
 }

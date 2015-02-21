@@ -30,7 +30,7 @@ function Expand-NugetPackage
 
     $pwd = Get-ModuleDirectory
 
-    Expand-ZipFile $nugetPackageName $destinationFolder -suppressTaskNameOutput
+    Expand-ZipFile $nugetPackageName $destinationFolder
 
     Remove-Item "$destinationFolder\``[Content_Types``].xml"
     Remove-Item "$destinationFolder\*.nuspec"

@@ -25,9 +25,9 @@ function Add-LoopbackFix
     )
 
     $ErrorActionPreference = "Stop"
-    Format-TaskNameToHost "Add Loopback Fix for $siteHostName"
 
     Write-Host ""
+    Write-Host "Adding loopback fix for $siteName"
     Write-Host "note: we are not disabling the loopback check all together, we are simply adding $siteHostName to an allowed list." -f DarkCyan
     Write-Host ""
 

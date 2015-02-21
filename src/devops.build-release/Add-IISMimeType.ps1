@@ -27,8 +27,6 @@ function Add-IISMimeType
     )
 
     $ErrorActionPreference = "Stop"
-    Format-TaskNameToHost "Add IIS Mime Type"
-
     Write-Host "Adding mime type $mimeType for extension $fileExtension to IIS site $siteName."
 
     $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"

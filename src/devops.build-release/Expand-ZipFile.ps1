@@ -23,15 +23,10 @@ function Expand-ZipFile
 {
     param(
         [parameter(Mandatory=$true,position=0)] [string] $zipFileName,
-        [parameter(Mandatory=$true,position=1)] [string] $destinationFolder,
-        [parameter(Mandatory=$false)]           [switch] $suppressTaskNameOutput
+        [parameter(Mandatory=$true,position=1)] [string] $destinationFolder
     )
 
     $ErrorActionPreference = "Stop"
-
-    if(-not $suppressTaskNameOutput.IsPresent){
-        Format-TaskNameToHost "Expand Zip File"
-    }
 
     if (!(Test-Path $destinationFolder)) {
         md $destinationFolder | Out-Null

@@ -86,10 +86,15 @@ function Invoke-GruntMinification {
 function Invoke-EntityFrameworkMigrations ([string] $targetAssembly, [string] $startupDirectory, [string] $connectionString, [string] $databaseName, [switch] $dropDB){
     if($dropDB.IsPresent){ 
         Write-Host "Dropping current database."
-        Invoke-SqlStatement "DROP DATABASE $databaseName" $connectionString -useMaster -ea SilentlyContinue
+        try{
+            Invoke-SqlStatement "DROP DATABASE $databaseName" $connectionString -useMaster | Out-Null
+        } catch [Exception] {
+            Write-Warning $_
+        }
+
     }
 
-    Write-Host "Running Entity Framework Migrations."
+    Write-Host "`nRunning Entity Framework Migrations."
     exec {migrate.exe $targetAssembly /StartUpDirectory=$startupDirectory /connectionString=$connectionString /connectionProviderName="System.Data.SqlClient"}
 }
 
@@ -154,13 +159,6 @@ function Get-WarningsFromMSBuildLog {
         $stream.Close()
     }
 }
-
-
-####################################################################
-
-#
-# Private Functions
-#
 
 # Borrowed from PSAKE. http://jameskovacs.com/2010/02/25/the-exec-problem/
 function Exec([scriptblock]$cmd, [string]$errorMessage = "Error executing command: " + $cmd) { 

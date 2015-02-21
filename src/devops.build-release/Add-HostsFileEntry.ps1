@@ -35,8 +35,6 @@ function Add-HostsFileEntry
 	)
 
     $ErrorActionPreference = "Stop"
-    Format-TaskNameToHost "Add Host File Entry"
-
 	Write-Host "Adding hosts entry for custom host header..."
 
 	$HostsLocation = "$env:windir\System32\drivers\etc\hosts"
