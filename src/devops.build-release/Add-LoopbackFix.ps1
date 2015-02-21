@@ -26,16 +26,23 @@ function Add-LoopbackFix
 
     $ErrorActionPreference = "Stop"
 
-    Write-Host ""
-    Write-Host "Adding loopback fix for $siteName"
-    Write-Host "note: we are not disabling the loopback check all together, we are simply adding $siteHostName to an allowed list." -f DarkCyan
-    Write-Host ""
+    Write-Host "Adding loopback fix for $siteHostName" -NoNewLine
 
-    Write-Host "Creating fix for using custom host headers..."
-    if (Get-ItemProperty -Name "BackConnectionHostNames" -path 'HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0' -erroraction silentlycontinue) { 
-        Write-Host "Fix for using custom host headers already in place."
-    } else { 
+    $str = Get-ItemProperty -Name "BackConnectionHostNames" -path 'HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0' -erroraction silentlycontinue
+  
+    if ($str) { 
+        if($($str.BackConnectionHostNames) -like "*$siteHostName*")
+        {
+            Write-Host "`tAlready in place" -f Cyan
+        } else{
+            $str.BackConnectionHostNames += "`n$siteHostName"
+            Set-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" -Name "BackConnectionHostNames" -Value $str.BackConnectionHostNames 
+            Write-Host "`tDone" -f Green
+        }
+    } else {
         New-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" -Name "BackConnectionHostNames" -Value $siteHostName -PropertyType "MultiString" 
-        Write-Host "Fix for using custom host headers added."
+        Write-Host "`tDone" -f Green
     }
+
+    Write-Host "`tnote: we are not disabling the loopback check all together, we are simply adding $siteHostName to an allowed list." -f DarkGray
 }

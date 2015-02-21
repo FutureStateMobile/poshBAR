@@ -26,8 +26,9 @@ function Add-IISHttpVerb {
     )
 
     $ErrorActionPreference = "Stop"
-    Write-Host "Adding IIS Http Verb '$verb' to '$siteName'"
+    Write-Host "Adding IIS Http Verb '$verb' to '$siteName'" -NoNewLine
     $allowed = if($action -eq "add"){'true'} else {'false'}
 
     & $appcmd set config $siteName -section:system.webServer/security/requestFiltering /+"verbs.[verb='$verb',allowed='$allowed']"
+    Write-Host "`tDone" -f Green
 }

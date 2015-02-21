@@ -26,29 +26,22 @@ function Install-WebApplication() {
         Remove-Item "$($appFilePath)\*" -recurse -Force
     }
 
-    Write-Host "Copying website content to: $($appFilePath)"
+    Write-Host "Copying website content to: $($appFilePath)" -NoNewLine
     Copy-Item "$baseDir\website\*" $($appFilePath) -Recurse -Force
-    Write-Host "Successfully copied website content"
+    Write-Host "`tDone" -f Green
 
     # Site Permissions
-    Write-Host "Setting permissions for $($websiteSettings.appPool.userName) on $siteFilePath"
-    icacls "$siteFilePath" /grant ($($websiteSettings.appPool.userName) + ":(OI)(CI)(RX)") | Out-Default
-    Write-Host "Successfully granted read/write access to $($websiteSettings.physicalPathRoot)\$($websiteSettings.siteName)"
+    Approve-Permissions $siteFilePath $($websiteSettings.appPool.userName) "read-execute"
 
     if(Test-Path "$siteFilePath/App_Data"){
-        icacls "$($siteFilePath)/App_Data" /grant ($($websiteSettings.appPool.userName) + ":(OI)(CI)(M)") | Out-Default
-        Write-Host "Successfully granted read/execute access to $($appFilePath)"
+        Approve-Permissions "$siteFilePath/App_Data" $($websiteSettings.appPool.userName) "modify"
     }
 
     # App Permissions
-    Write-Host ""
-    Write-Host "Setting permissions for $($websiteSettings.appPool.userName) on $appFilePath"
-    icacls "$($appFilePath)" /grant ($($websiteSettings.appPool.userName) + ":(OI)(CI)(RX)") | Out-Default
-    Write-Host "Successfully granted read/execute access to $($appFilePath)"
+    Approve-Permissions $appFilePath $($websiteSettings.appPool.userName) "read-execute"
 
     if(Test-Path "$appFilePath/App_Data"){
-        icacls "$($appFilePath)/App_Data" /grant ($($websiteSettings.appPool.userName) + ":(OI)(CI)(M)") | Out-Default
-        Write-Host "Successfully granted read/execute access to $($appFilePath)"
+        Approve-Permissions "$appFilePath/App_Data" $($websiteSettings.appPool.userName) "modify"
     }
 
     New-AppPool $($websiteSettings.appPool.name) $($websiteSettings.appPool.identityType) $($websiteSettings.appPool.maxWorkerProcesses) $($websiteSettings.appPool.userName) $($websiteSettings.appPool.password)
@@ -63,5 +56,5 @@ function Install-WebApplication() {
         Set-IISAuthentication $authenticationType true $($siteAndUriPath)
     }
 
-    Write-Host -Fore Green "Successfully deployed Web Application"
+    Write-Host "Successfully deployed Web Application"
 }

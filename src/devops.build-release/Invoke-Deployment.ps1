@@ -50,6 +50,7 @@ function Assert
 
 function WriteStepTimeSummary($totalDeploymentDuration) {
     if ($fsmbr.context.count -gt 0) {
+        Write-Host "`nDeployment Complete`n" -f Green
         "-" * 70
         "Deployment Report"
         "-" * 70

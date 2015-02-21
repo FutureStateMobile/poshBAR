@@ -35,35 +35,33 @@ function Add-HostsFileEntry
 	)
 
     $ErrorActionPreference = "Stop"
-	Write-Host "Adding hosts entry for custom host header..."
+	Write-Host "Adding hosts entry for custom host header" -NoNewLine
 
 	$HostsLocation = "$env:windir\System32\drivers\etc\hosts"
 	$NewHostEntry = "`t$ipAddress`t$hostName"
 
-    $output = @()
 
 	if((gc $HostsLocation) -contains $NewHostEntry)
 	{
-        $output += new-object PSObject -property @{ Info = "[ $hostName | $ipAddress ]"; Message = "Host file entry already Exists"}
+        Write-Host "`tExists" -f Cyan
 	}
 	else
 	{
-        $output += new-object PSObject -property @{ Info = "[ $hostName | $ipAddress ]"; Message = "Attempting to update host file."}
+        Write-Host "`tDone"
 		Add-Content -Path $HostsLocation -Value $NewHostEntry
 	}
 
 	# Validate entry
+    Write-Host "Validating hosts entry" -NoNewLine
 	if((gc $HostsLocation) -contains $NewHostEntry)
 	{
-        $output += new-object PSObject -property @{ Info = "[ $hostName | $ipAddress ]"; Message = "TEST PASSED"}
+        Write-Host "`tPassed" -f Green
 	}
 	else
 	{
-        $output += new-object PSObject -property @{ Info = "[ $hostName | $ipAddress ]"; Message = "TEST FAILED"}
+        Write-Host "`tFailed" -f Red
 	}
 
-    $output | ft -autoSize -property Info,Message
-    
     if($includeLoopbackFix.IsPresent){
         Add-LoopbackFix $hostName
     }

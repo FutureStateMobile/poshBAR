@@ -38,19 +38,19 @@ function New-Application
 
     $ErrorActionPreference = "Stop"
 
-    Write-Output "Creating new Application: $siteName/$appName"
+    Write-Host "Creating new Application: $siteName/$appName" -NoNewLine
     $exists = Confirm-ApplicationExists $siteName $appName
     
     if (!$exists) {
-        & $appcmd add App /site.name:$siteName /path:/$appName /physicalPath:$appPath
-        & $appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName
-        Write-Output "Created Application: $siteName/$appName"
+        & $appcmd add App /site.name:$siteName /path:/$appName /physicalPath:$appPath | Out-Null
+        & $appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName | Out-Null
+        Write-Host "`tDone" -f Green
     } else {
-        Write-Output "Application already exists..."
+        Write-Host "`tApplication already exists..." -f Cyan
         if ($updateIfFound.isPresent) {
             Update-Application $siteName $appName $appPath $appPoolName
         } else {
-            Write-Output "Not updating Application, you must specify the '-updateIfFound' if you wish to update the Application settings."
+            Write-Host "Not updating Application, you must specify the '-updateIfFound' if you wish to update the Application settings."
         }
     }
 }
@@ -63,15 +63,16 @@ function Update-Application{
         [parameter( Mandatory=$true, position=3 )] [string] $appPoolName
     )
 
-    Write-Output "Updating Application: $siteName/$appName"
+    Write-Host "Updating Application: $siteName/$appName" -NoNewLine
     $exists = Confirm-ApplicationExists $siteName $appName
 
     if ($exists){
-        & $appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName
-        & $appcmd set app /app.name:$siteName/$appName "/[path='/'].physicalPath:$appPath"
-        Write-Output "Updated Application: $siteName/$appName"
+        & $appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName | Out-Null
+        & $appcmd set app /app.name:$siteName/$appName "/[path='/'].physicalPath:$appPath" | Out-Null
+        Write-Host "`tDone" -f Green
     }else{
-        Write-Output "Error: Could not find an Application with the name: $siteName/$appName"
+        Write-Host "" #forces a new line
+        Write-Warning "Could not find an Application with the name: $siteName/$appName"
     }
 }
 

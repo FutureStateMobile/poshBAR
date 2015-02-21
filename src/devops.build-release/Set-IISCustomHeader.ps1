@@ -1,3 +1,4 @@
+$appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
 <#
     .DESCRIPTION
        Will set the specified Authentication value for the specified applicaiton or website
@@ -28,12 +29,10 @@ function Set-IISCustomHeader
 
     $ErrorActionPreference = "Stop"
 
-    Write-Output "Setting custom header $customHeaderName on site $siteName to value $customHeaderValue"
+    Write-Output "Setting custom header $customHeaderName on site $siteName to value $customHeaderValue" -NoNewLine
     
-    $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
+    & $appcmd set config $siteName -section:system.webServer/httpProtocol /+"customHeaders.[name='$customHeaderName',value='$customHeaderValue']"  | Out-Null
 
-    & $appcmd set config $siteName -section:system.webServer/httpProtocol /+"customHeaders.[name='$customHeaderName',value='$customHeaderValue']" 
-
-    Write-Output "Successfully set custom header $customHeaderName on site $siteName to value $customHeaderValue"
+    Write-Output "`tDone" -f Green
 }
 

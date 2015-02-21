@@ -36,18 +36,19 @@ function New-Site{
         [parameter(Mandatory=$false,position=6)] [switch] $updateIfFound
     )
 
-    Write-Output "Creating Site: $siteName"
+    Write-Host "Creating Site: $siteName" -NoNewLine
     $exists = Confirm-SiteExists $siteName
     
     if (!$exists) {
-        & $appcmd add site /name:$siteName /physicalPath:$sitePath /bindings:$protocol/*:${portNumber}:$hostHeader
-        & $appcmd set app $siteName/ /applicationPool:$appPoolName
+        & $appcmd add site /name:$siteName /physicalPath:$sitePath /bindings:$protocol/*:${portNumber}:$hostHeader | Out-Null
+        & $appcmd set app $siteName/ /applicationPool:$appPoolName | Out-Null
+        Write-Host "`tDone" -f Green
     }else{
-        Write-Output "Site already exists..."
+        Write-Host "`tSite already exists" -f Cyan
         if ($updateIfFound.isPresent) {
             Update-Site $siteName $sitePath $hostHeader $protocol $portNumber $appPoolName
         } else {
-            Write-Output "Not updating Site, you must specify the '-updateIfFound' if you wish to update the Site settings."
+            Write-Host "Not updating Site, you must specify the '-updateIfFound' if you wish to update the Site settings."
         }
     }
 }
@@ -62,15 +63,17 @@ function Update-Site{
             [parameter(Mandatory=$true,position=5)] [string] $appPoolName
     )
 
-    Write-Output "Updating Site: $siteName"
+    Write-Host "Updating Site: $siteName" -NoNewLine
     $exists = Confirm-SiteExists $siteName
 
     if ($exists){
-        & $appcmd set Site $siteName/ /bindings:$protocol/*:${portNumber}:$hostHeader
-        & $appcmd set App $siteName/ /applicationPool:$appPoolName
-        & $appcmd set App $siteName/ "/[path='/'].physicalPath:$sitePath"
+        & $appcmd set Site $siteName/ /bindings:$protocol/*:${portNumber}:$hostHeader  | Out-Null
+        & $appcmd set App $siteName/ /applicationPool:$appPoolName | Out-Null
+        & $appcmd set App $siteName/ "/[path='/'].physicalPath:$sitePath" | Out-Null
+        Write-Host "`tDone" -f Green
     }else{
-        Write-Output "Error: Could not find a Site with the name: $siteName"
+        Write-Host "" #forces a new line
+        Write-Warning "Could not find a Site with the name: $siteName"
     }
 }
 

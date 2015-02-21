@@ -10,8 +10,8 @@ Push-Location $psScriptRoot
 . .\Add-LoopbackFix.ps1
 . .\ApplicationAdministration.ps1
 . .\AppPoolAdministration.ps1
+. .\Approve-Permissions.ps1
 . .\Assert-PSVersion.ps1
-. .\DatabaseDeploy.ps1
 . .\Expand-NugetPackage.ps1
 . .\Expand-ZipFile.ps1
 . .\Format-TaskNameToHost.ps1
@@ -26,13 +26,11 @@ Push-Location $psScriptRoot
 . .\Invoke-Using.ps1
 . .\Set-IISAuthentication.ps1
 . .\Set-IISCustomHeader.ps1
-. .\Set-WebApplicationSecurity.ps1
 . .\SiteAdministration.ps1
 . .\SqlHelpers.ps1
 . .\Test-PathExtended.ps1
 . .\Test-RunAsAdmin.ps1
 . .\TextUtils.ps1
-. .\Timer.ps1
 . .\Update-AssemblyVersions.ps1
 . .\Update-JsonConfigFile.ps1
 . .\Update-XmlConfigFile.ps1
@@ -48,6 +46,7 @@ Export-ModuleMember `
           'Add-IISHttpVerb',
           'Add-IISMimeType',
           'Add-LoopbackFix',
+          'Approve-Permissions',
           'Assert-PSVersion',
           'Confirm-ApplicationExists',
           'Confirm-AppPoolExists',
@@ -66,11 +65,9 @@ Export-ModuleMember `
           'Get-Sites',
           'Get-TestFileName',
           'Get-WarningsFromMSBuildLog', 
-          'Initialize-TaskTimer',
           'Install-IISRewriteModule',
           'Install-WebApplication',
           'Invoke-BulkCopy',
-          'Invoke-DatabaseDeploy',
           'Invoke-DBMigration',
           'Invoke-Deployment',
           'Invoke-DeployOctopusNugetPackage',
@@ -101,8 +98,6 @@ Export-ModuleMember `
           'Remove-Site',
           'Set-IISAuthentication',
           'Set-IISCustomHeader',
-          'Set-TaskTimeStamp',
-          'Set-WebApplicationSecurity',
           'Start-Application',
           'Start-AppPool',
           'Start-Site',
@@ -118,6 +113,5 @@ Export-ModuleMember `
           'Update-JsonConfigValues',
           'Update-Site',
           'Update-XmlConfigValues',
-          'Write-BuildInformation',
-          'Write-TaskTimeSummary'
+          'Write-BuildInformation'
           )
