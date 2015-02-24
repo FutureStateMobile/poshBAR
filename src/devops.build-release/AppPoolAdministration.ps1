@@ -36,10 +36,10 @@ function New-AppPool{
         [parameter(Mandatory=$false,position=6)] [string] $managedRuntimeVersion = "v4.0"
     )
 
-    Write-Output "Creating AppPool: $appPoolName"
     $exists = Confirm-AppPoolExists $appPoolName
 
     if (!$exists){
+        Write-Host "Creating AppPool: $appPoolName" -NoNewLine
         $newAppPool = "$appcmd add APPPOOL"
         $newAppPool = "$newAppPool /name:$appPoolName"
         $newAppPool = "$newAppPool /processModel.identityType:$appPoolIdentityType"
@@ -53,10 +53,9 @@ function New-AppPool{
             $newAppPool = "$newAppPool /processModel.password:$password"
         }
 
-        Invoke-Expression $newAppPool
-        Write-Output "Created AppPool: $appPoolName"
+        Invoke-Expression $newAppPool | Out-Null
+        Write-Host "`tDone" -f Green
     }else{
-        Write-Output "AppPool already exits..."
         Update-AppPool $appPoolName $appPoolIdentityType $maxProcesses $username $password $managedPipelineMode $managedRuntimeVersion
     }
 }
@@ -72,10 +71,10 @@ function Update-AppPool{
         [parameter(Mandatory=$false,position=6)] [string] $managedRuntimeVersion = "v4.0"
     )
 
-    Write-Output "Updating AppPool: $appPoolName"
     $exists = Confirm-AppPoolExists $appPoolName
 
     if ($exists){
+        Write-Host "Updating AppPool: $appPoolName" -NoNewLine
         $updateAppPool = "$appcmd set APPPOOL $appPoolName"
         $updateAppPool = "$updateAppPool /processModel.identityType:$appPoolIdentityType"
         $updateAppPool = "$updateAppPool /processModel.maxProcesses:$maxProcesses"
@@ -88,10 +87,10 @@ function Update-AppPool{
             $updateAppPool = "$updateAppPool /processModel.password:$password"
         }
 
-        Invoke-Expression $updateAppPool
-        Write-Output "Updated AppPool: $appPoolName"
+        Invoke-Expression $updateAppPool | Out-Null
+        Write-Host "`tDone" -f Green
     }else{
-        Write-Output "Error: Could not find an AppPool with the name: $appPoolName"
+        Write-Warning "Could not find an AppPool with the name: $appPoolName"
     }
 }
 
@@ -107,7 +106,7 @@ function Get-AppPool( $appPoolName ){
 
 function Get-AppPools{
     $getAppPools = "$appcmd list APPPOOLS"
-    Invoke-Expression $getAppPools
+    Invoke-Expression $getAppPools | Out-Null
 }
 
 function Start-AppPool( $appPoolName ){

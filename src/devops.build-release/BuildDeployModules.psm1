@@ -1,18 +1,17 @@
-$script:fsmbr = @{}
-$fsmbr.version = "1.1.1" # contains the current version of fsm.buildrelease
-$fsmbr.context = new-object system.collections.stack # holds onto the current state of all variables
+$fsmbrVersion = "1.1.1" # contains the current version of fsm.buildrelease
 
-Write-Host "`nfsm.buildrelease version $($fsmbr.version) `nCopyright ($([char]0x00A9)) Future State Mobile Inc. & Contributors`n"
+Write-Host "`nfsm.buildrelease version $fsmbrVersion `nCopyright ($([char]0x00A9)) Future State Mobile Inc. & Contributors`n"
 
 Push-Location $psScriptRoot
 
 . .\Add-HostsFileEntry.ps1
+. .\Add-IISHttpVerb.ps1
 . .\Add-IISMimeType.ps1
 . .\Add-LoopbackFix.ps1
 . .\ApplicationAdministration.ps1
 . .\AppPoolAdministration.ps1
+. .\Approve-Permissions.ps1
 . .\Assert-PSVersion.ps1
-. .\DatabaseDeploy.ps1
 . .\Expand-NugetPackage.ps1
 . .\Expand-ZipFile.ps1
 . .\Format-TaskNameToHost.ps1
@@ -20,19 +19,18 @@ Push-Location $psScriptRoot
 . .\Helpers.ps1
 . .\Install-IISRewriteModule.ps1
 . .\Install-WebApplication.ps1
+. .\Invoke-Deployment.ps1
 . .\Invoke-DeployOctopusNugetPackage.ps1
 . .\Invoke-ElevatedCommand.ps1
 . .\Invoke-ExternalCommand.ps1
 . .\Invoke-Using.ps1
 . .\Set-IISAuthentication.ps1
 . .\Set-IISCustomHeader.ps1
-. .\Set-WebApplicationSecurity.ps1
 . .\SiteAdministration.ps1
 . .\SqlHelpers.ps1
 . .\Test-PathExtended.ps1
 . .\Test-RunAsAdmin.ps1
 . .\TextUtils.ps1
-. .\Timer.ps1
 . .\Update-AssemblyVersions.ps1
 . .\Update-JsonConfigFile.ps1
 . .\Update-XmlConfigFile.ps1
@@ -45,12 +43,15 @@ Export-ModuleMember `
         '*') `
     -Function @(
           'Add-HostsFileEntry',
+          'Add-IISHttpVerb',
           'Add-IISMimeType',
           'Add-LoopbackFix',
+          'Approve-Permissions',
           'Assert-PSVersion',
           'Confirm-ApplicationExists',
           'Confirm-AppPoolExists',
           'Confirm-SiteExists',
+          'Exec',
           'Expand-NugetPackage',
           'Expand-ZipFile',
           'Format-TaskNameToHost',
@@ -64,12 +65,11 @@ Export-ModuleMember `
           'Get-Sites',
           'Get-TestFileName',
           'Get-WarningsFromMSBuildLog', 
-          'Initialize-TaskTimer',
           'Install-IISRewriteModule',
           'Install-WebApplication',
           'Invoke-BulkCopy',
-          'Invoke-DatabaseDeploy',
           'Invoke-DBMigration',
+          'Invoke-Deployment',
           'Invoke-DeployOctopusNugetPackage',
           'Invoke-ElevatedCommand',
           'Invoke-EntityFrameworkMigrations',
@@ -96,13 +96,13 @@ Export-ModuleMember `
           'Remove-Application',
           'Remove-AppPool',
           'Remove-Site',
+          'RequiredFeatures',
           'Set-IISAuthentication',
           'Set-IISCustomHeader',
-          'Set-TaskTimeStamp',
-          'Set-WebApplicationSecurity',
           'Start-Application',
           'Start-AppPool',
           'Start-Site',
+          'Step',
           'Stop-Application',
           'Stop-AppPool',
           'Stop-Site',
@@ -114,6 +114,5 @@ Export-ModuleMember `
           'Update-JsonConfigValues',
           'Update-Site',
           'Update-XmlConfigValues',
-          'Write-BuildInformation',
-          'Write-TaskTimeSummary'
+          'Write-BuildInformation'
           )

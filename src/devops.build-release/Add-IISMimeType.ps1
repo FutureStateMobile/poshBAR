@@ -1,3 +1,4 @@
+$appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
 <#
     .DESCRIPTION
         Will register a mimetype for a file extension.
@@ -27,14 +28,10 @@ function Add-IISMimeType
     )
 
     $ErrorActionPreference = "Stop"
-    Format-TaskNameToHost "Add IIS Mime Type"
+    Write-Host "Adding mime type $mimeType for extension $fileExtension to IIS site $siteName." -NoNewLine
 
-    Write-Host "Adding mime type $mimeType for extension $fileExtension to IIS site $siteName."
-
-    $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
-
-
-    & $appcmd set config $siteName /section:staticContent /-"[fileExtension='.$fileExtension']"
-    & $appcmd set config $siteName /section:staticContent /+"[fileExtension='.$fileExtension',mimeType='$mimeType']"
-   Write-Host "Added mime type $mimeType for extension $fileExtension to IIS site $siteName."
+    & $appcmd set config $siteName /section:staticContent /-"[fileExtension='.$fileExtension']" | Out-Null
+    & $appcmd set config $siteName /section:staticContent /+"[fileExtension='.$fileExtension',mimeType='$mimeType']" | Out-Null
+    
+   Write-Host "`tDone" -f Green
 }

@@ -28,15 +28,18 @@ function Set-IISAuthentication
 
     $ErrorActionPreference = "Stop"
     Import-Module "WebAdministration"
-    Write-Output "Setting $settingName to a value of $value."
+    Write-Host "Setting $settingName to a value of $value." -NoNewLine
     
+    Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/$settingName" -name enabled -value $value -PSPath "IIS:\" -location $location
+    Write-Host "`tDone" -f Green
+
     if ($settingName -ne "anonymousAuthentication")
     {
-         Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/anonymousAuthentication" -name enabled -value "false" -PSPath "IIS:\" -location $location
+        Write-Host "Disabling Anonymous Authentication" -NoNewLine
+        Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/anonymousAuthentication" -name enabled -value "false" -PSPath "IIS:\" -location $location
+        Write-Host "`tDone" -f Green
     }
 
-    Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/$settingName" -name enabled -value $value -PSPath "IIS:\" -location $location
-    
     # Disable Negotiate (Kerberos) and use only NTLM
     # if ($settingName -eq "windowsAuthentication")
     # {

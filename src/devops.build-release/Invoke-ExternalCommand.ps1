@@ -31,3 +31,4 @@ function Invoke-ExternalCommand
         throw ($errorMessage)
     }
 }
+Set-Alias Exec Invoke-ExternalCommand

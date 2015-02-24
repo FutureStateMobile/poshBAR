@@ -3,7 +3,6 @@ param (
     [alias("be")] [string] $buildEnvironment = "local",
     [alias("bn")] [string] $buildNumber = "0.1.1.1",
     [alias("bi")] [string] $buildInformation = "Developer Build",
-    [alias("ic")] [switch] $includeCoverage,
     [alias("p")]  [switch] $projectHelp
 )
 $currentDir = Split-Path $script:MyInvocation.MyCommand.Path
@@ -14,7 +13,7 @@ if (-not (Get-Module Invoke-PSake)) {
 $psake.use_exit_on_error = $true
 
 if ($projectHelp.isPresent) {
-    Invoke-PSake ".\build\default.ps1" -docs
+    Invoke-PSake ".\build\build.ps1" -docs
 } else {
     $buildNumberParts = $buildNumber.split(".")
 
@@ -27,12 +26,11 @@ if ($projectHelp.isPresent) {
     $buildNumber = $($buildNumberParts[3]);
     $informationalVersion = "$version $buildInformation";
 
-    Invoke-PSake ".\build\default.ps1" $task -parameters @{
+    Invoke-PSake ".\build\build.ps1" $task -parameters @{
         version = $version;
         buildNumber = $buildNumber;
         buildEnvironment = $buildEnvironment;
-        informationalVersion = $informationalVersion;
-        includeCoverage = $includeCoverage
+        informationalVersion = $informationalVersion
     }
 
     if ($psake.build_success -eq $false) {

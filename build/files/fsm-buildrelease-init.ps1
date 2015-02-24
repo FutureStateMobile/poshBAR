@@ -17,10 +17,11 @@ Get-Childitem "$toolsPath\templates" -recurse | % {
         }
     }
  }
-
+<#
 $deployFile = "deploy.ps1"
 if(Test-Path "$rootDir\$deployFile"){
         Get-Content "$rootDir\$deployFile" | ForEach-Object { $_ -replace "fsm\.buildrelease\.((\d+)\.(\d+)\.(\d+)\.*(\d*))", "$package" } | Set-Content ($deployFile+".tmp")
     Remove-Item $deployFile
     Rename-Item ($deployFile+".tmp") $deployFile
 }
+#>

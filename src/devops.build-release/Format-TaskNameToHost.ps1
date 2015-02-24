@@ -22,14 +22,11 @@ function Format-TaskNameToHost
     )
 
     $ErrorActionPreference = "Stop"
+    $taskName = $taskName.SubString(0,1).ToUpper()+$taskName.SubString(1)
+    $taskName = "[ $($taskName -csplit '(?<!^)(?=[A-Z])' -join ' ') ]"
 
-    if(-not $suppressTimer.IsPresent){
-        Set-TaskTimeStamp $taskName
-    }
-
-    $taskName = "[ $taskName ]"
     [int] $headingLength = 120
-    [int] $leftLength = (($headingLength - $taskName.length) / 2) + $taskName.length
+    [int] $leftLength = (($headingLength - $taskName.length) / 2) + $taskName.length 
 
     write-host ""
     write-host $taskName.padleft($leftLength, "-").padright($headingLength, "-") -foregroundcolor cyan

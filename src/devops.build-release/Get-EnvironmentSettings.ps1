@@ -39,9 +39,9 @@ function Get-EnvironmentSettings
     $currentDir = Split-Path $script:MyInvocation.MyCommand.Path
 
     if ( $culture ){
-        $environmentsDir = Resolve-Path "$currentDir\..\environments\$culture"
+        $environmentsDir = Resolve-Path ".\environments\$culture"
     } else {
-        $environmentsDir = Resolve-Path "$currentDir\..\environments"
+        $environmentsDir = Resolve-Path ".\environments"
     }
 
     if (Test-Path "$environmentsDir\$($computerName).xml") {
