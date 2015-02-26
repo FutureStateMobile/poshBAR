@@ -1,7 +1,10 @@
 $script:dismFeatures = new-object System.Collections.ArrayList
 
 function Install-WindowsFeatures{
-        param([ValidateScript({$f = @();Get-WindowsFeatures | %{$f+=$_.Feature};if($f -contains $_){$true}else{throw $msgs.error_feature_set_invalid -f $_, $($f -join ', ')}})][string[]] $features)
+    param(
+        [ValidateScript({Assert-WindowsFeatures})][string[]] $features
+    )
+    
     Assert($features.Count -ne 0) ($msgs.error_must_supply_a_feature)
     $features | % {
         $tempVal = $_
@@ -23,7 +26,6 @@ function Install-WindowsFeatures{
 }
 
 function Get-WindowsFeatures {
-    
     if(!$dismFeatures)
     {
         $allFeatures = DISM.exe /ONLINE /Get-Features /FORMAT:List | Where-Object { $_.StartsWith("Feature Name") -OR $_.StartsWith("State") } 
@@ -34,4 +36,21 @@ function Get-WindowsFeatures {
         }
     }
     return $dismFeatures
+}
+
+#
+# Private Methods
+#
+function Assert-WindowsFeatures {
+    $featureList = @()
+    Get-WindowsFeatures | %{
+        $featureList+=$_.Feature
+    }
+    
+    if(-not ($featureList -contains $_)){
+        throw $msgs.error_feature_set_invalid -f $_, $($featureList -join ', ')
+        Exit 1
+    }
+
+    $true
 }

@@ -1,38 +1,12 @@
-function Get-TestFileName ( [string] $outputDir, [string] $runCommand ){
-    $fileName = $runCommand -replace "\.", "-"
-    return "$outputDir\$fileName"
-}
-
-function Invoke-GruntMinification {
-
-}
-
-function Assert-That
-{
-    [CmdletBinding()]
+function Invoke-MSBuild {
     param(
-        [Parameter(Position=0,Mandatory=1)]$conditionToCheck,
-        [Parameter(Position=1,Mandatory=1)]$failureMessage
+        [Parameter(Mandatory=$true, Position=0)] [string] $outDir,
+        [Parameter(Mandatory=$true, Position=1)] [string] $projectFile,
+        [Parameter(Mandatory=$true, Position=2)] [string] $logFile,
+        [Parameter(Mandatory=$false, Position=3)] [double] $VisualStudioVersion = 12.0
     )
-    if (!$conditionToCheck) {
-        throw ("Assert: " + $failureMessage)
-    }
-}
-Set-Alias Assert Assert-That
 
-function Invoke-EntityFrameworkMigrations ([string] $targetAssembly, [string] $startupDirectory, [string] $connectionString, [string] $databaseName, [switch] $dropDB){
-    if($dropDB.IsPresent){ 
-        Write-Host "Dropping current database."
-        try{
-            Invoke-SqlStatement "DROP DATABASE $databaseName" $connectionString -useMaster | Out-Null
-        } catch [Exception] {
-            Write-Warning $_
-        }
-
-    }
-
-    Write-Host "`nRunning Entity Framework Migrations."
-    exec {migrate.exe $targetAssembly /StartUpDirectory=$startupDirectory /connectionString=$connectionString /connectionProviderName="System.Data.SqlClient"}
+        exec { msbuild /t:build /p:OutDir="$outDir\" $projectFile /p:"VisualStudioVersion=$("{0:N1}" -f $VisualStudioVersion)" /l:"FileLogger,Microsoft.Build.Engine;logfile=$logFile" } ($msgs.error_msbuild_compile -f $projectFile)
 }
 
 function Get-WarningsFromMSBuildLog {

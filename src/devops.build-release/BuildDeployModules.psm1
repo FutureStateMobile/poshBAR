@@ -12,10 +12,12 @@ Push-Location $psScriptRoot
 . .\AppPoolAdministration.ps1
 . .\Approve-Permissions.ps1
 . .\Assert-PSVersion.ps1
+. .\EntityFramework.ps1
 . .\Expand-NugetPackage.ps1
 . .\Expand-ZipFile.ps1
 . .\Format-TaskNameToHost.ps1
 . .\Get-EnvironmentSettings.ps1
+. .\Grunt.ps1
 . .\Helpers.ps1
 . .\Install-WebApplication.ps1
 . .\Invoke-Deployment.ps1
@@ -23,9 +25,13 @@ Push-Location $psScriptRoot
 . .\Invoke-ElevatedCommand.ps1
 . .\Invoke-ExternalCommand.ps1
 . .\Invoke-Using.ps1
+. .\MSBuild.ps1
+. .\Nuget.ps1
+. .\nUnit.ps1
 . .\Set-IISAuthentication.ps1
 . .\Set-IISCustomHeader.ps1
 . .\SiteAdministration.ps1
+. .\Specflow.ps1
 . .\SqlHelpers.ps1
 . .\Test-PathExtended.ps1
 . .\Test-RunAsAdmin.ps1
@@ -34,6 +40,7 @@ Push-Location $psScriptRoot
 . .\Update-JsonConfigFile.ps1
 . .\Update-XmlConfigFile.ps1
 . .\WindowsFeatures.ps1
+. .\xUnit.ps1
 
 Pop-Location
 
@@ -46,6 +53,7 @@ Export-ModuleMember `
           'Add-IISMimeType',
           'Add-LoopbackFix',
           'Approve-Permissions',
+          'Assert-That',
           'Assert-PSVersion',
           'Confirm-ApplicationExists',
           'Confirm-AppPoolExists',
@@ -76,9 +84,10 @@ Export-ModuleMember `
           'Invoke-ExternalCommand',
           'Invoke-FromBase64', 
           'Invoke-GruntMinification',
-          'Invoke-GruntTests',
           'Invoke-HtmlDecode', 
           'Invoke-HtmlEncode',
+          'Invoke-KarmaTests',
+          'Invoke-MSBuild',
           'Invoke-Nunit',
           'Invoke-NUnitWithCoverage'
           'Invoke-SpecFlow',
@@ -92,6 +101,7 @@ Export-ModuleMember `
           'Invoke-XUnitWithCoverage',
           'New-Application',
           'New-AppPool',
+          'New-NugetPackage',
           'New-Site',
           'Remove-Application',
           'Remove-AppPool',
@@ -129,6 +139,7 @@ convertfrom-stringdata @"
     error_specflow_failed = Publishing specflow results  for '{0}' failed.
     error_coverage_failed = Running code coverage for '{0}' failed.
     error_tests_failed = Running tests '{0}' failed.
+    error_msbuild_compile = Error compiling '{0}'.
     wrn_full_permission = You have applied FULL permission to '{0}' for '{1}'. THIS IS DANGEROUS!
     wrn_cant_find = Could not find {0} with the name: {0}.
     msg_grant_permission = Granting {0} permissions to {1} for {2}.

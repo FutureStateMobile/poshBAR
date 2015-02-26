@@ -36,18 +36,6 @@ function Initialize-Context{
     )
 }
 
-function Assert
-{
-    [CmdletBinding()]
-    param(
-        [Parameter(Position=0,Mandatory=1)]$conditionToCheck,
-        [Parameter(Position=1,Mandatory=1)]$failureMessage
-    )
-    if (!$conditionToCheck) {
-        throw ("Assert: " + $failureMessage)
-    }
-}
-
 function WriteStepTimeSummary($totalDeploymentDuration) {
     if ($fsmbr.context.count -gt 0) {
         Write-Host "Deployment Complete" -f Green
