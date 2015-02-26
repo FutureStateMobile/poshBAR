@@ -44,7 +44,7 @@ function Invoke-DeployOctopusNugetPackage{
         if(Test-Path $postDeployScript){ & $postDeployScript $environment }
     } catch [Exception]{
         if(Test-Path $deployFailedScript){ & $deployFailedScript $environment }   
-        Write-Host "Failed to deploy: $_.Exception.Message" -f Red
+        Write-Host ($msgs.error_octopus_deploy_failed -f $_.Exception.Message) -f Red
         $_.Exception.StackTrace 
         Exit 1 
     }

@@ -35,7 +35,7 @@ function Add-HostsFileEntry
 	)
 
     $ErrorActionPreference = "Stop"
-	Write-Host "Adding hosts entry for custom host header" -NoNewLine
+    Write-Host ($msgs.msg_add_host_entry -f $hostName) -NoNewLine
 
 	$HostsLocation = "$env:windir\System32\drivers\etc\hosts"
 	$NewHostEntry = "`t$ipAddress`t$hostName"
@@ -52,7 +52,7 @@ function Add-HostsFileEntry
 	}
 
 	# Validate entry
-    Write-Host "Validating hosts entry" -NoNewLine
+    Write-Host ($msgs.msg_validate_host_entry -f $hostName) -NoNewLine
 	if((gc $HostsLocation) -contains $NewHostEntry)
 	{
         Write-Host "`tPassed" -f Green

@@ -50,7 +50,7 @@ function Assert
 
 function WriteStepTimeSummary($totalDeploymentDuration) {
     if ($fsmbr.context.count -gt 0) {
-        Write-Host "`nDeployment Complete`n" -f Green
+        Write-Host "Deployment Complete" -f Green
         "-" * 70
         "Deployment Report"
         "-" * 70
@@ -77,44 +77,10 @@ function WriteStepTimeSummary($totalDeploymentDuration) {
     }
 }
 
-$script:dismFeatures = new-object System.Collections.ArrayList
-function Get-WindowsFeatures {
-    
-    if(!$dismFeatures)
-    {
-        $allFeatures = DISM.exe /ONLINE /Get-Features /FORMAT:List | Where-Object { $_.StartsWith("Feature Name") -OR $_.StartsWith("State") } 
-        for($i = 0; $i -lt $allFeatures.length; $i=$i+2) {
-            $feature = $allFeatures[$i]
-            $state = $allFeatures[$i+1]
-            $dismFeatures.add(@{feature=$feature.split(":")[1].trim();state=$state.split(":")[1].trim()}) | OUT-NULL
-        }
-    }
-    return $dismFeatures
-}
-
 function RequiredFeatures {
-    param(
-        [ValidateScript({$f = @();Get-WindowsFeatures | %{$f+=$_.Feature};if($f -contains $_){$true}else{throw $msgs.error_feature_set_invalid -f $_, $($f -join ', ')}})][string[]] $script:features
-)
-    Assert($features.Count -ne 0) ($msgs.error_must_supply_a_feature)
+    param([string[]] $script:features)
     Step InstallRequiredWindowsFeatures {
-        $features | % {
-            $tempVal = $_
-            $f = Get-WindowsFeatures | ? {$_.feature -eq $tempVal}
-            Write-Host "Enabling Feature $($f.feature)" -NoNewline
-            if($f.state -ne "enabled"){
-                try{
-                    Exec{Dism /online /Enable-Feature /FeatureName:$($f.feature) /NoRestart /Quiet} 
-                    Write-Host "`tDone" -f Green
-                }catch{
-                    # Trying again with the All keyword because probably a dependency is missing.
-                    Exec{Dism /online /Enable-Feature /FeatureName:$($f.feature) /NoRestart /Quiet /All} 
-                    Write-Host "`Done (with dependencies)" -f Green
-                }
-            } else {
-                Write-Host "`tAlready Available." -f Cyan
-            }
-        }
+        Install-WindowsFeatures $script:features
     }
 }
 
@@ -138,12 +104,4 @@ function Step{
     #Assert (!$currentContext.steps.ContainsKey($stepKey)) ($msgs.error_duplicate_step_name -f $name)
         
     $currentContext.steps.$stepKey = $newStep
-}
-
-DATA msgs {
-convertfrom-stringdata @'
-    error_duplicate_step_name = Step {0} has already been defined.
-    error_must_supply_a_feature = You must supply at least one Windows Feature.
-    error_feature_set_invalid = The argument `"{0}`" does not belong to the set `"{1}`".
-'@
 }

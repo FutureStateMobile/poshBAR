@@ -6,7 +6,7 @@ function Approve-Permissions{
 	)
 
     if($permission -eq "full"){
-        Write-Warning "You have applied FULL permission to $path for $trustee. THIS IS DANGEROUS!"
+        Write-Warning ($msgs.wrn_full_permission -f $path, $trustee)
     }
     
     switch ($permission){
@@ -17,7 +17,7 @@ function Approve-Permissions{
         'write-only' {$perm = "(W)"}
     }
     
-    Write-Host "Granting $permission permissions to $path for user $trustee" -NoNewLine
+    Write-Host ($msgs.msg_grant_permission -f $permission, $path, $trustee) -NoNewLine
     icacls "$path" /grant ($($trustee) + ":(OI)(CI)$perm") | Out-Null
     Write-Host "`tDone" -f Green
 }

@@ -26,7 +26,7 @@ function Install-WebApplication() {
         Remove-Item "$($appFilePath)\*" -recurse -Force
     }
 
-    Write-Host "Copying website content to: $($appFilePath)" -NoNewLine
+    Write-Host ($msgs.msg_copying_content -f $websiteSettings.siteName, $appFilePath) -NoNewLine
     Copy-Item "$baseDir\website\*" $($appFilePath) -Recurse -Force
     Write-Host "`tDone" -f Green
 
@@ -56,5 +56,5 @@ function Install-WebApplication() {
         Set-IISAuthentication $authenticationType true $($siteAndUriPath)
     }
 
-    Write-Host "Successfully deployed Web Application"
+    $msgs.msg_web_app_success -f $websiteSettings.siteName
 }

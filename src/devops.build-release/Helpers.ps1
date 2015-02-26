@@ -8,7 +8,7 @@ function Invoke-Nunit ( [string] $targetAssembly, [string] $outputDir, [string] 
         $xmlFile = "$fileName-TestResults.xml"
         $txtFile = "$fileName-TestResults.txt"
         
-        exec { nunit-console.exe $targetAssembly /fixture:$runCommand /xml=$xmlFile /out=$txtFile /nologo /framework=4.0 } "Running nunit test '$runCommand' failed."    
+        exec { nunit-console.exe $targetAssembly /fixture:$runCommand /xml=$xmlFile /out=$txtFile /nologo /framework=4.0 } ($msgs.error_tests_failed -f $runCommand)
     }    
 }
 
@@ -22,8 +22,8 @@ function Invoke-NUnitWithCoverage ( [string] $targetAssembly, [string] $outputDi
     $coverageConfig = (Get-TestFileName "$buildFilesDir\coverageRules" $testAssemblyRootNamespace) + ".config"
     # /AttributeFilters="Test;TestFixture;SetUp;TearDown"
     Write-Host "dotcover.exe cover $coverageConfig /TargetExecutable=$nunitRunnerDir\nunit-console.exe /TargetArguments=$targetAssembly /fixture:$runCommand /xml=$xmlFile /out=$txtFile /nologo /framework=4.0 /Output=$coverageFile /ReportType=html /Filters=$coverageFilter"
-    exec{ dotcover.exe cover $coverageConfig /TargetExecutable=$nunitRunnerDir\nunit-console.exe /TargetArguments="$targetAssembly /fixture:$runCommand /xml=$xmlFile /out=$txtFile /nologo /framework=4.0" /Output=$coverageFile /ReportType=html } "Running code coverage '$runCommand' failed."
-    Write-Host "##teamcity[importData type='dotNetCoverage' tool='dotcover' path='$coverageFile']"
+    exec{ dotcover.exe cover $coverageConfig /TargetExecutable=$nunitRunnerDir\nunit-console.exe /TargetArguments="$targetAssembly /fixture:$runCommand /xml=$xmlFile /out=$txtFile /nologo /framework=4.0" /Output=$coverageFile /ReportType=html } ($msgs.error_coverage_failed -f $runCommand)
+    $msgs.msg_teamcity_importdata -f 'dotNetCoverage', 'dotcover', $coverageFile
 }
 
 function Invoke-XUnit ([string] $targetAssembly, [string] $outputDir, [string] $runCommand){
@@ -45,8 +45,8 @@ function Invoke-XUnitWithCoverage  ([string] $targetAssembly, [string] $outputDi
     $txtFile = "$fileName-TestResults.txt"
     $coverageFile = "$fileName-CoverageResults.dcvr"
 
-    exec{ dotcover.exe cover /TargetExecutable=$xunitRunnerDir\xunit.console.exe /TargetArguments="$targetAssembly /xml $xmlFile" /Output=$coverageFile /ReportType=html} "Running code coverage '$runCommand' failed."
-    Write-Host "##teamcity[importData type='dotNetCoverage' tool='dotcover' path='$coverageFile']"
+    exec{ dotcover.exe cover /TargetExecutable=$xunitRunnerDir\xunit.console.exe /TargetArguments="$targetAssembly /xml $xmlFile" /Output=$coverageFile /ReportType=html} ($msgs.error_coverage_failed -f $runCommand)
+    $msgs.msg_teamcity_importdata -f 'dotNetCoverage', 'dotcover', $coverageFile
 }
 
 function Invoke-SpecFlow ( [string] $testProjectFile, [string] $outputDir, [string] $runCommand ) {
@@ -56,9 +56,7 @@ function Invoke-SpecFlow ( [string] $testProjectFile, [string] $outputDir, [stri
     $txtFile = "$fileName-TestResults.txt"
     $htmlFile = "$fileName.html"
 
-    Write-Host "specflow.exe nunitexecutionreport $testProjectFile /xmlTestResult:$xmlFile /testOutput:$txtFile /out:$htmlFile"
-
-    exec { specflow.exe nunitexecutionreport $testProjectFile /xmlTestResult:$xmlFile /testOutput:$txtFile /out:$htmlFile } "Publishing specflow results failed."
+    exec { specflow.exe nunitexecutionreport $testProjectFile /xmlTestResult:$xmlFile /testOutput:$txtFile /out:$htmlFile } ($msgs.error_specflow_failed -f $fileName)
 }
 
 function Get-TestFileName ( [string] $outputDir, [string] $runCommand ){
@@ -117,8 +115,8 @@ function Get-WarningsFromMSBuildLog {
     $warnings | % { Write-Host " * $_" }
      
     #TeamCity output
-    Write-Host "##teamcity[buildStatus text='{build.status.text}, Build warnings: $count']"
-    Write-Host "##teamcity[buildStatisticValue key='buildWarnings' value='$count']"
+    $msgs.msg_teamcity_buildstatus -f "{build.status.text}, Build warnings: $count"
+    $msgs.msg_teamcity_buildstatisticvalue -f 'buildWarnings', $count
      
     # file output
     if( $rawOutputPath ){

@@ -18,6 +18,6 @@ function Test-RunAsAdmin
 
     If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
     {
-        Write-Error "You are required to 'Run as Administrator' when running this deployment."
+        Write-Error $msgs.error_admin_required
     }
 }

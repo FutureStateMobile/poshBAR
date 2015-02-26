@@ -1,23 +1,20 @@
-properties { 
-    $buildScriptDir  = resolve-path .
-    $baseDir  = resolve-path "$buildScriptDir\.."
-    $buildDir = "$baseDir\build-artifacts" 
-    $buildPublishDir = "$buildDir\publish"
-    $packagesDir = "$baseDir\Packages"
-    $modulesDir = "$baseDir\src\devops.build-release"
+$buildScriptDir  = resolve-path .
+$baseDir  = resolve-path "$buildScriptDir\.."
+$buildDir = "$baseDir\build-artifacts" 
+$buildPublishDir = "$buildDir\publish"
+$packagesDir = "$baseDir\Packages"
+$modulesDir = "$baseDir\src\devops.build-release"
 
+#
+# Nuspec Properties
+#
+$devopsNugetPackage = "$baseDir\nuspec\fsm.buildrelease.nuspec"
+$gitNugetPackage = "$baseDir\nuspec\fsm.git.nuspec"
+$devopsSummary = "FSM Build-Release Modules"
 
-    #
-    # Nuspec Properties
-    #
-    $devopsNugetPackage = "$baseDir\nuspec\fsm.buildrelease.nuspec"
-    $gitNugetPackage = "$baseDir\nuspec\fsm.git.nuspec"
-    $devopsSummary = "FSM Build-Release Modules"
+# Dogfood
+Import-Module "$modulesDir\BuildDeployModules" -force
 
-    # Dogfood
-    Import-Module "$modulesDir\BuildDeployModules" -force
-    Write-BuildInformation (get-variable -scope 0)
-}
 
 Task default -depends Package
 Task Package -depends PackageBuildRelease

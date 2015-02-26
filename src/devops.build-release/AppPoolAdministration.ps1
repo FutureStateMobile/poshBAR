@@ -90,7 +90,7 @@ function Update-AppPool{
         Invoke-Expression $updateAppPool | Out-Null
         Write-Host "`tDone" -f Green
     }else{
-        Write-Warning "Could not find an AppPool with the name: $appPoolName"
+        Write-Warning ($msgs.wrn_invalid_app_pool -f $appPoolName)
     }
 }
 

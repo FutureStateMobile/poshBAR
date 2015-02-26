@@ -29,7 +29,7 @@ function Set-IISCustomHeader
 
     $ErrorActionPreference = "Stop"
 
-    Write-Output "Setting custom header $customHeaderName on site $siteName to value $customHeaderValue" -NoNewLine
+    Write-Host ($msgs.msg_custom_header -f $customHeaderName, $siteName, $customHeaderValue) -NoNewLine
     
     & $appcmd set config $siteName -section:system.webServer/httpProtocol /+"customHeaders.[name='$customHeaderName',value='$customHeaderValue']"  | Out-Null
 

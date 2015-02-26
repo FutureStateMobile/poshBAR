@@ -15,7 +15,7 @@ Import-Module "$baseDir\packages\fsm.buildrelease.*\tools\modules\BuildDeployMod
 
 task default -depends Init
 task Init -depends MakeBuildDir {
-    $script:environmentSettings = Get-EnvironmentSettings $buildEnvironment "//environmentSettings"
+    $script:environmentSettings = Get-EnvironmentSettings $buildEnvironment "//environmentSettings" "$baseDir\build\environments"
     Framework '4.0'
 }
 

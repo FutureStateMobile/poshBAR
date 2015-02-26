@@ -29,6 +29,7 @@ function Get-EnvironmentSettings
     param(
         [parameter(Mandatory=$true,position=0)] [string] $environment,
         [parameter(Mandatory=$true,position=1)] [string] $nodeXPath = "/",
+        [parameter(Mandatory=$false,position=2)] [string] $environmentsPath,
         [parameter(Mandatory=$false,position=3)] [string] $culture
     )
 
@@ -38,21 +39,19 @@ function Get-EnvironmentSettings
     $doc = New-Object System.Xml.XmlDocument
     $currentDir = Split-Path $script:MyInvocation.MyCommand.Path
 
-    if ( $culture ){
-        $environmentsDir = Resolve-Path ".\environments\$culture"
-    } else {
-        $environmentsDir = Resolve-Path ".\environments"
-    }
+    $environmentsPath = if($environmentsPath){Resolve-Path $environmentsPath} else {Resolve-Path "$currentDir\..\environments\"}
+    $environmentsDir = if($culture){"$environmentsPath\$culture"} else {$environmentsPath}
 
     if (Test-Path "$environmentsDir\$($computerName).xml") {
-        Write-Host "Using config for machine '$computerName' instead of the '$environment' environment." -ForegroundColor Magenta
+        Write-Host ($msgs.msg_use_machine_environment -f $computerName, $environment) -f Magenta
         $doc.Load("$environmentsDir\$($computerName).xml")
     } else {
         $doc.Load("$environmentsDir\$($environment).xml")
     }
 
     if($OctopusParameters){
-        Write-Host "Checking for Octopus Overrides"
+        # Message
+        $msgs.msg_octopus_overrides -f $environment
         foreach($key in $OctopusParameters.Keys)
         {
             $myXPath = "$nodeXPath/$($key.Replace(".", "/"))"
@@ -60,7 +59,8 @@ function Get-EnvironmentSettings
                 $node = $doc.SelectSingleNode($myXPath)
             
                 if($node){
-                    Write-Host "Overriding node: '$key'`t`t Value: '$($OctopusParameters["$key"])'"
+                    # Message
+                    $msgs.msg_overriding_to -f $key, $($OctopusParameters["$key"])
                     $node.InnerText = $($OctopusParameters["$key"])
                 }
             } catch { 

@@ -26,24 +26,25 @@ function Update-AssemblyVersions
     param( 
         [parameter(Mandatory=$true,position=0)] [ValidatePattern("^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})(\.[0-9]*?)?$")] [string] $Version,
         [parameter(Mandatory=$true,position=1)] [string] $BuildNumber,
-        [parameter(Mandatory=$true,position=2)] [string] $AssemblyInformationalVersion
+        [parameter(Mandatory=$true,position=2)] [string] $AssemblyInformationalVersion,
+        [parameter(Mandatory=$false,position=3)] [string] $projectRoot = "..\"
     )
 
     $ErrorActionPreference = "Stop"
 
     $assemblyVersionPattern = 'AssemblyVersion\(".*?"\)'
+    $assenblyCopyrightPattern = 'AssemblyCopyright\(".*?"\)'
     $fileVersionPattern = 'AssemblyFileVersion\(".*?"\)'
     $informationalVersionPattern = 'AssemblyInformationalVersion\(".*?"\)'
     
     $assemblyVersion = 'AssemblyVersion("' + $Version + '")';
+    $assemblyCopyright = 'AssemblyCopyright("Copyright © ' + $((Get-Date).year) + '")';
     $fileVersion = 'AssemblyFileVersion("' + $Version + '.' + $BuildNumber + '")';
     $informationalVersion = 'AssemblyInformationalVersion("' + $AssemblyInformationalVersion + '")';
     
-    Write-Host "Updating AssemblyVersion to $Version"
-    Write-Host "Updating AssemblyFileVersion to $Version.$BuildNumber"
-    Write-Host "Updating AssemblyInformationalVersion to $AssemblyInformationalVersion"
+    $msgs.msg_updating_assembly -f $version, $Version.$BuildNumber, $AssemblyInformationalVersion
 
-    Set-Location ..\
+    Push-Location "$projectRoot\Properties"
 
     Get-ChildItem -r -filter AssemblyInfo.cs | ForEach-Object {
         $filename = $_.Directory.ToString() + '\' + $_.Name
@@ -55,10 +56,12 @@ function Update-AssemblyVersions
     
         (Get-Content $filename) | ForEach-Object {
             % {$_ -replace $assemblyVersionPattern, $assemblyVersion } |
+            % {$_ -replace $assenblyCopyrightPattern, $assemblyCopyright } |
             % {$_ -replace $fileVersionPattern, $fileVersion } |
             % {$_ -replace $informationalVersionPattern, $informationalVersion }
         } | Set-Content $filename
 
         Write-Host "$filename - Updated"
     }
+    Pop-Location
 }

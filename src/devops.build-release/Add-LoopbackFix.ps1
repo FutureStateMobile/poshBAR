@@ -26,7 +26,7 @@ function Add-LoopbackFix
 
     $ErrorActionPreference = "Stop"
 
-    Write-Host "Adding loopback fix for $siteHostName" -NoNewLine
+    Write-Host ($msgs.msg_add_loopback_fix -f $siteHostName) -NoNewLine
 
     $str = Get-ItemProperty -Name "BackConnectionHostNames" -path 'HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0' -erroraction silentlycontinue
   
@@ -44,5 +44,5 @@ function Add-LoopbackFix
         Write-Host "`tDone" -f Green
     }
 
-    Write-Host "`tnote: we are not disabling the loopback check all together, we are simply adding $siteHostName to an allowed list." -f DarkGray
+    Write-Host ($msgs.msg_loopback_note -f $siteHostName) -f DarkGray
 }

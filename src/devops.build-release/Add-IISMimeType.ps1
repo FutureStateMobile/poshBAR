@@ -28,7 +28,7 @@ function Add-IISMimeType
     )
 
     $ErrorActionPreference = "Stop"
-    Write-Host "Adding mime type $mimeType for extension $fileExtension to IIS site $siteName." -NoNewLine
+    Write-Host ($msgs.msg_add_mime_type -f $mimeType, $fileExtension, $siteName) -NoNewLine
 
     & $appcmd set config $siteName /section:staticContent /-"[fileExtension='.$fileExtension']" | Out-Null
     & $appcmd set config $siteName /section:staticContent /+"[fileExtension='.$fileExtension',mimeType='$mimeType']" | Out-Null

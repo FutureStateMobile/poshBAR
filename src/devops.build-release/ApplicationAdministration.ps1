@@ -50,7 +50,8 @@ function New-Application
         if ($updateIfFound.isPresent) {
             Update-Application $siteName $appName $appPath $appPoolName
         } else {
-            Write-Host "Not updating Application, you must specify the '-updateIfFound' if you wish to update the Application settings."
+            # Message
+            $msgs.msg_not_updating -f "Application"
         }
     }
 }
@@ -72,7 +73,7 @@ function Update-Application{
         Write-Host "`tDone" -f Green
     }else{
         Write-Host "" #forces a new line
-        Write-Warning "Could not find an Application with the name: $siteName/$appName"
+        Write-Warning ($msgs.cant_find -f "Application", "$siteName/$appName")
     }
 }
 

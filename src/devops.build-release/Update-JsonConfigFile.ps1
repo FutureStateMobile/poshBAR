@@ -32,8 +32,7 @@ function Update-JsonConfigValues{
     )
     $ErrorActionPreference = "Stop"
     
-    Write-Host "updating $configFile"
-    Write-Host "changing $node value to: `t$value"
+    $msgs.msg_changing_to -f $node, $value
 
     if(Get-Command ConvertFrom-Json -ea SilentlyContinue){
     #Powershell => 3 support

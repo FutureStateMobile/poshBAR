@@ -44,11 +44,12 @@ function New-Site{
         & $appcmd set app $siteName/ /applicationPool:$appPoolName | Out-Null
         Write-Host "`tDone" -f Green
     }else{
-        Write-Host "`tSite already exists" -f Cyan
+        Write-Host "`tExists" -f Cyan
         if ($updateIfFound.isPresent) {
             Update-Site $siteName $sitePath $hostHeader $protocol $portNumber $appPoolName
         } else {
-            Write-Host "Not updating Site, you must specify the '-updateIfFound' if you wish to update the Site settings."
+            # Message
+            $msgs.msg_not_updating -f "Site"
         }
     }
 }
@@ -73,7 +74,7 @@ function Update-Site{
         Write-Host "`tDone" -f Green
     }else{
         Write-Host "" #forces a new line
-        Write-Warning "Could not find a Site with the name: $siteName"
+        Write-Warning ($msgs.cant_find -f "Site",$siteName)
     }
 }
 

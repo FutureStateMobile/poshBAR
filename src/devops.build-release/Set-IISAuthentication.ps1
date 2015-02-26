@@ -28,14 +28,14 @@ function Set-IISAuthentication
 
     $ErrorActionPreference = "Stop"
     Import-Module "WebAdministration"
-    Write-Host "Setting $settingName to a value of $value." -NoNewLine
+    Write-Host ($msgs.msg_updating_to -f $settingName, $value) -NoNewLine
     
     Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/$settingName" -name enabled -value $value -PSPath "IIS:\" -location $location
     Write-Host "`tDone" -f Green
 
     if ($settingName -ne "anonymousAuthentication")
     {
-        Write-Host "Disabling Anonymous Authentication" -NoNewLine
+        Write-Host ($msgs.msg_disable_anon_auth -f $location) -NoNewLine
         Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/anonymousAuthentication" -name enabled -value "false" -PSPath "IIS:\" -location $location
         Write-Host "`tDone" -f Green
     }

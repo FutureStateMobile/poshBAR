@@ -93,7 +93,7 @@ function Invoke-BulkCopy() {
         Invoke-SqlStatement $copySql $connectionString
 
     } catch {
-        Write-Host "Error loading $inputFile error: " $_ -f Red   # will display the actual sql error in the console
-        throw $_
+        Write-Error ($msgs.error_loading_sql_file -f $inputFile, $_)
+        exit 1
     }
 }
