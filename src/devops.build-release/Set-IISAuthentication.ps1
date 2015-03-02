@@ -20,8 +20,9 @@
 
 function Set-IISAuthentication
 {
+    [CmdletBinding()]
     param(
-        [parameter(Mandatory=$true,position=0)] [string] [ValidateSet('anonymousAuthentication','windowsAuthentication','basicAuthentication','formsAuthentication')] $settingName,
+        [parameter(Mandatory=$true,position=0)] [AuthType] $settingName,
         [parameter(Mandatory=$true,position=1)] [PSObject] $value,
         [parameter(Mandatory=$true,position=2)] [string] $location
     )
@@ -50,3 +51,12 @@ function Set-IISAuthentication
     # }
 
 }
+
+ Add-Type -TypeDefinition @'
+    public enum AuthType{
+        WindowsAuthentication,
+        BasicAuthentication,
+        AnonymousAuthentication,
+        FormsAuthentication
+    }
+'@

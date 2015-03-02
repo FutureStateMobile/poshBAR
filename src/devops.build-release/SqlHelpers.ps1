@@ -8,6 +8,7 @@ if(-NOT (Get-Module sqlps -erroraction silentlycontinue)){
 }
 
 function Get-DatabaseConnectionProperties() {
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)][string] $connectionString
     )
@@ -24,6 +25,7 @@ function Get-DatabaseConnectionProperties() {
 }
 
 function Invoke-SqlStatement() {
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)][string] $sqlToRun,
         [parameter(Mandatory=$true,position=1)][string] $connectionString,
@@ -50,6 +52,7 @@ function Invoke-SqlStatement() {
 }
 
 function Invoke-SqlFile() {
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)][string] $sqlFile,
         [parameter(Mandatory=$true,position=1)][string] $connectionString,
@@ -76,6 +79,7 @@ function Invoke-SqlFile() {
 }
 
 function Invoke-BulkCopy() {
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)][string] $targetTable,
         [parameter(Mandatory=$true,position=1)][string] $inputFile,

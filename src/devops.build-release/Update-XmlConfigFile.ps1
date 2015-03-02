@@ -22,6 +22,7 @@
 #>
 function Update-XmlConfigValues
 {
+    [CmdletBinding()]
     param( 
         [parameter(Mandatory=$true,position=0)] [string] $configFile,
         [parameter(Mandatory=$true,position=1)] [string] $xpath,

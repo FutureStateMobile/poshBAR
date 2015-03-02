@@ -1,4 +1,5 @@
 function New-NugetPackage{
+    [CmdletBinding()]
 	param(
 		[parameter(Mandatory=$true, Position=0)][string] $nuspecFile,
         [parameter(Mandatory=$true, Position=1)][string] $version,

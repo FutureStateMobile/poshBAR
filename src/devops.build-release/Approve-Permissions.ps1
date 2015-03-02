@@ -1,4 +1,5 @@
 function Approve-Permissions{
+    [CmdletBinding()]
 	param(
 		[Parameter(Mandatory=$true, Position=0)] [string] $path,
         [Parameter(Mandatory=$true, Position=1)] [string] $trustee,

@@ -20,6 +20,7 @@
 
 function Invoke-Using
 {
+    [CmdletBinding()]
     param (
         [parameter(Mandatory=$true,position=0)] [System.IDisposable] $inputObject,
         [parameter(Mandatory=$true,position=1)] [ScriptBlock] $scriptBlock

@@ -21,7 +21,7 @@
         Nothing yet...
 #>
 function Set-PowershellScriptSigning{
-
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string[]] $scripts,
         [parameter(Mandatory=$false,position=1)] [string] $certPath = "LocalMachine\My"

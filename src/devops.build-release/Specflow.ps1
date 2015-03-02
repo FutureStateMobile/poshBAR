@@ -1,4 +1,5 @@
 function Invoke-SpecFlow {
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true, Position=0)] [string] $testProjectFile, 
         [parameter(Mandatory=$true, Position=1)] [string] $outputDir, 

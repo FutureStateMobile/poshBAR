@@ -20,6 +20,7 @@
 #>
 function Add-LoopbackFix
 {
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string] $siteHostName
     )

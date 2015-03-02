@@ -28,6 +28,7 @@ $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
 
 function New-Application
 {
+    [CmdletBinding()]
     param(
         [parameter( Mandatory=$true, position=0 )] [string] $siteName,
         [parameter( Mandatory=$true, position=1 )] [string] $appName,

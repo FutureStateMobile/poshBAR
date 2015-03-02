@@ -1,6 +1,7 @@
 $script:dismFeatures = new-object System.Collections.ArrayList
 
 function Install-WindowsFeatures{
+    [CmdletBinding()]
     param(
         [ValidateScript({Assert-WindowsFeatures})][string[]] $features
     )

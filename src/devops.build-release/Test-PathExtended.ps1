@@ -1,4 +1,5 @@
 ﻿function Test-PathExtended {
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=1)] [string] $path
     )

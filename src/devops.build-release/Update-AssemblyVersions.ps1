@@ -23,8 +23,9 @@
 #> 
 function Update-AssemblyVersions
 {
+    [CmdletBinding()]
     param( 
-        [parameter(Mandatory=$true,position=0)] [ValidatePattern("^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})(\.[0-9]*?)?$")] [string] $Version,
+        [parameter(Mandatory=$true,position=0)] [ValidatePattern('^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})(\.[0-9]*?)?$')] [string] $Version,
         [parameter(Mandatory=$true,position=1)] [string] $BuildNumber,
         [parameter(Mandatory=$true,position=2)] [string] $AssemblyInformationalVersion,
         [parameter(Mandatory=$false,position=3)] [string] $projectRoot = "..\"

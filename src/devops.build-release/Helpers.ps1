@@ -36,6 +36,7 @@ function Invoke-EntityFrameworkMigrations ([string] $targetAssembly, [string] $s
 }
 
 function Get-WarningsFromMSBuildLog {
+    [CmdletBinding()]
     Param(
         [parameter(Mandatory=$true)] [alias("f")] $FilePath,
         [parameter()] [alias("ro")] $rawOutputPath,

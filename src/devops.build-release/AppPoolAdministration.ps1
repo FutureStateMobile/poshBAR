@@ -26,13 +26,14 @@ $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
         Will setup an App Pool with a Managed Runtime Version of 4.0 and it defaults to using an Identity of LocalSystem.
 #>
 function New-AppPool{
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true, position=0)] [string] $appPoolName,
-        [parameter(Mandatory=$false,position=1)] [ValidateSet("LocalSystem","LocalService","NetworkService","SpecificUser","ApplicationPoolIdentity")] [string] $appPoolIdentityType  = "NetworkService",
+        [parameter(Mandatory=$false,position=1)] [IdentityType] $appPoolIdentityType = [IdentityType]::NetworkService,
         [parameter(Mandatory=$false,position=2)] [int] $maxProcesses = 1,
         [parameter(Mandatory=$false,position=3)] [string] $username,
         [parameter(Mandatory=$false,position=4)] [string] $password,
-        [parameter(Mandatory=$false,position=5)] [ValidateSet('Integrated','Classic')] [string] $managedPipelineMode = "Integrated",
+        [parameter(Mandatory=$false,position=5)] [PipelineMode] $managedPipelineMode = [PipelineMode]::Integrated,
         [parameter(Mandatory=$false,position=6)] [string] $managedRuntimeVersion = "v4.0"
     )
 
@@ -63,11 +64,11 @@ function New-AppPool{
 function Update-AppPool{
     param(
         [parameter(Mandatory=$true, position=0)] [string] $appPoolName,
-        [parameter(Mandatory=$false,position=1)] [ValidateSet("LocalSystem","LocalService","NetworkService","SpecificUser","ApplicationPoolIdentity")] [string] $appPoolIdentityType = "NetworkService",
+        [parameter(Mandatory=$false,position=1)] [IdentityType] $appPoolIdentityType = [IdentityType]::NetworkService,
         [parameter(Mandatory=$false,position=2)] [int] $maxProcesses = 1,
         [parameter(Mandatory=$false,position=3)] [string] $username,
         [parameter(Mandatory=$false,position=4)] [string] $password,
-        [parameter(Mandatory=$false,position=5)] [string] $managedPipelineMode = "Integrated",
+        [parameter(Mandatory=$false,position=5)] [string] $managedPipelineMode = [PipelineMode]::Integrated,
         [parameter(Mandatory=$false,position=6)] [string] $managedRuntimeVersion = "v4.0"
     )
 
@@ -127,3 +128,20 @@ function Remove-AppPool( $appPoolName ){
 function Get-ModuleDirectory {
     return Split-Path $script:MyInvocation.MyCommand.Path
 }
+
+ Add-Type -TypeDefinition @'
+    public enum IdentityType{
+        LocalSystem,
+        LocalService,
+        NetworkService,
+        SpecificUser,
+        ApplicationPoolIdentity
+    }
+'@
+
+ Add-Type -TypeDefinition @'
+    public enum PipelineMode{
+        Integrated,
+        Classic
+    }
+'@

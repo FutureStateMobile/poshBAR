@@ -1,11 +1,12 @@
 $ErrorActionPreference = "Stop"
 
 function Install-WebApplication() {
+    [CmdletBinding()]
     param( 
         [parameter(Mandatory=$true,position=0)] [string] $environment,
         [parameter(Mandatory=$true,position=1)] [System.Xml.XmlElement] $websiteSettings,
-        [parameter(Mandatory=$true,position=2)] [ValidatePattern("^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})(\.[0-9]*?)?$")] [string] $version,
-        [parameter(Mandatory=$true,position=3)] [ValidateSet('anonymousAuthentication','windowsAuthentication','basicAuthentication','formsAuthentication')] [string] $authenticationType
+        [parameter(Mandatory=$true,position=2)] [ValidatePattern('^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})(\.[0-9]*?)?')] [string] $version,
+        [parameter(Mandatory=$true,position=3)] [AuthType] $authenticationType
     )
     $moduleDir = Split-Path $script:MyInvocation.MyCommand.Path
     $baseDir = Resolve-Path "$moduleDir\.."
@@ -58,3 +59,12 @@ function Install-WebApplication() {
 
     $msgs.msg_web_app_success -f $websiteSettings.siteName
 }
+
+ Add-Type -TypeDefinition @'
+    public enum AuthType{
+        WindowsAuthentication,
+        BasicAuthentication,
+        AnonymousAuthentication,
+        FormsAuthentication
+    }
+'@

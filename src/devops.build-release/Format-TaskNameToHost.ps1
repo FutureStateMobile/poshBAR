@@ -16,6 +16,7 @@
 #>
 function Format-TaskNameToHost
 {
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string] $taskName,
         [parameter(Mandatory=$false)]           [switch] $suppressTimer

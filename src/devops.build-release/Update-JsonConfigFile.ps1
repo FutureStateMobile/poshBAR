@@ -25,6 +25,7 @@
         version 2 is available, all formatting will be lost, and the output will be a single line.
 #>
 function Update-JsonConfigValues{
+    [CmdletBinding()]
     param( 
         [parameter(Mandatory=$true,position=0)] [string] $configFile,
         [parameter(Mandatory=$true,position=1)] [string] $node,

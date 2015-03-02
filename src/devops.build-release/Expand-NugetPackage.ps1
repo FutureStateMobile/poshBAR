@@ -19,6 +19,7 @@
 #>
 function Expand-NugetPackage
 {
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string] $nugetPackageName,
         [parameter(Mandatory=$true,position=1)] [string] $destinationFolder

@@ -19,6 +19,7 @@ $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
         Will add or remove a VERB from your website
 #>
 function Add-IISHttpVerb {
+    [CmdletBinding()]
     param(
         [parameter( Mandatory=$true, position=0 )] [string] [ValidateSet('GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'TRACE', 'OPTIONS', 'CONNECT', 'PATCH')] $verb,
         [parameter( Mandatory=$true, position=1 )] [string] $siteName,

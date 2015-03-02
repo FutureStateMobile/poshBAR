@@ -26,6 +26,7 @@ $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
         Will setup a web application under the specified Website and AppPool.
 #>
 function New-Site{
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string] $siteName,
         [parameter(Mandatory=$true,position=1)] [string] $sitePath,

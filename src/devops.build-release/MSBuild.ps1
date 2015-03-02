@@ -1,4 +1,5 @@
 function Invoke-MSBuild {
+    [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true, Position=0)] [string] $outDir,
         [Parameter(Mandatory=$true, Position=1)] [string] $projectFile,
@@ -10,7 +11,8 @@ function Invoke-MSBuild {
 }
 
 function Get-WarningsFromMSBuildLog {
-    Param(
+    [CmdletBinding()]
+    param(
         [parameter(Mandatory=$true)] [alias("f")] $FilePath,
         [parameter()] [alias("ro")] $rawOutputPath,
         [parameter()][alias("o")] $htmlOutputPath

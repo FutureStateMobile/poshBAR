@@ -1,4 +1,11 @@
-function Invoke-Nunit ( [string] $targetAssembly, [string] $outputDir, [string] $runCommand, [string] $testAssemblyRootNamespace ) {
+function Invoke-Nunit {
+
+    [CmdletBinding()]
+    param( 
+        [string] $targetAssembly, 
+        [string] $outputDir, 
+        [string] $runCommand, 
+        [string] $testAssemblyRootNamespace )
 
     if ( $includeCoverage ){
         Invoke-NUnitWithCoverage $targetAssembly $outputDir $runCommand $testAssemblyRootNamespace
@@ -12,7 +19,15 @@ function Invoke-Nunit ( [string] $targetAssembly, [string] $outputDir, [string] 
     }    
 }
 
-function Invoke-NUnitWithCoverage ( [string] $targetAssembly, [string] $outputDir, [string] $runCommand, [string] $testAssemblyRootNamespace){
+function Invoke-NUnitWithCoverage {
+    
+    [CmdletBinding()]
+    param( 
+        [string] $targetAssembly, 
+        [string] $outputDir, 
+        [string] $runCommand, 
+        [string] $testAssemblyRootNamespace)
+    
     $fileName = Get-TestFileName $outputDir $runCommand
 
     $xmlFile = "$fileName-TestResults.xml"

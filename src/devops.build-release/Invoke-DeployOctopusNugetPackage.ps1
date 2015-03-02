@@ -19,8 +19,9 @@
         Nothing yet...
 #>
 function Invoke-DeployOctopusNugetPackage{
+    [CmdletBinding()]
     param(
-        [parameter( Mandatory=$true, position=0 )] [ValidatePattern("^*?\.nupkg")] [string] $pathToPackage,
+        [parameter( Mandatory=$true, position=0 )] [ValidatePattern('^*?\.nupkg')] [string] $pathToPackage,
         [parameter( Mandatory=$true, position=1 )] [string] $environment
     )
     $ErrorActionPreference = "Stop"

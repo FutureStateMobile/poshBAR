@@ -42,6 +42,7 @@
 #>
 function Invoke-ElevatedCommand
 {
+    [CmdletBinding()]
     param(
         ## The script block to invoke elevated. NOTE: to access the InputObject/pipeline data from the script block, use "$input"!
         [Parameter(Mandatory = $true)] [ScriptBlock] $Scriptblock,

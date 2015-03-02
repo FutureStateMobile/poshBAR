@@ -26,6 +26,7 @@
 #>
 function Get-EnvironmentSettings
 {
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string] $environment,
         [parameter(Mandatory=$true,position=1)] [string] $nodeXPath = "/",

@@ -1,5 +1,12 @@
-function Invoke-XUnit ([string] $targetAssembly, [string] $outputDir, [string] $runCommand){
-        if ( $includeCoverage ){
+function Invoke-XUnit{
+    [CmdletBinding()]
+    param(
+        [string] $targetAssembly, 
+        [string] $outputDir, 
+        [string] $runCommand
+    )
+
+    if ( $includeCoverage ){
         Invoke-XUnitWithCoverage $targetAssembly $outputDir $runCommand
     } else {
         $fileName = Get-TestFileName $outputDir $runCommand
@@ -12,7 +19,14 @@ function Invoke-XUnit ([string] $targetAssembly, [string] $outputDir, [string] $
     }
 }
 
-function Invoke-XUnitWithCoverage  ([string] $targetAssembly, [string] $outputDir, [string] $runCommand){
+function Invoke-XUnitWithCoverage{
+    [CmdletBinding()]
+    param(
+        [string] $targetAssembly, 
+        [string] $outputDir, 
+        [string] $runCommand
+    )
+    
     $fileName = Get-TestFileName $outputDir $runCommand
 
     $xmlFile = "$fileName-TestResults.xml"

@@ -5,6 +5,7 @@ Add-Type -AssemblyName System.Web
 
 function Invoke-FromBase64
 {
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string] $str
     )
@@ -14,6 +15,7 @@ function Invoke-FromBase64
 
 function Invoke-ToBase64
 {
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string] $str
     )
@@ -23,6 +25,7 @@ function Invoke-ToBase64
 
 function Invoke-UrlDecode
 {
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string] $str
     )
@@ -32,6 +35,7 @@ function Invoke-UrlDecode
 
 function Invoke-UrlEncode
 {
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string] $str
     )
@@ -41,6 +45,7 @@ function Invoke-UrlEncode
 
 function Invoke-HtmlDecode
 {
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string] $str
     )
@@ -50,6 +55,7 @@ function Invoke-HtmlDecode
 
 function Invoke-HtmlEncode
 {
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string] $str
     )
