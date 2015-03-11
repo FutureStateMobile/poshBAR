@@ -10,7 +10,7 @@ $workingDir = "$buildDir\working"
 $packagesDir = "$baseDir\packages"
 $solutionFile = "$baseDir\[MY-APP].sln"
 
-Import-Module "$baseDir\packages\fsm.buildrelease.*\tools\modules\BuildDeployModules" -force
+Import-Module "$baseDir\packages\poshBAR.*\tools\modules\poshBAR" -force
 
 
 task default -depends Init

@@ -6,7 +6,7 @@ param (
 $currentDir = Split-Path $script:MyInvocation.MyCommand.Path
 $publishDir = "$currentDir\build-artifacts\publish"
 
-Import-Module "$currentDir\packages\fsm.buildrelease.*\tools\modules\BuildDeployModules" -force
+Import-Module "$currentDir\packages\poshBAR.*\tools\modules\poshBAR" -force
 
 Test-RunAsAdmin
 

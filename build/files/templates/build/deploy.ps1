@@ -10,7 +10,7 @@ if ( $OctopusParameters ) {
 }
 
 $currentDir = Split-Path $script:MyInvocation.MyCommand.Path
-Import-Module "$currentDir\..\packages\fsm.buildrelease.*\tools\modules\BuildDeployModules" -force
+Import-Module "$currentDir\..\packages\poshBAR.*\tools\modules\poshBAR" -force
 
 $environmentSettings = Get-EnvironmentSettings $environment "//environmentSettings"
 $websiteSettings = $environmentSettings.webSites.[NameOfYourWebsiteNode]

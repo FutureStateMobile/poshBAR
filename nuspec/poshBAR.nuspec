@@ -18,7 +18,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\src\poshBAR\**\*.*" target="tools\modules" />
+    <file src="..\build-artifacts\working\poshBAR\**\*.*" target="tools\modules" />
     <file src="..\build\files\init.ps1" target="tools\init.ps1" />
     <file src="..\build\files\templates\**\*.*" target="tools\templates\" />
   </files>
