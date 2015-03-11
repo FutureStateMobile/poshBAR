@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>poshBAR</id>
+    <version>0.1.1</version>
+    <title>Powershell Build &amp; Release</title>
+    <description>Reusables modules used in the aid of a .NET build and release cycle</description>
+    <summary>Powershell Build $amp; Release v-0.1.1</summary>
+    <tags>devops, build-release, ci, continuous integration</tags>
+    <authors>Keith Larsen, Chase Florell</authors>
+    <owners>FutureState Mobile Inc.</owners>
+    <projectUrl>https://github.com/FutureStateMobile/poshBAR</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright 2014 FutureState Mobile Inc.</copyright>
+    <dependencies>
+      <dependency id="psake" version="4.4.1" />
+      <dependency id="NuGet.CommandLine" version="2.8.3" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\src\poshBAR\**\*.*" target="tools\modules" />
+    <file src="..\build\files\init.ps1" target="tools\init.ps1" />
+    <file src="..\build\files\templates\**\*.*" target="tools\templates\" />
+  </files>
+</package>

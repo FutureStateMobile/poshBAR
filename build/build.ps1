@@ -1,19 +1,16 @@
-$buildScriptDir  = resolve-path .
-$baseDir  = resolve-path "$buildScriptDir\.."
-$buildDir = "$baseDir\build-artifacts" 
-$buildPublishDir = "$buildDir\publish"
-$packagesDir = "$baseDir\Packages"
-$modulesDir = "$baseDir\src\devops.build-release"
-
-#
-# Nuspec Properties
-#
-$devopsNugetPackage = "$baseDir\nuspec\fsm.buildrelease.nuspec"
-$gitNugetPackage = "$baseDir\nuspec\fsm.git.nuspec"
-$devopsSummary = "FSM Build-Release Modules"
+$baseDir  = resolve-path ".\.."
+$script:this = @{
+    buildDir = "$baseDir\build-artifacts" 
+    buildPublishDir = "$baseDir\build-artifacts\publish"
+    packagesDir = "$baseDir\build-artifacts\Packages"
+    workingDir = "$baseDir\build-artifacts\Working\poshBAR"
+    modulesDir = "$baseDir\src\poshBAR"
+    devopsNugetPackage = "$baseDir\nuspec\poshBAR.nuspec"
+    devopsSummary = "Powershell Build `$amp; Release"
+}
 
 # Dogfood
-Import-Module "$modulesDir\BuildDeployModules" -force
+Import-Module "$($this.modulesDir)\poshBAR" -force
 
 
 Task default -depends Package
@@ -21,22 +18,43 @@ Task Package -depends PackageBuildRelease
 
 Task SetupPaths {
     Write-Host "Adding some of our tools to the Path so we can run them easier"
-    $env:Path += ";$packagesDir\NuGet.CommandLine.2.8.3\tools"
+    $env:Path += ";$($this.packagesDir)\NuGet.CommandLine.2.8.3\tools"
 }
 
 Task MakeBuildDir {
     Write-Host "Creating new build-artifacts directory"
-    rm -r $buildDir -force -ea SilentlyContinue
-    New-Item -ItemType Directory -Force -Path $buildDir
-    New-Item -ItemType Directory -Force -Path $buildPublishDir
+    $this.buildDir
+    rm -r $this.buildDir -force -ea SilentlyContinue
+    New-Item -ItemType Directory -Force -Path $this.buildPublishDir
+    New-Item -ItemType Directory -Force -Path $this.workingDir
 }
 
-Task PackageBuildRelease -depends SetupPaths, MakeBuildDir {
+Task UpdateVersion -depends MakeBuildDir {
+    copy "$($this.modulesDir)\*" $this.workingDir
 
-    Update-XmlConfigValues $devopsNugetPackage "//*[local-name() = 'version']" $version
-    Update-XmlConfigValues $devopsNugetPackage "//*[local-name() = 'summary']" "$devopsSummary v-$version"
+    Push-Location $this.workingDir
 
-    exec { NuGet.exe Pack $devopsNugetPackage -Version "$version.$buildNumber" -OutputDirectory $buildPublishDir -NoPackageAnalysis } "Failed to package the Devops Scripts."
+    $pattern = '^\$version = "(\d.\d.\d)" .*'
+    $output = "`$version = '$version.$buildNumber' # contains the current version of poshBAR"
+    ls -r -filter poshBAR.psm1 | % {
+        $filename = $_.Directory.ToString() + '\' + $_.Name
+        (cat $filename) | % {
+            % {$_ -replace $pattern, $output }
+        } | sc "$filename.temp"
+
+        rm $filename -force
+        ren "$filename.temp" $filename
+        "$filename - Updated to $version.$buildNumber"
+    }
+    Pop-Location
+}
+
+Task PackageBuildRelease -depends SetupPaths, UpdateVersion, MakeBuildDir {
+
+    Update-XmlConfigValues $this.devopsNugetPackage "//*[local-name() = 'version']" $version
+    Update-XmlConfigValues $this.devopsNugetPackage "//*[local-name() = 'summary']" "$($this.devopsSummary) v-$version"
+
+    exec { NuGet.exe Pack $this.devopsNugetPackage -Version "$version.$buildNumber" -OutputDirectory $this.buildPublishDir -NoPackageAnalysis } "Failed to package the Devops Scripts."
 }
 
 FormatTaskName {
