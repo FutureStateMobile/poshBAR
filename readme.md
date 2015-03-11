@@ -1,10 +1,7 @@
-#FutureState Mobile Powershell Modules#
+#Powershell Build & Release#
 
- - profile modules
-   - git
- - devops modules
-   - build realease
-
+  - info coming soon...
+  
 ###License###
 
 [Microsoft Public License (Ms-PL)](http://www.microsoft.com/en-us/openness/licenses.aspx#MPL)
