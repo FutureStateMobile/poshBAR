@@ -52,6 +52,7 @@ function Set-IISAuthentication
 
 }
 
+if(!("AuthType" -as [Type])){
  Add-Type -TypeDefinition @'
     public enum AuthType{
         WindowsAuthentication,
@@ -60,3 +61,4 @@ function Set-IISAuthentication
         FormsAuthentication
     }
 '@
+}

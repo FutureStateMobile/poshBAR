@@ -129,6 +129,7 @@ function Get-ModuleDirectory {
     return Split-Path $script:MyInvocation.MyCommand.Path
 }
 
+if(!("IdentityType" -as [Type])){
  Add-Type -TypeDefinition @'
     public enum IdentityType{
         LocalSystem,
@@ -138,10 +139,13 @@ function Get-ModuleDirectory {
         ApplicationPoolIdentity
     }
 '@
+}
 
+if(!("PipelineMode" -as [Type])){
  Add-Type -TypeDefinition @'
     public enum PipelineMode{
         Integrated,
         Classic
     }
 '@
+}
