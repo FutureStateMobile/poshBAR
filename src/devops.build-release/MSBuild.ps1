@@ -1,41 +1,72 @@
+[int]$global:TeamCityWrnCount = 0
 function Invoke-MSBuild {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true, Position=0)] [string] $outDir,
         [Parameter(Mandatory=$true, Position=1)] [string] $projectFile,
-        [Parameter(Mandatory=$true, Position=2)] [string] $logFile,
-        [Parameter(Mandatory=$false, Position=3)] [double] $VisualStudioVersion = 12.0
+        [Parameter(Mandatory=$false, Position=2)] [string] $logPath,
+        [Parameter(Mandatory=$false, Position=3)] [string] $namespace,
+        [Parameter(Mandatory=$false, Position=4)] [double] $VisualStudioVersion = 12.0
     )
 
-        exec { msbuild /t:build /p:OutDir="$outDir\" $projectFile /p:"VisualStudioVersion=$("{0:N1}" -f $VisualStudioVersion)" /l:"FileLogger,Microsoft.Build.Engine;logfile=$logFile" } ($msgs.error_msbuild_compile -f $projectFile)
+    if($namespace){
+        if(-not (Test-Path "$logPath\MSBuild")) {
+            mkdir "$logPath\MSBuild"
+        }
+
+        $logFileParam = "logfile=$logPath\MSBuild\Raw.$namespace.txt"
+    }
+
+    $VisualStudioVersionParam = "VisualStudioVersion=$("{0:N1}" -f $VisualStudioVersion)"
+
+    exec { msbuild /t:build /p:OutDir="$outDir\" $projectFile /p:"$VisualStudioVersionParam" /l:"FileLogger,Microsoft.Build.Engine;$logFileParam" } ($msgs.error_msbuild_compile -f $projectFile)
+
+    if($namespace){
+        New-WarningsFromMSBuildLog $logPath $namespace
+    }
 }
 
-function Get-WarningsFromMSBuildLog {
+function Invoke-CleanMSBuild {
     [CmdletBinding()]
     param(
-        [parameter(Mandatory=$true)] [alias("f")] $FilePath,
-        [parameter()] [alias("ro")] $rawOutputPath,
-        [parameter()][alias("o")] $htmlOutputPath
+        [Parameter(Mandatory=$true, Position=0)] [string] $solutionFile,
+        [Parameter(Mandatory=$false, Position=1)] [double] $VisualStudioVersion = 12.0
     )
-     
-    $warnings = @(Get-Content -ErrorAction Stop $FilePath |       # Get the file content
-                    Where {$_ -match '^.*warning CS.*$'} |        # Extract lines that match warnings
-                    %{ $_.trim() -replace "^s*d+>",""  } |        # Strip out any project number and caret prefixes
-                    sort-object | Get-Unique -asString)           # remove duplicates by sorting and filtering for unique strings
+    exec { msbuild $solutionFile /t:clean /v:q /nologo /p:VisualStudioVersion=12.0 } "Error cleaning the solution."
+}
+
+function New-WarningsFromMSBuildLog {
+    [CmdletBinding()]
+    param(
+        [parameter(Mandatory=$true)] [string] $logPath,
+        [parameter(Mandatory=$true)] [string] $namespace
+    )
+
+    $FilePath       = "$logPath\MSBuild\Raw.$namespace.txt"
+    $txtOutputPath  = "$logPath\MSBuild\Wrn.$namespace.txt"
+    $htmlOutputPath = "$logPath\MSBuild\Wrn.$namespace.html"
+     Write-Host $namespace
+    $warnings = @(cat -ea Stop $FilePath |      # Get the file content
+        ? { $_ -match '^.*warning CS.*$' } |    # Extract lines that match warnings
+        % { $_.trim() -replace "^s*d+>",""  } | # Strip out any project number and caret prefixes
+        sort | gu -asString)                    # remove duplicates by sorting and filtering for unique strings
      
     $count = $warnings.Count
-     
+    $global:TeamCityWrnCount += $count
+
+    if($count -eq 0) {return}
+    
     # raw output
     Write-Host "MSBuild Warnings - $count warnings ==================================================="
     $warnings | % { Write-Host " * $_" }
      
     #TeamCity output
-    $msgs.msg_teamcity_buildstatus -f "{build.status.text}, Build warnings: $count"
-    $msgs.msg_teamcity_buildstatisticvalue -f 'buildWarnings', $count
+    $msgs.msg_teamcity_buildstatus -f "{build.status.text}, Build warnings: $TeamCityWrnCount"
+    $msgs.msg_teamcity_buildstatisticvalue -f 'buildWarnings', $TeamCityWrnCount
      
     # file output
-    if( $rawOutputPath ){
-        $stream = [System.IO.StreamWriter] $RawOutputPath
+    if( $txtOutputPath ){
+        $stream = [System.IO.StreamWriter] $txtOutputPath
         $stream.WriteLine("Build Warnings")
         $stream.WriteLine("====================================")
         $stream.WriteLine("")
@@ -44,7 +75,7 @@ function Get-WarningsFromMSBuildLog {
     }
      
     # html report output
-    if( $htmlOutputPath -and $rawOutputPath ){
+    if( $htmlOutputPath -and $txtOutputPath ){
         $stream = [System.IO.StreamWriter] $htmlOutputPath
         $stream.WriteLine(@"
 <html>

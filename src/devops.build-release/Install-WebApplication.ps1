@@ -9,7 +9,7 @@ function Install-WebApplication() {
         [parameter(Mandatory=$true,position=3)] [AuthType] $authenticationType
     )
     $moduleDir = Split-Path $script:MyInvocation.MyCommand.Path
-    $baseDir = Resolve-Path "$moduleDir\.."
+    $baseDir = Resolve-Path "$moduleDir\..\.."
 
     if ( ($websiteSettings.appPath.length -eq 0) -or ($websiteSettings.appPath -eq "/") -or ($websiteSettings.appPath -eq "\") ) {
         $siteFilePath = "$($websiteSettings.physicalPathRoot)\$($websiteSettings.siteName)\$($websiteSettings.physicalFolderPrefix)-$version"

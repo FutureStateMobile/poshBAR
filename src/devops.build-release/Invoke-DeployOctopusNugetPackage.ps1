@@ -38,7 +38,6 @@ function Invoke-DeployOctopusNugetPackage{
     $deployScript = "$pathOnly\deploy.ps1"
     $postDeployScript = "$pathOnly\postDeploy.ps1"
     $deployFailedScript = "$pathOnly\deployFailed.ps1"
-
     try{
         if(Test-Path $preDeployScript){ & $preDeployScript $environment }
         if(Test-Path $deployScript){ & $deployScript $environment }

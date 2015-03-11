@@ -12,6 +12,8 @@ Push-Location $psScriptRoot
 . .\AppPoolAdministration.ps1
 . .\Approve-Permissions.ps1
 . .\Assert-PSVersion.ps1
+. .\Chutzpah.ps1
+. .\Ecliptic.ps1
 . .\EntityFramework.ps1
 . .\Expand-NugetPackage.ps1
 . .\Expand-ZipFile.ps1
@@ -24,12 +26,14 @@ Push-Location $psScriptRoot
 . .\Invoke-DeployOctopusNugetPackage.ps1
 . .\Invoke-ElevatedCommand.ps1
 . .\Invoke-ExternalCommand.ps1
+. .\Invoke-HealthCheck.ps1
 . .\Invoke-Using.ps1
 . .\MSBuild.ps1
 . .\Nuget.ps1
 . .\nUnit.ps1
 . .\Set-IISAuthentication.ps1
 . .\Set-IISCustomHeader.ps1
+. .\Set-PowershellScriptSigning.ps1
 . .\SiteAdministration.ps1
 . .\Specflow.ps1
 . .\SqlHelpers.ps1
@@ -37,8 +41,8 @@ Push-Location $psScriptRoot
 . .\Test-RunAsAdmin.ps1
 . .\TextUtils.ps1
 . .\Update-AssemblyVersions.ps1
-. .\Update-JsonConfigFile.ps1
-. .\Update-XmlConfigFile.ps1
+. .\JsonConfig.ps1
+. .\XmlConfig.ps1
 . .\WindowsFeatures.ps1
 . .\xUnit.ps1
 
@@ -52,6 +56,7 @@ Export-ModuleMember `
           'Add-IISHttpVerb',
           'Add-IISMimeType',
           'Add-LoopbackFix',
+          'Add-XmlConfigValue',
           'Approve-Permissions',
           'Assert-That',
           'Assert-PSVersion',
@@ -71,19 +76,22 @@ Export-ModuleMember `
           'Get-Site',
           'Get-Sites',
           'Get-TestFileName',
-          'Get-WarningsFromMSBuildLog', 
           'Get-WindowsFeatures',
           'Install-WebApplication',
           'Install-WindowsFeatures',
           'Invoke-BulkCopy',
+          'Invoke-Chutzpah',
+          'Invoke-CleanMSBuild',
           'Invoke-DBMigration',
           'Invoke-Deployment',
           'Invoke-DeployOctopusNugetPackage',
+          'Invoke-Ecliptic',
           'Invoke-ElevatedCommand',
           'Invoke-EntityFrameworkMigrations',
           'Invoke-ExternalCommand',
           'Invoke-FromBase64', 
           'Invoke-GruntMinification',
+          'Invoke-HealthCheck',
           'Invoke-HtmlDecode', 
           'Invoke-HtmlEncode',
           'Invoke-KarmaTests',
@@ -103,12 +111,14 @@ Export-ModuleMember `
           'New-AppPool',
           'New-NugetPackage',
           'New-Site',
+          'New-WarningsFromMSBuildLogs', 
           'Remove-Application',
           'Remove-AppPool',
           'Remove-Site',
           'RequiredFeatures',
           'Set-IISAuthentication',
           'Set-IISCustomHeader',
+          'Set-PowershellScriptSigning',
           'Start-Application',
           'Start-AppPool',
           'Start-Site',
@@ -140,6 +150,8 @@ convertfrom-stringdata @"
     error_coverage_failed = Running code coverage for '{0}' failed.
     error_tests_failed = Running tests '{0}' failed.
     error_msbuild_compile = Error compiling '{0}'.
+    error_specflow_generation = Error generating the specflow feature files for '{0}'.
+    error_chutzpah = Error running the chutzpah javascipt tests for '{0}'.
     wrn_full_permission = You have applied FULL permission to '{0}' for '{1}'. THIS IS DANGEROUS!
     wrn_cant_find = Could not find {0} with the name: {0}.
     msg_grant_permission = Granting {0} permissions to {1} for {2}.

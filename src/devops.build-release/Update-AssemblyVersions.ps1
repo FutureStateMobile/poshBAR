@@ -33,13 +33,13 @@ function Update-AssemblyVersions
 
     $ErrorActionPreference = "Stop"
 
-    $assemblyVersionPattern = 'AssemblyVersion\(".*?"\)'
-    $assenblyCopyrightPattern = 'AssemblyCopyright\(".*?"\)'
-    $fileVersionPattern = 'AssemblyFileVersion\(".*?"\)'
-    $informationalVersionPattern = 'AssemblyInformationalVersion\(".*?"\)'
+    $assemblyVersionPattern = 'AssemblyVersion(Attribute)?\(".*?"\)'
+    $assenblyCopyrightPattern = 'AssemblyCopyright(Attribute)?\(".*?"\)'
+    $fileVersionPattern = 'AssemblyFileVersion(Attribute)?\(".*?"\)'
+    $informationalVersionPattern = 'AssemblyInformationalVersion(Attribute)?\(".*?"\)'
     
     $assemblyVersion = 'AssemblyVersion("' + $Version + '")';
-    $assemblyCopyright = 'AssemblyCopyright("Copyright © ' + $((Get-Date).year) + '")';
+    $assemblyCopyright = 'AssemblyCopyright("Copyright `(c`) ' + $((Get-Date).year) + '")';
     $fileVersion = 'AssemblyFileVersion("' + $Version + '.' + $BuildNumber + '")';
     $informationalVersion = 'AssemblyInformationalVersion("' + $AssemblyInformationalVersion + '")';
     
@@ -47,22 +47,24 @@ function Update-AssemblyVersions
 
     Push-Location "$projectRoot\Properties"
 
-    Get-ChildItem -r -filter AssemblyInfo.cs | ForEach-Object {
+    ls -r -filter AssemblyInfo.cs | % {
         $filename = $_.Directory.ToString() + '\' + $_.Name
-        
+        #ni "$filename.temp" -type file
         # If you are using a source control that requires to check-out files before 
         # modifying them, make sure to check-out the file here.
         # For example, TFS will require the following command:
         # tf checkout $filename
     
-        (Get-Content $filename) | ForEach-Object {
+        (cat $filename) | % {
             % {$_ -replace $assemblyVersionPattern, $assemblyVersion } |
             % {$_ -replace $assenblyCopyrightPattern, $assemblyCopyright } |
             % {$_ -replace $fileVersionPattern, $fileVersion } |
             % {$_ -replace $informationalVersionPattern, $informationalVersion }
-        } | Set-Content $filename
+        } | sc "$filename.temp"
 
-        Write-Host "$filename - Updated"
+        rm $filename -force
+        ren "$filename.temp" $filename
+        "$filename - Updated"
     }
     Pop-Location
 }
