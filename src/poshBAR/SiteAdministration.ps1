@@ -5,7 +5,9 @@ $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
         Will create a Website with the specified settings if one doesn't exist.
 
     .EXAMPLE
-        New-Website "apps.tcpl.ca" "C:\inetpub\apps.tcpl.ca" "apps.tcpl.ca"
+        $b = @{"protocol" = "http"; "port" = 80; "hostName"="mysite.com"}
+        $bindings = @($b)
+        New-Site "myWebsite.com" "c:\inetpub\wwwroot" $bindings "myAppPool" -updateIfFound
 
     .PARAMETER siteName
         The name of the Website that we are creating.
@@ -13,15 +15,15 @@ $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
     .PARAMETER sitePath
         The physical path where this Website is located on disk.
 
-    .PARAMETER hostHeader
-        The "C" name that IIS forward on to this Website.
+    .PARAMETER bindings
+        An Object Array of bindings. Must include "protocol", "port", and "hostName"
 
-    .PARAMETER protocol
-        The protocol for the site e.g. http or https
+    .PARAMETER appPoolName
+        The name of the app pool to use
 
-    .PARAMETER portNumber
-        The port the site is bound to e.g. port 80
-
+    .PARAMETER updateIfFound
+        Should we update an existing website if it's found?
+        
     .SYNOPSIS
         Will setup a web application under the specified Website and AppPool.
 #>
@@ -30,9 +32,7 @@ function New-Site{
     param(
         [parameter(Mandatory=$true,position=0)] [string] $siteName,
         [parameter(Mandatory=$true,position=1)] [string] $sitePath,
-        [parameter(Mandatory=$true,position=2)] [string] $hostHeader,
-        [parameter(Mandatory=$true,position=3)] [string] [ValidateSet('http','https')] $protocol,
-        [parameter(Mandatory=$true,position=4)] [int] $portNumber,
+        [parameter(Mandatory=$true,position=3)] [object[]] $bindings,
         [parameter(Mandatory=$true,position=5)] [string] $appPoolName,
         [parameter(Mandatory=$false,position=6)] [switch] $updateIfFound
     )
@@ -41,13 +41,15 @@ function New-Site{
     $exists = Confirm-SiteExists $siteName
     
     if (!$exists) {
-        & $appcmd add site /name:$siteName /physicalPath:$sitePath /bindings:$protocol/*:${portNumber}:$hostHeader | Out-Null
+        $bindingString = @()
+        $bindings | % { $bindingString += "$($_.protocol)/*:$($_.port):$($_.hostName)" }
+        & $appcmd add site /name:$siteName /physicalPath:$sitePath /bindings:$($bindingString -join ",") | Out-Null
         & $appcmd set app $siteName/ /applicationPool:$appPoolName | Out-Null
         Write-Host "`tDone" -f Green
     }else{
         Write-Host "`tExists" -f Cyan
         if ($updateIfFound.isPresent) {
-            Update-Site $siteName $sitePath $hostHeader $protocol $portNumber $appPoolName
+            Update-Site $siteName $sitePath $bindings $appPoolName
         } else {
             # Message
             $msgs.msg_not_updating -f "Site"
@@ -59,9 +61,7 @@ function Update-Site{
     param(
             [parameter(Mandatory=$true,position=0)] [string] $siteName,
             [parameter(Mandatory=$true,position=1)] [string] $sitePath,
-            [parameter(Mandatory=$true,position=2)] [string] $hostHeader,
-            [parameter(Mandatory=$true,position=3)] [string] $protocol,
-            [parameter(Mandatory=$true,position=4)] [string] $portNumber,
+            [parameter(Mandatory=$true,position=3)] [object[]] $bindings,
             [parameter(Mandatory=$true,position=5)] [string] $appPoolName
     )
 
@@ -69,7 +69,10 @@ function Update-Site{
     $exists = Confirm-SiteExists $siteName
 
     if ($exists){
-        & $appcmd set Site $siteName/ /bindings:$protocol/*:${portNumber}:$hostHeader  | Out-Null
+        $bindingString = @()
+        $bindings | % { $bindingString += "$($_.protocol)/*:$($_.port):$($_.hostName)" }
+        
+        & $appcmd set Site $siteName/ /bindings:$($bindingString -join ",")  | Out-Null
         & $appcmd set App $siteName/ /applicationPool:$appPoolName | Out-Null
         & $appcmd set App $siteName/ "/[path='/'].physicalPath:$sitePath" | Out-Null
         Write-Host "`tDone" -f Green

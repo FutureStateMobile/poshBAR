@@ -47,7 +47,7 @@ function Install-WebApplication() {
 
     New-AppPool $($websiteSettings.appPool.name) $($websiteSettings.appPool.identityType) $($websiteSettings.appPool.maxWorkerProcesses) $($websiteSettings.appPool.userName) $($websiteSettings.appPool.password)
 
-    New-Site $($websiteSettings.siteName) $siteFilePath $($websiteSettings.siteHost) ($websiteSettings.siteProtcol) ($websiteSettings.portNumber) $($websiteSettings.appPool.name) -updateIfFound
+    New-Site $($websiteSettings.siteName) $siteFilePath ($websiteSettings.bindings) $($websiteSettings.appPool.name) -updateIfFound
 
     Set-IISAuthentication $authenticationType true $($websiteSettings.siteName)
     if ( ($websiteSettings.appPath.length -gt 0) -and ($websiteSettings.appPath -ne "/") -and ($websiteSettings.appPath -ne "\") ) {
