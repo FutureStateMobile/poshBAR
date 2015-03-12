@@ -5,10 +5,17 @@
         <MYWEBSITE>
             <physicalPathRoot>c:\inetpub</physicalPathRoot>
             <physicalFolderPrefix>MY-WEBSITE</physicalFolderPrefix>
-            <siteProtcol>http</siteProtcol>
+            <bindings>
+                <protocol>http</protocol>
+                <port>80</port>
+                <hostName>local.MY-WEBSITE.com</hostName>
+            </bindings>
+            <bindings>
+                <protocol>https</protocol>
+                <port>443</port>
+                <hostName>local.MY-WEBSITE.com</hostName>
+            </bindings>
             <siteName>local.MY-WEBSITE.com</siteName>
-            <siteHost>local.MY-WEBSITE.com</siteHost>
-            <portNumber>80</portNumber>
             <appPath>/</appPath>
             <!-- valid authenticationTypes are: [anonymousAuthentication, basicAuthentication, formsAuthentication, windowsAuthentication]-->
             <authenticationType>anonymousAuthentication</authenticationType>
