@@ -5,7 +5,7 @@
     .EXAMPLE
         Set-IISAuthentication "windowsAuthentication" true "apps.tcpl.ca/MyApp"
 
-    .PARAMETER settingName
+    .PARAMETER authTypes
         The name of the Authentication setting that we are changing
 
     .PARAMETER value
@@ -22,7 +22,7 @@ function Set-IISAuthentication
 {
     [CmdletBinding()]
     param(
-        [parameter(Mandatory=$true,position=0)] [AuthType[]] $settingName,
+        [parameter(Mandatory=$true,position=0)] [AuthType[]] [AllowNull()] $authTypes,
         [parameter(Mandatory=$true,position=1)] [PSObject] $value,
         [parameter(Mandatory=$true,position=2)] [string] $location
     )
@@ -40,20 +40,24 @@ function Set-IISAuthentication
     Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/windowsAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location
     Write-Host "`tDone" -f Green
 
-    $settingName | % {
-        Write-Host ($msgs.msg_update_auth -f $_, $location, $value) -NoNewLine
-        Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/$_" -name enabled -value $value -PSPath "IIS:\" -location $location
-        Write-Host "`tDone" -f Green
+    if($authTypes){
+        $authTypes | % {
+            Write-Host ($msgs.msg_update_auth -f $_, $location, $value) -NoNewLine
+            Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/$_" -name enabled -value $value -PSPath "IIS:\" -location $location
+            Write-Host "`tDone" -f Green
+        }
     }
 }
 
 if(!("AuthType" -as [Type])){
  Add-Type -TypeDefinition @'
     public enum AuthType{
-        WindowsAuthentication,
-        BasicAuthentication,
-        AnonymousAuthentication,
-        FormsAuthentication
+        anonymousAuthentication,
+        basicAuthentication,
+        clientCertificateMappingAuthentication,
+        digestAuthentication,
+        iisClientCertificateMappingAuthentication,
+        windowsAuthentication    
     }
 '@
 }
