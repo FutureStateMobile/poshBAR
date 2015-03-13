@@ -22,34 +22,29 @@ function Set-IISAuthentication
 {
     [CmdletBinding()]
     param(
-        [parameter(Mandatory=$true,position=0)] [AuthType] $settingName,
+        [parameter(Mandatory=$true,position=0)] [AuthType[]] $settingName,
         [parameter(Mandatory=$true,position=1)] [PSObject] $value,
         [parameter(Mandatory=$true,position=2)] [string] $location
     )
 
     $ErrorActionPreference = "Stop"
     Import-Module "WebAdministration"
-    Write-Host ($msgs.msg_updating_to -f $settingName, $value) -NoNewLine
     
-    Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/$settingName" -name enabled -value $value -PSPath "IIS:\" -location $location
+    #disable all types
+    Write-Host ($msgs.msg_disable_auth -f $location) -NoNewLine
+    Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/anonymousAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location
+    Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/basicAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location
+    Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/clientCertificateMappingAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location
+    Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/digestAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location
+    Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/iisClientCertificateMappingAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location
+    Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/windowsAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location
     Write-Host "`tDone" -f Green
 
-    if ($settingName -ne "anonymousAuthentication")
-    {
-        Write-Host ($msgs.msg_disable_anon_auth -f $location) -NoNewLine
-        Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/anonymousAuthentication" -name enabled -value "false" -PSPath "IIS:\" -location $location
+    $settingName | % {
+        Write-Host ($msgs.msg_update_auth -f $_, $location, $value) -NoNewLine
+        Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/$_" -name enabled -value $value -PSPath "IIS:\" -location $location
         Write-Host "`tDone" -f Green
     }
-
-    # Disable Negotiate (Kerberos) and use only NTLM
-    # if ($settingName -eq "windowsAuthentication")
-    # {
-    #     Remove-WebConfigurationProperty -filter "/system.webServer/security/authentication/windowsAuthentication/providers" -name "." -PSPath "IIS:\" -location $location
-    #     Add-WebConfiguration -filter "/system.webServer/security/authentication/windowsAuthentication/providers" -PSPath "IIS:\" -location $location -Value "NTLM"
-    #     # if we ever need Kerberos then this would need to be added back 
-    #     # Add-WebConfiguration-filter system.webServer/security/authentication/windowsAuthentication/providers -PSPath "IIS:\" -location $location -Value "Negotiate"
-    # }
-
 }
 
 if(!("AuthType" -as [Type])){

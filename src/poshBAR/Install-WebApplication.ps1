@@ -5,8 +5,7 @@ function Install-WebApplication() {
     param( 
         [parameter(Mandatory=$true,position=0)] [string] $environment,
         [parameter(Mandatory=$true,position=1)] [System.Xml.XmlElement] $websiteSettings,
-        [parameter(Mandatory=$true,position=2)] [ValidatePattern('^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})(\.[0-9]*?)?')] [string] $version,
-        [parameter(Mandatory=$true,position=3)] [AuthType] $authenticationType
+        [parameter(Mandatory=$true,position=2)] [ValidatePattern('^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})(\.[0-9]*?)?')] [string] $version
     )
     $moduleDir = Split-Path $script:MyInvocation.MyCommand.Path
     $baseDir = Resolve-Path "$moduleDir\..\.."
@@ -49,12 +48,12 @@ function Install-WebApplication() {
 
     New-Site $($websiteSettings.siteName) $siteFilePath ($websiteSettings.bindings) $($websiteSettings.appPool.name) -updateIfFound
 
-    Set-IISAuthentication $authenticationType true $($websiteSettings.siteName)
+    Set-IISAuthentication $websiteSettings.iisAuthenticationTypes true $websiteSettings.siteName
     if ( ($websiteSettings.appPath.length -gt 0) -and ($websiteSettings.appPath -ne "/") -and ($websiteSettings.appPath -ne "\") ) {
         New-Application $($websiteSettings.siteName) $($websiteSettings.appPath) $appFilePath $($websiteSettings.appPool.name) -updateIfFound
 
         $siteAndUriPath = $($websiteSettings.siteName) + "/" + $($websiteSettings.appPath)
-        Set-IISAuthentication $authenticationType true $($siteAndUriPath)
+        Set-IISAuthentication $websiteSettings.iisAuthenticationTypes true $siteAndUriPath
     }
 
     $msgs.msg_web_app_success -f $websiteSettings.siteName
@@ -63,10 +62,12 @@ function Install-WebApplication() {
 if(!("AuthType" -as [Type])){
  Add-Type -TypeDefinition @'
     public enum AuthType{
-        WindowsAuthentication,
-        BasicAuthentication,
-        AnonymousAuthentication,
-        FormsAuthentication
+        windowsAuthentication,
+        basicAuthentication,
+        anonymousAuthentication,
+        clientCertificateMappingAuthentication,
+        digestAuthentication,
+        iisClientCertificateMappingAuthentication
     }
 '@
 }

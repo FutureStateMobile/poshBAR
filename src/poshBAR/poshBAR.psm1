@@ -164,8 +164,7 @@ convertfrom-stringdata @"
     msg_updating_assembly = Updating AssemblyVersion to '{0}'. Updating AssemblyFileVersion to '{1}'. Updating AssemblyInformationalVersion to '{2}'.
     msg_not_updating = Not updating {0}, you must specify the '-updateIfFound' if you wish to update the {0} settings.
     msg_custom_header = Setting custom header '{0}' on site '{1}' to value '{2}'.
-    msg_disable_anon_auth = Disabling Anonymous Authentication for '{0}'.
-    msg_web_app_success = Successfully deploy Web Application '{0}'.
+    msg_web_app_success = Successfully deployed Web Application '{0}'.
     msg_copying_content = Copying {0} content to {1}.
     msg_use_machine_environment = Using config for machine {0} instead of the {1} environment.
     msg_octopus_overrides = Checking for Octopus Overrides for environment '{0}'.
@@ -178,5 +177,7 @@ convertfrom-stringdata @"
     msg_add_host_entry = Adding host entry for '{0}' into the hosts file.
     msg_validate_host_entry = Validating host entry for '{0} in the hosts file'
     msg_loopback_note = note: we're not disabling the loopback check all together, we are simply adding '{0}' to an allowed list.
+    msg_disable_auth = Updating all authentication types for {0} to false.
+    msg_update_auth = Updating {0} for {1} to {2}
 "@
 }
