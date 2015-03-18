@@ -5,19 +5,21 @@ function Invoke-WebConfigTransform
         [Parameter(Position=1, Mandatory=$true)] [string] $env
     )
 
-    $xml = "$pathToWebConfig\web.config"
-    $xdt = "$pathToWebConfig\web.$env.config"
+    $xml = join-path $pathToWebConfig "web.config"
+    $xdt = join-path $pathToWebConfig "web.$env.config"
 
-    if (!$xml -or !(Test-Path -path $xml -PathType Leaf)) {
+    if (!(Test-Path -path $xml -PathType Leaf)) {
         Write-Host "There is no web.config to transform at $pathToWebConfig."
+        return
     }
 
-    if (!$xml -or !(Test-Path -path $xml -PathType Leaf)) {
+    if (!(Test-Path -path $xml -PathType Leaf)) {
         Write-Host "There is no web.$env.config transform file at $pathToWebConfig."
+        return
     }
 
     Write-Host "Transforming $xml with $xdt"
-    $here  = resolve-path "."
+    $here  = Split-Path $script:MyInvocation.MyCommand.Path
     Add-Type -LiteralPath "$here\Microsoft.Web.XmlTransform.dll"
     psUsing ($srcXml = new Microsoft.Web.XmlTransform.XmlTransformableDocument) {
         $srcXml.PreserveWhitespace = $true
