@@ -45,7 +45,7 @@ Push-Location $psScriptRoot
 . .\Test-RunAsAdmin.ps1
 . .\TextUtils.ps1
 . .\Update-AssemblyVersions.ps1
-. .\Using-Object.ps1
+. .\Use-Object.ps1
 . .\JsonConfig.ps1
 . .\XmlConfig.ps1
 . .\WindowsFeatures.ps1
@@ -140,7 +140,7 @@ Export-ModuleMember `
           'Update-JsonConfigValues',
           'Update-Site',
           'Update-XmlConfigValues',
-          'Using-Object'
+          'Use-Object'
           )
 
 

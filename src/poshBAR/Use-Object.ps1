@@ -1,4 +1,4 @@
-function Using-Object
+function Use-Object
 {
     [CmdletBinding()]
     param (
@@ -18,4 +18,4 @@ function Using-Object
         }
     }
 }
-Set-Alias psUsing Using-Object
+Set-Alias psUsing Use-Object
