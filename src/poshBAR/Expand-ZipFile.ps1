@@ -28,18 +28,27 @@ function Expand-ZipFile
     )
 
     $ErrorActionPreference = "Stop"
+    $guid = [guid]::NewGuid()
+    $tempDir = "$($env:TEMP)\$guid"
+    md $tempDir | Out-null
 
     if (!(Test-Path $destinationFolder)) {
         md $destinationFolder | Out-Null
     } else {
-        Remove-Item "$destinationFolder\*" -recurse -Force
+        Remove-Item "$destinationFolder\*" -recurse -Force -ea silentlyContinue
     }
 
     try {
         [System.Reflection.Assembly]::LoadWithPartialName("System.IO.Compression.FileSystem") | Out-Null
-        [System.IO.Compression.ZipFile]::ExtractToDirectory($zipFileName, $destinationFolder)
+        [System.IO.Compression.ZipFile]::ExtractToDirectory($zipFileName, $tempDir)
+
+        Get-ChildItem -Path $tempDir | % { 
+          Copy-Item $_.fullname "$destinationFolder" -Recurse -ea silentlyContinue
+        }
+
+        rm -r $tempDir
     } catch {
-    
+        Write-Host "Using the slower Shell Application method for unzipping"
         # This is slower, but is a good fallback if System.IO.Compression is not available
         $newZipFileName = $zipFileName + ".zip"
         Rename-Item $zipFileName $newZipFileName
@@ -55,5 +64,9 @@ function Expand-ZipFile
         $dst     = $destinationFolder
 
         Rename-Item $newZipFileName $zipFileName
+    } finally {
+        if ($archive) {
+            $archive.Dispose()
+        }
     }
 }
