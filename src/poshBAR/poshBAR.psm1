@@ -2,6 +2,9 @@ $version = "1.1.1" # contains the current version of poshBAR
 
 Write-Host "`nposhBAR version $version `nCopyright ($([char]0x00A9)) Future State Mobile Inc. & Contributors`n"
 
+Remove-Item alias:new -ea SilentlyContinue
+Set-Alias new New-Object
+
 Push-Location $psScriptRoot
 
 . .\Add-HostsFileEntry.ps1
@@ -28,6 +31,7 @@ Push-Location $psScriptRoot
 . .\Invoke-ExternalCommand.ps1
 . .\Invoke-HealthCheck.ps1
 . .\Invoke-Using.ps1
+. .\Invoke-WebConfigTransform.ps1
 . .\MSBuild.ps1
 . .\Nuget.ps1
 . .\nUnit.ps1
@@ -41,6 +45,7 @@ Push-Location $psScriptRoot
 . .\Test-RunAsAdmin.ps1
 . .\TextUtils.ps1
 . .\Update-AssemblyVersions.ps1
+. .\Using-Object.ps1
 . .\JsonConfig.ps1
 . .\XmlConfig.ps1
 . .\WindowsFeatures.ps1
@@ -105,6 +110,7 @@ Export-ModuleMember `
           'Invoke-UrlDecode', 
           'Invoke-UrlEncode', 
           'Invoke-Using',
+          'Invoke-WebConfigTransform',
           'Invoke-XUnit',
           'Invoke-XUnitWithCoverage',
           'New-Application',
@@ -133,7 +139,8 @@ Export-ModuleMember `
           'Update-AssemblyVersions',
           'Update-JsonConfigValues',
           'Update-Site',
-          'Update-XmlConfigValues'
+          'Update-XmlConfigValues',
+          'Using-Object'
           )
 
 
