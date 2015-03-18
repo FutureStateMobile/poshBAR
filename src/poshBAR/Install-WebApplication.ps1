@@ -48,12 +48,8 @@ function Install-WebApplication() {
 
     New-Site $($websiteSettings.siteName) $siteFilePath ($websiteSettings.bindings) $($websiteSettings.appPool.name) -updateIfFound
 
-    Set-IISAuthentication $websiteSettings.iisAuthenticationTypes true $websiteSettings.siteName
     if ( ($websiteSettings.appPath.length -gt 0) -and ($websiteSettings.appPath -ne "/") -and ($websiteSettings.appPath -ne "\") ) {
         New-Application $($websiteSettings.siteName) $($websiteSettings.appPath) $appFilePath $($websiteSettings.appPool.name) -updateIfFound
-
-        $siteAndUriPath = $($websiteSettings.siteName) + "/" + $($websiteSettings.appPath)
-        Set-IISAuthentication $websiteSettings.iisAuthenticationTypes true $siteAndUriPath
     }
 
     $msgs.msg_web_app_success -f $websiteSettings.siteName
