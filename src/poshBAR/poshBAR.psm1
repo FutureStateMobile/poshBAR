@@ -30,8 +30,7 @@ Push-Location $psScriptRoot
 . .\Invoke-ElevatedCommand.ps1
 . .\Invoke-ExternalCommand.ps1
 . .\Invoke-HealthCheck.ps1
-. .\Invoke-Using.ps1
-. .\Invoke-WebConfigTransform.ps1
+. .\Invoke-XmlDocumentTransform.ps1
 . .\MSBuild.ps1
 . .\Nuget.ps1
 . .\nUnit.ps1
@@ -109,8 +108,7 @@ Export-ModuleMember `
           'Invoke-ToBase64', 
           'Invoke-UrlDecode', 
           'Invoke-UrlEncode', 
-          'Invoke-Using',
-          'Invoke-WebConfigTransform',
+          'Invoke-XmlDocumentTransform',
           'Invoke-XUnit',
           'Invoke-XUnitWithCoverage',
           'New-Application',

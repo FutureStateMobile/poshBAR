@@ -19,3 +19,4 @@ function Use-Object
     }
 }
 Set-Alias psUsing Use-Object
+Set-Alias Invoke-Using Use-Object
