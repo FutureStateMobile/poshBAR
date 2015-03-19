@@ -30,7 +30,6 @@ Push-Location $psScriptRoot
 . .\Invoke-ElevatedCommand.ps1
 . .\Invoke-ExternalCommand.ps1
 . .\Invoke-HealthCheck.ps1
-. .\Invoke-XmlDocumentTransform.ps1
 . .\MSBuild.ps1
 . .\Nuget.ps1
 . .\nUnit.ps1

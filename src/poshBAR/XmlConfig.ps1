@@ -104,7 +104,6 @@ function Update-XmlConfigValues
     .NOTES
         Nothing yet...
 #>
-
 function Add-XmlConfigValue
 {
     param( 
@@ -146,4 +145,91 @@ function Add-XmlConfigValue
 
 }
 
-Export-ModuleMember Add-ConfigValue
+<#
+    .DESCRIPTION
+        Will transform one XML doc with another using the standard xdt transform
+
+#>
+function Invoke-XmlDocumentTransform
+{
+    [CmdletBinding(DefaultParameterSetName="default")]
+    param(
+        [Parameter(Mandatory=$true, ParameterSetName='default', Position=0)] 
+        [Parameter(Mandatory=$true, ParameterSetName='Overload1', Position=0)] 
+        [System.Management.Automation.PathInfo] $xmlFilePathAndName,
+
+        [Parameter(Mandatory=$true, ParameterSetName='default', Position=1)]
+        [Parameter(Mandatory=$true, ParameterSetName='Overload1', Position=2)] 
+        [string] $environment,
+
+        [Parameter(Mandatory=$false, ParameterSetName='default', Position=2)]
+        [Parameter(Mandatory=$false, ParameterSetName='Overload1', Position=3)] 
+        [switch] $preventWrite,
+
+        [Parameter(Mandatory=$false, ParameterSetName='default', Position=3)]
+        [Parameter(Mandatory=$false, ParameterSetName='Overload1', Position=4)] 
+        [switch] $writeAsTempFile,
+
+        [Parameter(Mandatory=$true, ParameterSetName='Overload1', Position=1)]
+        [System.Management.Automation.PathInfo] [alias('xdt')] $xmlTransformFilePathAndName
+
+    )
+    
+    $xml = $xmlFilePathAndName
+    if (!(Test-Path -path $xml -PathType Leaf)) {
+        Write-Warning "There is no $xml to transform at $path."
+        return
+    }
+
+
+    switch($PsCmdlet.ParameterSetName){
+    
+        "Overload1" {
+            $xdtFile = [System.IO.Path]::GetFileName($xmlTransformFilePathAndName)
+            $xdt = $xmlTransformFilePathAndName
+            break
+        }
+
+        "default" { 
+            $path = [System.IO.Path]::GetDirectoryName($xmlFilePathAndName)
+            $xdtName = [System.IO.Path]::GetFileNameWithoutExtension("$xmlFilePathAndName")
+            $xdtExt = [System.IO.Path]::GetExtension("$xmlFilePathAndName")
+
+            $xdtFile = "$xdtName.$environment$xdtExt"
+            $xdt = join-path $path $xdtFile
+            break
+        }
+    }
+        
+    if (!(Test-Path -path $xdt -PathType Leaf)) {
+        Write-Warning "There is no $xdtFile transform file at $path."
+        return
+    }
+
+    Write-Host "Transforming '$xml' with '$xdt'."
+    $here  = Split-Path $script:MyInvocation.MyCommand.Path
+    Add-Type -LiteralPath "$here\Microsoft.Web.XmlTransform.dll"
+    psUsing ($srcXml = new Microsoft.Web.XmlTransform.XmlTransformableDocument) {
+        $srcXml.PreserveWhitespace = $true
+        $srcXml.Load($xml)
+
+        psUsing ($transXml = new Microsoft.Web.XmlTransform.XmlTransformation($xdt)) {
+            if(!$transXml.Apply($srcXml)){
+                throw "Transformation failed"
+            }
+
+            if(!$preventWrite.IsPresent){
+                if($writeAsTempFile.IsPresent){
+                    $srcXml.Save("$xml.temp")
+                } else {
+                    $srcXml.Save("$xml")
+                }
+            }
+
+            return $srcXml
+        }
+    }
+}
+
+
+set-alias xdt Invoke-XmlDocumentTransform
