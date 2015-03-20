@@ -1,3 +1,5 @@
+$here  = Split-Path $script:MyInvocation.MyCommand.Path
+Add-Type -path "$here\Microsoft.Web.XmlTransform.dll"
 <#
     .DESCRIPTION
         Will parse an XML config file and replace the values at a xpath expression with the value passed in.
@@ -175,11 +177,7 @@ function Invoke-XmlDocumentTransform
         [Parameter(Mandatory=$false, Position=4, ParameterSetName='path')] 
         [Parameter(Mandatory=$false, Position=4, ParameterSetName='doc')] 
         [switch] $writeAsTempFile
-    )
-
-    $here  = Split-Path $script:MyInvocation.MyCommand.Path
-    Add-Type -LiteralPath "$here\Microsoft.Web.XmlTransform.dll"
-    
+    )    
 
 
     if($xmlTransformFilePathAndName){
@@ -215,6 +213,7 @@ function Invoke-XmlDocumentTransform
             $srcXml.Load($xml)
 
             psUsing ($transXml = new Microsoft.Web.XmlTransform.XmlTransformation($xdt)) {
+                Write-Host "Transforming '$xml' with '$xdt'"
                 if(!$transXml.Apply($srcXml)){
                     throw "Transformation failed"
                 }
