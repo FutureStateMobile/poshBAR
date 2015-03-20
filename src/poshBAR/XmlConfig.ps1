@@ -184,6 +184,7 @@ function Invoke-XmlDocumentTransform
 
     if($xmlTransformFilePathAndName){
         $path = [System.IO.Path]::GetDirectoryName($xmlTransformFilePathAndName)
+        $xdtExt = [System.IO.Path]::GetExtension($xmlTransformFilePathAndName)
         $xdtFile = [System.IO.Path]::GetFileName($xmlTransformFilePathAndName)
         $xdt = $xmlTransformFilePathAndName
     }
@@ -237,11 +238,12 @@ function Invoke-XmlDocumentTransform
                     throw "Transformation failed"
                 }
 
+                $x = "$path\$environment$xdtExt"
                 if(!$preventWrite.IsPresent){
                     if($writeAsTempFile.IsPresent){
-                        $xmlTransformableDocument.Save("$xdt.temp")
+                        $xmlTransformableDocument.Save("$x.temp")
                     } else {
-                        $xmlTransformableDocument.Save("$xdt")
+                        $xmlTransformableDocument.Save("$x")
                     }
                 }
 
