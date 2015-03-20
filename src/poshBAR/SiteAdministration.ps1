@@ -52,7 +52,7 @@ function New-Site{
             Update-Site $siteName $sitePath $bindings $appPoolName
         } else {
             # Message
-            $msgs.msg_not_updating -f "Site"
+            Write-Host ($msgs.msg_not_updating -f "Site")
         }
     }
 }

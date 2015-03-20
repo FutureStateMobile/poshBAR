@@ -47,10 +47,10 @@ function Update-XmlConfigValues
                 if ($node.HasAttribute($attributeName)) {
                     $node.SetAttribute($attributeName, $value)
                     #write message
-                    $msgs.msg_updated_to -f "$xpath->$attributeName", $value
+                    Write-Host ($msgs.msg_updated_to -f "$xpath->$attributeName", $value)
                 } else {
                     #write message
-                    $msgs.msg_wasnt_found -f $attributeName
+                    Write-Host ($msgs.msg_wasnt_found -f $attributeName)
                 }
             } else {
                 if ($node.NodeType -eq "Element") {
@@ -60,18 +60,18 @@ function Update-XmlConfigValues
                     $node.Value = $value
                 }
                 #write message
-                $msgs.msg_updated_to -f "$xpath", $value
+                Write-Host ($msgs.msg_updated_to -f "$xpath", $value)
             }
         }
         else {
             #write message
-            $msgs.msg_wasnt_found -f $xpath
+            Write-Host ($msgs.msg_wasnt_found -f $xpath)
         }
     }
 
     if($private:count -eq 0) {
         #write message
-        $msgs.msg_wasnt_found -f $xpath
+        Write-Host ($msgs.msg_wasnt_found -f $xpath)
     }
 
     $doc.Save($configFile)
