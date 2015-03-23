@@ -22,13 +22,13 @@
 function Invoke-AspNetRegIIS {
     [CmdletBinding()]
     param(
-        [parameter(Mandatory=$false, ParameterSetName='i')] [switch] $i,
-        [parameter(Mandatory=$false, ParameterSetName='ir')] [switch] $ir,
-        [parameter(Mandatory=$false, ParameterSetName='iur')] [switch] $iur,
+        [parameter(Mandatory=$false, ParameterSetName='-i')] [switch] $i,
+        [parameter(Mandatory=$false, ParameterSetName='-ir')] [switch] $ir,
+        [parameter(Mandatory=$false, ParameterSetName='-iur')] [switch] $iur,
         
-        [parameter(Mandatory=$false, ParameterSetName='i')] [ValidateSet(1,1.1,2.0,3.0,3.5,4.0,4.5)] [double] 
-        [parameter(Mandatory=$false, ParameterSetName='ir')] [ValidateSet(1,1.1,2.0,3.0,3.5,4.0,4.5)] [double] 
-        [parameter(Mandatory=$false, ParameterSetName='iur')] [ValidateSet(1,1.1,2.0,3.0,3.5,4.0,4.5)] [double] 
+        [parameter(Mandatory=$false, ParameterSetName='-i')] [ValidateSet(1,1.1,2.0,3.0,3.5,4.0,4.5)] [double] 
+        [parameter(Mandatory=$false, ParameterSetName='-ir')] [ValidateSet(1,1.1,2.0,3.0,3.5,4.0,4.5)] [double] 
+        [parameter(Mandatory=$false, ParameterSetName='-iur')] [ValidateSet(1,1.1,2.0,3.0,3.5,4.0,4.5)] [double] 
         $framework = 4.0
     )
     $ErrorActionPreference = "Stop"
@@ -70,15 +70,8 @@ function Invoke-AspNetRegIIS {
         throw 'aspnet_regiis.exe was not found on this machine.'
     }
 
-    switch($PsCmdlet.ParameterSetName){
-        'i'   {$argument = '-i'}
-        'ir'  {$argument = '-ir'}
-        'iur' {$argument = '-iur'}
-        default {$argument = '-i'}
-    }
-
     try{
-        Write-Host "Executing: '$path\aspnet_regiis.exe $argument'." -NoNewline
+        Write-Host "Executing: '$path\aspnet_regiis.exe $($PsCmdlet.ParameterSetName)'." -NoNewline
         Exec {"$path\aspnet_regiis.exe $argument"} "An error occurred while trying to register IIS." | out-null
         Write-Host "`tDone" -f Green
     } catch {

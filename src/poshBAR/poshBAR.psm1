@@ -120,7 +120,7 @@ Export-ModuleMember `
           'Remove-Application',
           'Remove-AppPool',
           'Remove-Site',
-          'RequiredFeatures',
+          'RequiredWindowsFeatures',
           'Set-IISAuthentication',
           'Set-IISCustomHeader',
           'Set-PowershellScriptSigning',
