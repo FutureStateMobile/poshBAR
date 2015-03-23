@@ -31,6 +31,8 @@ function Invoke-AspNetRegIIS {
         [parameter(Mandatory=$false, ParameterSetName='iur')] [ValidateSet(1,1.1,2.0,3.0,3.5,4.0,4.5)] [double] 
         $framework = 4.0
     )
+    $ErrorActionPreference = "Stop"
+    Write-Host "Ensuring ASP.NET version $framework is registered in IIS." -NoNewLine
 
     # all possible locations for aspnet_regiis.exe
     $v1   = "$env:WINDIR\.NET\Framework\v1.0.3705"               # .NET Framework version 1
@@ -64,6 +66,7 @@ function Invoke-AspNetRegIIS {
     }
          
     if(-not (Test-Path "$path\aspnet_regiis.exe")){
+        Write-Host '' # just inputs a carriage return if an error occurs
         throw 'aspnet_regiis.exe was not found on this machine.'
     }
 
@@ -74,7 +77,12 @@ function Invoke-AspNetRegIIS {
         default {$argument = '-i'}
     }
 
-    Exec {"$path\aspnet_regiis.exe $argument"} "An error occurred while trying to register IIS."
-     
+    try{
+        Exec {"$path\aspnet_regiis.exe $argument"} "An error occurred while trying to register IIS."
+        Write-Host "`tDone" -f Green
+    } catch {
+        Write-Host '' # just inputs a carriage return if an error occurs
+        throw $_
+    }
 }
 Set-Alias aspnet_regiis Invoke-AspNetRegIIS
