@@ -33,10 +33,10 @@ function Expand-NugetPackage
 
     Expand-ZipFile $nugetPackageName $destinationFolder
 
-    Remove-Item "$destinationFolder\``[Content_Types``].xml"
-    Remove-Item "$destinationFolder\*.nuspec"
-    Remove-Item "$destinationFolder\_rels" -recurse
-    Remove-Item "$destinationFolder\package" -recurse
+    Remove-Item "$destinationFolder\``[Content_Types``].xml" -ea SilentlyContinue
+    Remove-Item "$destinationFolder\*.nuspec" -ea SilentlyContinue
+    Remove-Item "$destinationFolder\_rels" -recurse -ea SilentlyContinue
+    Remove-Item "$destinationFolder\package" -recurse -ea SilentlyContinue
 
     Get-ChildItem $destinationFolder -recurse | where {$_.Mode -match "d"} | move-item -ea SilentlyContinue -dest { ( Invoke-UrlDecode $_.FullName ) }
     Get-ChildItem $destinationFolder -Recurse | Where-Object { !$_.PSIsContainer } |  Rename-Item -ea SilentlyContinue -NewName { Invoke-UrlDecode $_.Name }

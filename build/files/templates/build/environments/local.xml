@@ -17,8 +17,20 @@
             </bindings>
             <siteName>local.MY-WEBSITE.com</siteName>
             <appPath>/</appPath>
-            <!-- valid authenticationTypes are: [anonymousAuthentication, basicAuthentication, formsAuthentication, windowsAuthentication]-->
-            <authenticationType>anonymousAuthentication</authenticationType>
+            <!-- valid IIS Security Authentication types are: [anonymousAuthentication, basicAuthentication, clientCertificateMappingAuthentication, 
+                                                               digestAuthentication, iisClientCertificateMappingAuthentication, windowsAuthentication]-->
+            <iisAuthenticationTypes>anonymousAuthentication</iisAuthenticationTypes>
+            <systemWeb>
+                <authentication>
+                    <!-- valid asp.net Authentication modes are: [Windows, Forms, Passport, None]-->
+                    <mode>Windows</mode>
+                    <timeout>10</timeout>
+                </authentication>
+                <authorization>
+                    <!-- valid web.Config elements: [allowedUsers, allowedRoles, allowedVerbs] -->
+                    <allowedUsers>*</allowedUsers>
+                </authorization>
+            </systemWeb>
             <appPool>
                 <name>TransCanada.CLS.App</name>
                 <!-- valid identityTypes are: [LocalSystem, LocalService, NetworkService, SpecificUser, ApplicationPoolIdentity] -->

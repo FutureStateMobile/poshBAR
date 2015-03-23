@@ -8,20 +8,25 @@ function Install-WindowsFeatures{
     
     Assert($features.Count -ne 0) ($msgs.error_must_supply_a_feature)
     $features | % {
-        $tempVal = $_
-        $f = Get-WindowsFeatures | ? {$_.feature -eq $tempVal}
-        Write-Host ($msgs.msg_enabling_windows_feature -f $f.feature) -NoNewline
-        if($f.state -ne "enabled"){
-            try{
-                Exec{Dism /online /Enable-Feature /FeatureName:$($f.feature) /NoRestart /Quiet} 
-                Write-Host "`tDone" -f Green
-            }catch{
-                # Trying again with the All keyword because probably a dependency is missing.
-                Exec{Dism /online /Enable-Feature /FeatureName:$($f.feature) /NoRestart /Quiet /All} 
-                Write-Host "`tDone (with dependencies)" -f Green
+        $__ = $_.Replace('?','')
+        $f = Get-WindowsFeatures | ? {$_.feature -eq $__}
+        
+        if([string]::IsNullOrEmpty($f.feature)){
+            Write-Warning "$__ is not a valid feature for this version of Windows."
+        } else {        
+            Write-Host ($msgs.msg_enabling_windows_feature -f $f.feature) -NoNewline
+            if($f.state -ne "enabled"){
+                try{
+                    Exec{Dism /online /Enable-Feature /FeatureName:$($f.feature) /NoRestart /Quiet} 
+                    Write-Host "`tDone" -f Green
+                }catch{
+                    # Trying again with the All keyword because probably a dependency is missing.
+                    Exec{Dism /online /Enable-Feature /FeatureName:$($f.feature) /NoRestart /Quiet /All} 
+                    Write-Host "`tDone (with dependencies)" -f Green
+                }
+            } else {
+                Write-Host "`tExists." -f Cyan
             }
-        } else {
-            Write-Host "`tExists." -f Cyan
         }
     }
 }
@@ -47,8 +52,8 @@ function Assert-WindowsFeatures {
     Get-WindowsFeatures | %{
         $featureList+=$_.Feature
     }
-    
-    if(-not ($featureList -contains $_)){
+
+    if(-not ($featureList -contains $_) -and -not($_.EndsWith("?"))){
         throw $msgs.error_feature_set_invalid -f $_, $($featureList -join ', ')
         Exit 1
     }

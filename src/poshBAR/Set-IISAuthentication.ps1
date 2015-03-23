@@ -5,7 +5,7 @@
     .EXAMPLE
         Set-IISAuthentication "windowsAuthentication" true "apps.tcpl.ca/MyApp"
 
-    .PARAMETER settingName
+    .PARAMETER authTypes
         The name of the Authentication setting that we are changing
 
     .PARAMETER value
@@ -13,6 +13,9 @@
 
     .PARAMETER location
         The IIS location of the Application or Website that we want to change the setting on.
+
+    .PARAMETER disableOthers
+        Disables all other authentication types except for the ones contained in the array.
 
     .SYNOPSIS
         Will set the specified Authentication value for the specified applicaiton or website.
@@ -22,43 +25,52 @@ function Set-IISAuthentication
 {
     [CmdletBinding()]
     param(
-        [parameter(Mandatory=$true,position=0)] [AuthType] $settingName,
+        [parameter(Mandatory=$true,position=0)] [AuthType[]] [AllowNull()] $authTypes,
         [parameter(Mandatory=$true,position=1)] [PSObject] $value,
-        [parameter(Mandatory=$true,position=2)] [string] $location
+        [parameter(Mandatory=$true,position=2)] [string] $location,
+        [parameter(Mandatory=$false, position=3)] [switch] $disableOthers
     )
 
     $ErrorActionPreference = "Stop"
     Import-Module "WebAdministration"
-    Write-Host ($msgs.msg_updating_to -f $settingName, $value) -NoNewLine
     
-    Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/$settingName" -name enabled -value $value -PSPath "IIS:\" -location $location
-    Write-Host "`tDone" -f Green
-
-    if ($settingName -ne "anonymousAuthentication")
-    {
-        Write-Host ($msgs.msg_disable_anon_auth -f $location) -NoNewLine
-        Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/anonymousAuthentication" -name enabled -value "false" -PSPath "IIS:\" -location $location
+    if($disableOthers.IsPresent){
+        #disable all types
+        Write-Host ($msgs.msg_disable_auth -f $location) -NoNewLine
+        Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/anonymousAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location
+        Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/basicAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location
+        Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/clientCertificateMappingAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location
+        Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/digestAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location
+        Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/iisClientCertificateMappingAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location
+        Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/windowsAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location
         Write-Host "`tDone" -f Green
     }
 
-    # Disable Negotiate (Kerberos) and use only NTLM
-    # if ($settingName -eq "windowsAuthentication")
-    # {
-    #     Remove-WebConfigurationProperty -filter "/system.webServer/security/authentication/windowsAuthentication/providers" -name "." -PSPath "IIS:\" -location $location
-    #     Add-WebConfiguration -filter "/system.webServer/security/authentication/windowsAuthentication/providers" -PSPath "IIS:\" -location $location -Value "NTLM"
-    #     # if we ever need Kerberos then this would need to be added back 
-    #     # Add-WebConfiguration-filter system.webServer/security/authentication/windowsAuthentication/providers -PSPath "IIS:\" -location $location -Value "Negotiate"
-    # }
+    # no need to check if $authTypes is null, if it is, nothing happens.
+    $authTypes | % {
+        Write-Host ($msgs.msg_update_auth -f $_, $location, $value) -NoNewLine
+        Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/$_" -name enabled -value $value -PSPath "IIS:\" -location $location
+        Write-Host "`tDone" -f Green
+    }
+      
 
+    # turn off anonymous auth if it's not part of the collection.
+    if ($authTypes -notContains "anonymousAuthentication")
+    {
+         Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/anonymousAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location
+    }
+    
 }
 
 if(!("AuthType" -as [Type])){
  Add-Type -TypeDefinition @'
     public enum AuthType{
-        WindowsAuthentication,
-        BasicAuthentication,
-        AnonymousAuthentication,
-        FormsAuthentication
+        anonymousAuthentication,
+        basicAuthentication,
+        clientCertificateMappingAuthentication,
+        digestAuthentication,
+        iisClientCertificateMappingAuthentication,
+        windowsAuthentication    
     }
 '@
 }

@@ -51,8 +51,7 @@ function Get-EnvironmentSettings
     }
 
     if($OctopusParameters){
-        # Message
-        $msgs.msg_octopus_overrides -f $environment
+        Write-Host ($msgs.msg_octopus_overrides -f $environment) 
         foreach($key in $OctopusParameters.Keys)
         {
             $myXPath = "$nodeXPath/$($key.Replace(".", "/"))"
@@ -60,8 +59,7 @@ function Get-EnvironmentSettings
                 $node = $doc.SelectSingleNode($myXPath)
             
                 if($node){
-                    # Message
-                    $msgs.msg_overriding_to -f $key, $($OctopusParameters["$key"])
+                    Write-Host ($msgs.msg_overriding_to -f $key, $($OctopusParameters["$key"]))
                     $node.InnerText = $($OctopusParameters["$key"])
                 }
             } catch { 

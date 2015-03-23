@@ -51,8 +51,7 @@ function New-Application
         if ($updateIfFound.isPresent) {
             Update-Application $siteName $appName $appPath $appPoolName
         } else {
-            # Message
-            $msgs.msg_not_updating -f "Application"
+            Write-Host ($msgs.msg_not_updating -f "Application")
         }
     }
 }
