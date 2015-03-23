@@ -32,7 +32,7 @@ function Invoke-AspNetRegIIS {
         $framework = 4.0
     )
     $ErrorActionPreference = "Stop"
-    Write-Host "Ensuring ASP.NET version $framework is registered in IIS." -NoNewLine
+    Write-Host "Ensuring ASP.NET version $framework is registered in IIS."
 
     # all possible locations for aspnet_regiis.exe
     $v1   = "$env:WINDIR\.NET\Framework\v1.0.3705"               # .NET Framework version 1
@@ -78,7 +78,8 @@ function Invoke-AspNetRegIIS {
     }
 
     try{
-        Exec {"$path\aspnet_regiis.exe $argument"} "An error occurred while trying to register IIS."
+        Write-Host "Executing: '$path\aspnet_regiis.exe $argument'." -NoNewline
+        Exec {"$path\aspnet_regiis.exe $argument"} "An error occurred while trying to register IIS." | out-null
         Write-Host "`tDone" -f Green
     } catch {
         Write-Host '' # just inputs a carriage return if an error occurs
