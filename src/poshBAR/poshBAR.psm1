@@ -25,6 +25,7 @@ Push-Location $psScriptRoot
 . .\Grunt.ps1
 . .\Helpers.ps1
 . .\Install-WebApplication.ps1
+. .\Invoke-AspNetRegIIS.ps1
 . .\Invoke-Deployment.ps1
 . .\Invoke-DeployOctopusNugetPackage.ps1
 . .\Invoke-ElevatedCommand.ps1
@@ -82,6 +83,7 @@ Export-ModuleMember `
           'Get-WindowsFeatures',
           'Install-WebApplication',
           'Install-WindowsFeatures',
+          'Invoke-AspNetRegIIS',
           'Invoke-BulkCopy',
           'Invoke-Chutzpah',
           'Invoke-CleanMSBuild',
