@@ -187,7 +187,7 @@ function Add-XmlTransformToPath {
         return
     }
 
-    $nuspecToolsPath = "$here\..\tools"
+    $nuspecToolsPath = "$here\..\..\tools"
     if(Test-Path $nuspecToolsPath) {
         $env:Path += $(Resolve-Path $nuspecToolsPath)
         return
