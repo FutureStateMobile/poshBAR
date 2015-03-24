@@ -26,9 +26,9 @@ function Invoke-AspNetRegIIS {
         [parameter(Mandatory=$false, ParameterSetName='-ir')] [switch] $ir,
         [parameter(Mandatory=$false, ParameterSetName='-iur')] [switch] $iur,
         
-        [parameter(Mandatory=$false, ParameterSetName='-i')] [ValidateSet(1,1.1,2.0,3.0,3.5,4.0,4.5)] [double] 
-        [parameter(Mandatory=$false, ParameterSetName='-ir')] [ValidateSet(1,1.1,2.0,3.0,3.5,4.0,4.5)] [double] 
-        [parameter(Mandatory=$false, ParameterSetName='-iur')] [ValidateSet(1,1.1,2.0,3.0,3.5,4.0,4.5)] [double] 
+        [parameter(Mandatory=$false, ParameterSetName='-i')] [ValidateSet(1.0,1.1,2.0,3.0,3.5,4.0,4.5)] [double] 
+        [parameter(Mandatory=$false, ParameterSetName='-ir')] [ValidateSet(1.0,1.1,2.0,3.0,3.5,4.0,4.5)] [double] 
+        [parameter(Mandatory=$false, ParameterSetName='-iur')] [ValidateSet(1.0,1.1,2.0,3.0,3.5,4.0,4.5)] [double] 
         $framework = 4.0
     )
     $ErrorActionPreference = "Stop"
@@ -45,7 +45,7 @@ function Invoke-AspNetRegIIS {
 
     if($ENV:PROCESSOR_ARCHITECTURE -eq 'amd64'){
         switch($framework){
-            1   { $path = $v1;break}
+            1.0 { $path = $v1;break}
             1.1 { $path = $v1_1;break}
             2.0 { $path = $v2_64;break}
             3.0 { $path = $v2_64;break}
@@ -55,7 +55,7 @@ function Invoke-AspNetRegIIS {
         }
     } else {
         switch($framework){
-            1   { $path = $v1;break}
+            1.0 { $path = $v1;break}
             1.1 { $path = $v1_1;break}
             2.0 { $path = $v2_32;break}
             3.0 { $path = $v2_32;break}

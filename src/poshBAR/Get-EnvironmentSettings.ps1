@@ -45,7 +45,10 @@ function Get-EnvironmentSettings
 
     if (Test-Path "$environmentsDir\$($computerName).xml") {
         Write-Host ($msgs.msg_use_machine_environment -f $computerName, $environment) -f Magenta
-        $doc.Load("$environmentsDir\$($computerName).xml")
+        Invoke-XmlDocumentTransform $environment "$environmentsDir\$($environment).xml" "$environmentsDir\$($computerName).xml" -writeAsTempFile | out-null
+
+        $doc.Load("$environmentsDir\$($environment).xml.temp")
+        rm "$environmentsDir\$($environment).xml.temp"
     } else {
         $doc.Load("$environmentsDir\$($environment).xml")
     }
