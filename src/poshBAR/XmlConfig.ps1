@@ -162,12 +162,38 @@ function Invoke-XmlDocumentTransform
         [Parameter(Mandatory=$true, Position=2)]
         [string] $transformPathAndFile,
         
-        [Parameter(Mandatory=$true, Position=3)] 
-        [switch] $outputPathAndFile
+        [Parameter(Mandatory=$false, Position=3)] 
+        [string] $outputPathAndFile
     )    
-    $xmlTransformPath
+    Add-XmlTransformToPath
 
+    $outputPathAndFile = if($outputPathAndFile) {$outputPathAndFile} else {$inputPathAndFile}
     Exec { xmltransform -i $inputPathAndFile -t $transformPathAndFile -o $outputPathAndFile } "Could not invoke xmltransform, make sure it's found in `$env:PATH."
+}
+
+function Add-XmlTransformToPath {
+
+    if($env:Path -like '*xmltransform.*' ) { return }
+
+    if($poshbar.XmlTransformPath -and (Test-Path $poshbar.XmlTransformPath)){
+        $env:Path += ";$($poshbar.XmlTransformPath)"
+        return
+    }
+
+    $here = Split-Path $script:MyInvocation.MyCommand.Path
+    $packagePath = "$here\..\..\..\xmltransform.*\tools"
+    if(Test-Path $packagePath) {
+        $env:Path += $(Resolve-Path $packagePath)
+        return
+    }
+
+    $nuspecToolsPath = "$here\..\tools"
+    if(Test-Path $nuspecToolsPath) {
+        $env:Path += $(Resolve-Path $nuspecToolsPath)
+        return
+    }
+
+    throw 'Could not find XmlTransform, please specify it to `$poshbar["XmlTransformPath"]'
 }
 
 set-alias xdt Invoke-XmlDocumentTransform
