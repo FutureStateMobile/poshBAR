@@ -161,14 +161,11 @@ function Invoke-XmlDocumentTransform
         [Parameter(Mandatory=$true, Position=1)] 
         [string] $inputPathAndFile,
         
-        [Parameter(Mandatory=$false, Position=2)]
+        [Parameter(Mandatory=$true, Position=2)]
         [string] $transformPathAndFile,
         
-        [Parameter(Mandatory=$false, Position=3)] 
-        [switch] $outputPathAndFile,
-        
-        [Parameter(Mandatory=$false, Position=4)] 
-        [switch] $writeAsTempFile
+        [Parameter(Mandatory=$true, Position=3)] 
+        [switch] $outputPathAndFile
     )    
     $xmlTransformPath
 
