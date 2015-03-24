@@ -176,20 +176,21 @@ function Add-XmlTransformToPath {
     if($env:Path -like '*xmltransform.*' ) { return }
 
     if($poshbar.XmlTransformPath -and (Test-Path $poshbar.XmlTransformPath)){
-        $env:Path += ";$($poshbar.XmlTransformPath)"
+
+        $env:Path += ";$(Resolve-Path $poshbar.XmlTransformPath)"
         return
     }
 
     $here = Split-Path $script:MyInvocation.MyCommand.Path
     $packagePath = "$here\..\..\..\xmltransform.*\tools"
     if(Test-Path $packagePath) {
-        $env:Path += $(Resolve-Path $packagePath)
+        $env:Path += ";$(Resolve-Path $packagePath)"
         return
     }
 
     $nuspecToolsPath = "$here\..\..\tools"
     if(Test-Path $nuspecToolsPath) {
-        $env:Path += $(Resolve-Path $nuspecToolsPath)
+        $env:Path += ";$(Resolve-Path $nuspecToolsPath)"
         return
     }
 
