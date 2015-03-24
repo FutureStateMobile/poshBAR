@@ -1,5 +1,3 @@
-$here  = Split-Path $script:MyInvocation.MyCommand.Path
-Add-Type -path "$here\Microsoft.Web.XmlTransform.dll"
 <#
     .DESCRIPTION
         Will parse an XML config file and replace the values at a xpath expression with the value passed in.
