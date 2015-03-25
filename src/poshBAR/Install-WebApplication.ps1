@@ -27,7 +27,8 @@ function Install-WebApplication() {
     }
 
     Write-Host ($msgs.msg_copying_content -f $websiteSettings.siteName, $appFilePath) -NoNewLine
-    Copy-Item "$baseDir\website\*" $($appFilePath) -Recurse -Force
+    # copy the website over, but be sure to exclude environment specific web configs.
+    Copy-Item "$baseDir\website\*" $($appFilePath) -Exclude 'web.*.config'  -Recurse -Force 
     Write-Host "`tDone" -f Green
 
     # Site Permissions

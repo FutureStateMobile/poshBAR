@@ -34,7 +34,8 @@ function New-AppPool{
         [parameter(Mandatory=$false,position=3)] [string] $username,
         [parameter(Mandatory=$false,position=4)] [string] $password,
         [parameter(Mandatory=$false,position=5)] [PipelineMode] $managedPipelineMode = [PipelineMode]::Integrated,
-        [parameter(Mandatory=$false,position=6)] [string] $managedRuntimeVersion = "v4.0"
+        [parameter(Mandatory=$false,position=6)] [string] $managedRuntimeVersion = "v4.0",
+        [parameter(Mandatory=$false,position=7)] [switch] $alwaysRunning
     )
 
     $exists = Confirm-AppPoolExists $appPoolName
@@ -42,16 +43,17 @@ function New-AppPool{
     if (!$exists){
         Write-Host "Creating AppPool: $appPoolName" -NoNewLine
         $newAppPool = "$appcmd add APPPOOL"
-        $newAppPool = "$newAppPool /name:$appPoolName"
-        $newAppPool = "$newAppPool /processModel.identityType:$appPoolIdentityType"
-        $newAppPool = "$newAppPool /processModel.maxProcesses:$maxProcesses"
-        $newAppPool = "$newAppPool /managedPipelineMode:$managedPipelineMode"
-        $newAppPool = "$newAppPool /managedRuntimeVersion:$managedRuntimeVersion"
-        $newAppPool = "$newAppPool /autoStart:true"
+        $newAppPool += " /name:$appPoolName"
+        $newAppPool += " /processModel.identityType:$appPoolIdentityType"
+        $newAppPool += " /processModel.maxProcesses:$maxProcesses"
+        $newAppPool += " /managedPipelineMode:$managedPipelineMode"
+        $newAppPool += " /managedRuntimeVersion:$managedRuntimeVersion"
+        $newAppPool += ' /autoStart:true'
+        $newAppPool += if($alwaysRunning.IsPresent) {' /startMode:AlwaysRunning'}
     
         if ( $appPoolIdentityType -eq "SpecificUser" ){
-            $newAppPool = "$newAppPool /processModel.userName:$username"
-            $newAppPool = "$newAppPool /processModel.password:$password"
+            $newAppPool += " /processModel.userName:$username"
+            $newAppPool += " /processModel.password:$password"
         }
 
         Invoke-Expression $newAppPool | Out-Null
@@ -69,7 +71,8 @@ function Update-AppPool{
         [parameter(Mandatory=$false,position=3)] [string] $username,
         [parameter(Mandatory=$false,position=4)] [string] $password,
         [parameter(Mandatory=$false,position=5)] [string] $managedPipelineMode = [PipelineMode]::Integrated,
-        [parameter(Mandatory=$false,position=6)] [string] $managedRuntimeVersion = "v4.0"
+        [parameter(Mandatory=$false,position=6)] [string] $managedRuntimeVersion = "v4.0",
+        [parameter(Mandatory=$false,position=7)] [switch] $alwaysRunning
     )
 
     $exists = Confirm-AppPoolExists $appPoolName
@@ -77,15 +80,16 @@ function Update-AppPool{
     if ($exists){
         Write-Host "Updating AppPool: $appPoolName" -NoNewLine
         $updateAppPool = "$appcmd set APPPOOL $appPoolName"
-        $updateAppPool = "$updateAppPool /processModel.identityType:$appPoolIdentityType"
-        $updateAppPool = "$updateAppPool /processModel.maxProcesses:$maxProcesses"
-        $updateAppPool = "$updateAppPool /managedPipelineMode:$managedPipelineMode"
-        $updateAppPool = "$updateAppPool /managedRuntimeVersion:$managedRuntimeVersion"
-        $updateAppPool = "$updateAppPool /autoStart:true"
+        $updateAppPool += " /processModel.identityType:$appPoolIdentityType"
+        $updateAppPool += " /processModel.maxProcesses:$maxProcesses"
+        $updateAppPool += " /managedPipelineMode:$managedPipelineMode"
+        $updateAppPool += " /managedRuntimeVersion:$managedRuntimeVersion"
+        $updateAppPool += ' /autoStart:true'
+        $updateAppPool += if($alwaysRunning.IsPresent) {' /startMode:AlwaysRunning'}
     
         if ( $appPoolIdentityType -eq "SpecificUser" ){
-            $updateAppPool = "$updateAppPool /processModel.userName:$username"
-            $updateAppPool = "$updateAppPool /processModel.password:$password"
+            $updateAppPool += " /processModel.userName:$username"
+            $updateAppPool += " /processModel.password:$password"
         }
 
         Invoke-Expression $updateAppPool | Out-Null

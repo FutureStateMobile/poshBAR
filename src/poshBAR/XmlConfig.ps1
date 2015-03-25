@@ -1,5 +1,3 @@
-$here  = Split-Path $script:MyInvocation.MyCommand.Path
-Add-Type -path "$here\Microsoft.Web.XmlTransform.dll"
 <#
     .DESCRIPTION
         Will parse an XML config file and replace the values at a xpath expression with the value passed in.
@@ -156,100 +154,48 @@ function Invoke-XmlDocumentTransform
 {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true, Position=0, ParameterSetName='path')] 
-        [Parameter(Mandatory=$true, Position=0, ParameterSetName='doc')] 
-        [string] $environment,
 
-        [Parameter(Mandatory=$true, Position=1, ParameterSetName='path')] 
-        [string] $xmlFilePathAndName,
 
-        [Parameter(Mandatory=$true, Position=1, ParameterSetName='doc')] 
-        [Microsoft.Web.XmlTransform.XmlTransformableDocument] $xmlTransformableDocument,
+        [Parameter(Mandatory=$true, Position=1)] 
+        [string] $inputPathAndFile,
         
-        [Parameter(Mandatory=$false, Position=2, ParameterSetName='path')]
-        [Parameter(Mandatory=$true, Position=2, ParameterSetName='doc')]
-        [string] $xmlTransformFilePathAndName,
+        [Parameter(Mandatory=$true, Position=2)]
+        [string] $transformPathAndFile,
         
-        [Parameter(Mandatory=$false, Position=3, ParameterSetName='path')] 
-        [Parameter(Mandatory=$false, Position=3, ParameterSetName='doc')] 
-        [switch] $preventWrite,
-        
-        [Parameter(Mandatory=$false, Position=4, ParameterSetName='path')] 
-        [Parameter(Mandatory=$false, Position=4, ParameterSetName='doc')] 
-        [switch] $writeAsTempFile
+        [Parameter(Mandatory=$false, Position=3)] 
+        [string] $outputPathAndFile
     )    
+    Add-XmlTransformToPath
 
+    Write-Host "Transforming '$inputPathAndFile' with '$transformPathAndFile'."
+    $outputPathAndFile = if($outputPathAndFile) {$outputPathAndFile} else {$inputPathAndFile}
+    Exec { xmltransform -i $inputPathAndFile -t $transformPathAndFile -o $outputPathAndFile } "Could not invoke xmltransform, make sure it's found in `$env:PATH."
+}
 
-    if($xmlTransformFilePathAndName){
-        $path = [System.IO.Path]::GetDirectoryName($xmlTransformFilePathAndName)
-        $xdtExt = [System.IO.Path]::GetExtension($xmlTransformFilePathAndName)
-        $xdtFile = [System.IO.Path]::GetFileName($xmlTransformFilePathAndName)
-        $xdt = $xmlTransformFilePathAndName
+function Add-XmlTransformToPath {
+
+    if($env:Path -like '*xmltransform.*' ) { return }
+
+    if($poshbar.XmlTransformPath -and (Test-Path $poshbar.XmlTransformPath)){
+
+        $env:Path += ";$(Resolve-Path $poshbar.XmlTransformPath)"
+        return
     }
 
-    if($PsCmdlet.ParameterSetName -eq 'path') {
-        $xml = $xmlFilePathAndName
-        if (!(Test-Path -path $xml -PathType Leaf) -and !($xmlTransformableDocument)) {
-            Write-Warning "There is no xml to transform."
-            return
-        }
-
-        if(!$xmlTransformFilePathAndName){
-            $path = [System.IO.Path]::GetDirectoryName($xmlFilePathAndName)
-            $xdtName = [System.IO.Path]::GetFileNameWithoutExtension("$xmlFilePathAndName")
-            $xdtExt = [System.IO.Path]::GetExtension("$xmlFilePathAndName")
-
-            $xdtFile = "$xdtName.$environment$xdtExt"
-            $xdt = join-path $path $xdtFile
-        }
-        
-        if (!(Test-Path -path $xdt -PathType Leaf)) {
-            Write-Warning "There is no $xdtFile transform file at $path."
-            return
-        }
-
-        psUsing ($srcXml = new Microsoft.Web.XmlTransform.XmlTransformableDocument) {
-            $srcXml.PreserveWhitespace = $true
-            $srcXml.Load($xml)
-
-            psUsing ($transXml = new Microsoft.Web.XmlTransform.XmlTransformation($xdt)) {
-                Write-Host "Transforming '$xml' with '$xdt'"
-                if(!$transXml.Apply($srcXml)){
-                    throw "Transformation failed"
-                }
-
-                if(!$preventWrite.IsPresent){
-                    if($writeAsTempFile.IsPresent){
-                        $srcXml.Save("$xml.temp")
-                    } else {
-                        $srcXml.Save("$xml")
-                    }
-                }
-
-                return $srcXml
-            }
-
-        }
-    } else {
-        psUsing ($xmlTransformableDocument) {
-            psUsing ($transXml = new Microsoft.Web.XmlTransform.XmlTransformation($xdt)) {
-                if(!$transXml.Apply($xmlTransformableDocument)){
-                    throw "Transformation failed"
-                }
-
-                $x = "$path\$environment$xdtExt"
-                if(!$preventWrite.IsPresent){
-                    if($writeAsTempFile.IsPresent){
-                        $xmlTransformableDocument.Save("$x.temp")
-                    } else {
-                        $xmlTransformableDocument.Save("$x")
-                    }
-                }
-
-                return $xmlTransformableDocument
-            }
-        }
+    $here = Split-Path $script:MyInvocation.MyCommand.Path
+    $packagePath = "$here\..\..\..\xmltransform.*\tools"
+    if(Test-Path $packagePath) {
+        $env:Path += ";$(Resolve-Path $packagePath)"
+        return
     }
+
+    $nuspecToolsPath = "$here\..\..\tools"
+    if(Test-Path $nuspecToolsPath) {
+        $env:Path += ";$(Resolve-Path $nuspecToolsPath)"
+        return
+    }
+
+    throw 'Could not find XmlTransform, please specify it to `$poshbar["XmlTransformPath"]'
 }
 
 set-alias xdt Invoke-XmlDocumentTransform

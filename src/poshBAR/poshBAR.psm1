@@ -1,5 +1,5 @@
 $version = "1.1.1" # contains the current version of poshBAR
-
+$script:poshBAR = @{}
 Write-Host "`nposhBAR version $version `nCopyright ($([char]0x00A9)) Future State Mobile Inc. & Contributors`n"
 
 Remove-Item alias:new -ea SilentlyContinue
@@ -25,6 +25,7 @@ Push-Location $psScriptRoot
 . .\Grunt.ps1
 . .\Helpers.ps1
 . .\Install-WebApplication.ps1
+. .\Invoke-AspNetRegIIS.ps1
 . .\Invoke-Deployment.ps1
 . .\Invoke-DeployOctopusNugetPackage.ps1
 . .\Invoke-ElevatedCommand.ps1
@@ -60,6 +61,7 @@ Export-ModuleMember `
           'Add-IISMimeType',
           'Add-LoopbackFix',
           'Add-XmlConfigValue',
+          'Add-XmlTransformToPath',
           'Approve-Permissions',
           'Assert-That',
           'Assert-PSVersion',
@@ -82,6 +84,7 @@ Export-ModuleMember `
           'Get-WindowsFeatures',
           'Install-WebApplication',
           'Install-WindowsFeatures',
+          'Invoke-AspNetRegIIS',
           'Invoke-BulkCopy',
           'Invoke-Chutzpah',
           'Invoke-CleanMSBuild',
@@ -118,7 +121,7 @@ Export-ModuleMember `
           'Remove-Application',
           'Remove-AppPool',
           'Remove-Site',
-          'RequiredFeatures',
+          'RequiredWindowsFeatures',
           'Set-IISAuthentication',
           'Set-IISCustomHeader',
           'Set-PowershellScriptSigning',

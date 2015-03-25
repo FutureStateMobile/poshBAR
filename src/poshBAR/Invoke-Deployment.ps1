@@ -65,12 +65,13 @@ function WriteStepTimeSummary($totalDeploymentDuration) {
     }
 }
 
-function RequiredFeatures {
+function RequiredWindowsFeatures {
     param([string[]] $script:features)
     Step InstallRequiredWindowsFeatures {
         Install-WindowsFeatures $script:features
     }
 }
+set-alias RequiredFeatures RequiredWindowsFeatures
 
 function Step{
     param(

@@ -48,9 +48,11 @@ function Set-IISAuthentication
 
     # no need to check if $authTypes is null, if it is, nothing happens.
     $authTypes | % {
-        Write-Host ($msgs.msg_update_auth -f $_, $location, $value) -NoNewLine
-        Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/$_" -name enabled -value $value -PSPath "IIS:\" -location $location
-        Write-Host "`tDone" -f Green
+        if(-not ([string]::IsNullOrWhiteSpace($_))){
+            Write-Host ($msgs.msg_update_auth -f $_, $location, $value) -NoNewLine
+            Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/$_" -name enabled -value $value -PSPath "IIS:\" -location $location
+            Write-Host "`tDone" -f Green
+        }
     }
       
 
