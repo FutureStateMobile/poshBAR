@@ -2,7 +2,7 @@
 
 poshBAR is a library of powershell scripts designed to aid in the build & release cycle of a .NET application.
 
-Install via NuGet
+Install via [NuGet](https://www.nuget.org/packages/poshBAR)
 
     > Install-Package poshBAR
 
