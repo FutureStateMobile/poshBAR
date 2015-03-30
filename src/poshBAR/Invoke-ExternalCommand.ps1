@@ -26,20 +26,25 @@ function Invoke-ExternalCommand
     param(
         [Parameter(Position=0,Mandatory=1)][scriptblock] $command,
         [Parameter(Position=1,Mandatory=0)][string] $errorMessage = ($msgs.error_bad_command -f $command),
-        [Parameter] [int] $retry = 0
+        [Parameter(Mandatory=0)] [int] $retry = 0
     )
 
     # Setting ErrorAction to Stop is important. This ensures any errors that occur in the command are 
     # treated as terminating errors, and will be caught by the catch block.
-    $args.ErrorAction = "Stop"
+    $ErrorAction = "Stop"
     
     $retrycount = 0
     $completed = $false
 
     while (-not $completed) {
         try {
-            & $command
-            $completed = $true
+            & $command | out-null
+
+            if ($lastexitcode -ne 0) {
+                throw ($errorMessage)
+            } else {
+                $completed = $true
+            }
         } catch {
             if ($retrycount -ge $retry) {
                 Write-Verbose ("Command [{0}] failed after {1} retries." -f $command, $retrycount)
@@ -49,12 +54,6 @@ function Invoke-ExternalCommand
                 $retrycount++
             }
         }
-    }
-
-    & $command
-    
-    if ($lastexitcode -ne 0) {
-        throw ($errorMessage)
     }
 }
 Set-Alias Exec Invoke-ExternalCommand
