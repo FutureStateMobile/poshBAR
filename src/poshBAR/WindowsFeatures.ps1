@@ -1,4 +1,4 @@
-$script:dismFeatures = new-object System.Collections.ArrayList
+$global:dismFeatures = new-object System.Collections.ArrayList
 
 function Install-WindowsFeatures{
     [CmdletBinding()]
@@ -32,7 +32,7 @@ function Install-WindowsFeatures{
 }
 
 function Get-WindowsFeatures {
-    if(!$dismFeatures)
+    if(!$dismFeatures -and ($dismFeatures.count -gt 0))
     {
         $allFeatures = DISM.exe /ONLINE /Get-Features /FORMAT:List | Where-Object { $_.StartsWith("Feature Name") -OR $_.StartsWith("State") } 
         for($i = 0; $i -lt $allFeatures.length; $i=$i+2) {
