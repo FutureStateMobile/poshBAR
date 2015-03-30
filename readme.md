@@ -12,6 +12,7 @@ Install via [NuGet](https://www.nuget.org/packages/poshBAR)
   
   - [psake](https://github.com/psake/psake) (for builds)
   - [NuGet.CommandLine](https://github.com/NuGet/NuGet.CommandLine) (for generating nupkg's)
+  - [XmlTransform](https://github.com/Novakov/xmltransform)
 
 ###License###
 
