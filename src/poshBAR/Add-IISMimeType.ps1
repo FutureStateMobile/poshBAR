@@ -31,8 +31,8 @@ function Add-IISMimeType
     $ErrorActionPreference = "Stop"
     Write-Host ($msgs.msg_add_mime_type -f $mimeType, $fileExtension, $siteName) -NoNewLine
 
-    Exec { "$appcmd set config $siteName /section:staticContent /-`"[fileExtension='.$fileExtension']`""} -retry 10 | Out-Null
-    Exec { "$appcmd set config $siteName /section:staticContent /+`"[fileExtension='.$fileExtension',mimeType='$mimeType']`""} -retry 10 | Out-Null
+    Exec { Invoke-Expression "$appcmd set config $siteName /section:staticContent /-`"[fileExtension='.$fileExtension']`""} -retry 10 | Out-Null
+    Exec { Invoke-Expression "$appcmd set config $siteName /section:staticContent /+`"[fileExtension='.$fileExtension',mimeType='$mimeType']`""} -retry 10 | Out-Null
     
    Write-Host "`tDone" -f Green
 }

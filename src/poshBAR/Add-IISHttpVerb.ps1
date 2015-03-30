@@ -30,6 +30,6 @@ function Add-IISHttpVerb {
     Write-Host ($msgs.msg_add_verb -f $verb, $siteName) -NoNewLine
     $allowed = if($action -eq "add"){'true'} else {'false'}
 
-    Exec {"$appcmd set config $siteName -section:system.webServer/security/requestFiltering /+`"verbs.[verb='$verb',allowed='$allowed']`""} -retry 10
+    Exec {Invoke-Expression "$appcmd set config $siteName -section:system.webServer/security/requestFiltering /+`"verbs.[verb='$verb',allowed='$allowed']`""} -retry 10
     Write-Host "`tDone" -f Green
 }

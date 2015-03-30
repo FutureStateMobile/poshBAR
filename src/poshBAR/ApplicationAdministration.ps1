@@ -43,8 +43,8 @@ function New-Application
     $exists = Confirm-ApplicationExists $siteName $appName
     
     if (!$exists) {
-        Exec { "$appcmd add App /site.name:$siteName /path:/$appName /physicalPath:$appPath" } -retry 10 | Out-Null
-        Exec { "$appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName"} -retry 10 | Out-Null
+        Exec { Invoke-Expression  "$appcmd add App /site.name:$siteName /path:/$appName /physicalPath:$appPath" } -retry 10 | Out-Null
+        Exec { Invoke-Expression  "$appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName"} -retry 10 | Out-Null
         Write-Host "`tDone" -f Green
     } else {
         Write-Host "`tApplication already exists..." -f Cyan
@@ -68,8 +68,8 @@ function Update-Application{
     $exists = Confirm-ApplicationExists $siteName $appName
 
     if ($exists){
-        Exec { "$appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName"} -retry 10 | Out-Null
-        Exec { "$appcmd set app /app.name:$siteName/$appName `"/[path='/'].physicalPath:$appPath`"" } -retry 10 | Out-Null
+        Exec { Invoke-Expression  "$appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName"} -retry 10 | Out-Null
+        Exec { Invoke-Expression  "$appcmd set app /app.name:$siteName/$appName `"/[path='/'].physicalPath:$appPath`"" } -retry 10 | Out-Null
         Write-Host "`tDone" -f Green
     }else{
         Write-Host "" #forces a new line

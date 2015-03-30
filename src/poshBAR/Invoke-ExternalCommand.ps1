@@ -38,7 +38,7 @@ function Invoke-ExternalCommand
 
     while (-not $completed) {
         try {
-            & $command | out-null
+            & $command
 
             if ($lastexitcode -ne 0) {
                 throw ($errorMessage)

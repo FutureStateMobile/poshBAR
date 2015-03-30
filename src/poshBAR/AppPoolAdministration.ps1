@@ -56,7 +56,7 @@ function New-AppPool{
             $newAppPool += " /processModel.password:$password"
         }
 
-        Exec { $newAppPool } -retry 10 | Out-Null
+        Exec { Invoke-Expression  $newAppPool } -retry 10 | Out-Null
         Write-Host "`tDone" -f Green
     }else{
         Update-AppPool $appPoolName $appPoolIdentityType $maxProcesses $username $password $managedPipelineMode $managedRuntimeVersion
@@ -92,7 +92,7 @@ function Update-AppPool{
             $updateAppPool += " /processModel.password:$password"
         }
 
-        Exec { $updateAppPool } -retry 10 | Out-Null
+        Exec { Invoke-Expression  $updateAppPool } -retry 10 | Out-Null
         Write-Host "`tDone" -f Green
     }else{
         Write-Warning ($msgs.wrn_invalid_app_pool -f $appPoolName)
