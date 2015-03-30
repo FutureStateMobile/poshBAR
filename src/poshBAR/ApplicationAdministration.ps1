@@ -43,8 +43,8 @@ function New-Application
     $exists = Confirm-ApplicationExists $siteName $appName
     
     if (!$exists) {
-        & $appcmd add App /site.name:$siteName /path:/$appName /physicalPath:$appPath | Out-Null
-        & $appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName | Out-Null
+        Exec { "$appcmd add App /site.name:$siteName /path:/$appName /physicalPath:$appPath" } -retry 10 | Out-Null
+        Exec { "$appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName"} -retry 10 | Out-Null
         Write-Host "`tDone" -f Green
     } else {
         Write-Host "`tApplication already exists..." -f Cyan
@@ -68,8 +68,8 @@ function Update-Application{
     $exists = Confirm-ApplicationExists $siteName $appName
 
     if ($exists){
-        & $appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName | Out-Null
-        & $appcmd set app /app.name:$siteName/$appName "/[path='/'].physicalPath:$appPath" | Out-Null
+        Exec { "$appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName"} -retry 10 | Out-Null
+        Exec { "$appcmd set app /app.name:$siteName/$appName `"/[path='/'].physicalPath:$appPath`"" } -retry 10 | Out-Null
         Write-Host "`tDone" -f Green
     }else{
         Write-Host "" #forces a new line

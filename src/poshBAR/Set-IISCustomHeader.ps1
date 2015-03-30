@@ -32,7 +32,7 @@ function Set-IISCustomHeader
 
     Write-Host ($msgs.msg_custom_header -f $customHeaderName, $siteName, $customHeaderValue) -NoNewLine
     
-    & $appcmd set config $siteName -section:system.webServer/httpProtocol /+"customHeaders.[name='$customHeaderName',value='$customHeaderValue']"  | Out-Null
+    Exec { "$appcmd set config $siteName -section:system.webServer/httpProtocol /+`"customHeaders.[name='$customHeaderName',value='$customHeaderValue']`""} -retry 10  | Out-Null
 
     Write-Output "`tDone" -f Green
 }
