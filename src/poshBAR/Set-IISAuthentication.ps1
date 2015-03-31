@@ -59,7 +59,9 @@ function Set-IISAuthentication
     # turn off anonymous auth if it's not part of the collection.
     if ($authTypes -notContains "anonymousAuthentication")
     {
-         Set-WebConfigurationPropertyExtended -filter "/system.webServer/security/authentication/anonymousAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location -retry 10
+        Write-Host "Disabling anonymous authentication for $location" -NoNewline
+        Set-WebConfigurationPropertyExtended -filter "/system.webServer/security/authentication/anonymousAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location -retry 10
+        Write-Host "`tDone" -f Green
     }
     
 }
