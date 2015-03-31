@@ -9,11 +9,10 @@ function Install-WindowsFeatures{
         $key = $_.Replace('?','')
         $feature = (Get-WindowsFeatures).GetEnumerator() | ? {$_[$key]}
         
-        $value = $feature[$key]
-
-        if(!$value){
+        if(!$feature){
             Write-Warning "$key is not a valid feature for this version of Windows."
-        } else {        
+        } else {    
+            $value = $feature[$key]    
             Write-Host ($msgs.msg_enabling_windows_feature -f $key) -NoNewline
             if($value -ne "enabled"){
                 try{
