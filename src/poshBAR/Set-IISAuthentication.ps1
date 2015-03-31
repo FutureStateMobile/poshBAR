@@ -25,7 +25,7 @@ function Set-IISAuthentication
 {
     [CmdletBinding()]
     param(
-        [parameter(Mandatory=$true,position=0)] [AuthType[]] [AllowNull()] $authTypes,
+        [parameter(Mandatory=$true,position=0)] [string[]] [ValidateSet('anonymousAuthentication','basicAuthentication','clientCertificateMappingAuthentication','digestAuthentication','iisClientCertificateMappingAuthentication','windowsAuthentication')] [AllowNull()] $authTypes,
         [parameter(Mandatory=$true,position=1)] [PSObject] $value,
         [parameter(Mandatory=$true,position=2)] [string] $location,
         [parameter(Mandatory=$false, position=3)] [switch] $disableOthers
@@ -62,17 +62,4 @@ function Set-IISAuthentication
          Set-WebConfigurationProperty -filter "/system.webServer/security/authentication/anonymousAuthentication" -name enabled -value false -PSPath "IIS:\" -location $location
     }
     
-}
-
-if(!("AuthType" -as [Type])){
- Add-Type -TypeDefinition @'
-    public enum AuthType{
-        anonymousAuthentication,
-        basicAuthentication,
-        clientCertificateMappingAuthentication,
-        digestAuthentication,
-        iisClientCertificateMappingAuthentication,
-        windowsAuthentication    
-    }
-'@
 }

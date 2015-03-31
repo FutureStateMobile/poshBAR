@@ -58,16 +58,3 @@ function Install-WebApplication() {
 
     $msgs.msg_web_app_success -f $websiteSettings.siteName
 }
-
-if(!("AuthType" -as [Type])){
- Add-Type -TypeDefinition @'
-    public enum AuthType{
-        windowsAuthentication,
-        basicAuthentication,
-        anonymousAuthentication,
-        clientCertificateMappingAuthentication,
-        digestAuthentication,
-        iisClientCertificateMappingAuthentication
-    }
-'@
-}
