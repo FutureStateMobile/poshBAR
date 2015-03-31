@@ -1,7 +1,3 @@
-if(-not $script:dismFeatures){
-    $script:dismFeatures = new-object System.Collections.ArrayList
-}
-
 function Install-WindowsFeatures{
     [CmdletBinding()]
     param(
@@ -10,20 +6,22 @@ function Install-WindowsFeatures{
     
     Assert($features.Count -ne 0) ($msgs.error_must_supply_a_feature)
     $features | % {
-        $__ = $_.Replace('?','')
-        $f = Get-WindowsFeatures | ? {$_.feature -eq $__}
+        $key = $_.Replace('?','')
+        $feature = (Get-WindowsFeatures).GetEnumerator() | ? {$_[$key]}
         
-        if([string]::IsNullOrEmpty($f.feature)){
-            Write-Warning "$__ is not a valid feature for this version of Windows."
+        $value = $feature[$key]
+
+        if(!$value){
+            Write-Warning "$key is not a valid feature for this version of Windows."
         } else {        
-            Write-Host ($msgs.msg_enabling_windows_feature -f $f.feature) -NoNewline
-            if($f.state -ne "enabled"){
+            Write-Host ($msgs.msg_enabling_windows_feature -f $key) -NoNewline
+            if($value -ne "enabled"){
                 try{
-                    Exec{Dism /online /Enable-Feature /FeatureName:$($f.feature) /NoRestart /Quiet} 
+                    Exec{Dism /online /Enable-Feature /FeatureName:$($key) /NoRestart /Quiet} 
                     Write-Host "`tDone" -f Green
                 }catch{
                     # Trying again with the All keyword because probably a dependency is missing.
-                    Exec{Dism /online /Enable-Feature /FeatureName:$($f.feature) /NoRestart /Quiet /All} 
+                    Exec{Dism /online /Enable-Feature /FeatureName:$($key) /NoRestart /Quiet /All} 
                     Write-Host "`tDone (with dependencies)" -f Green
                 }
             } else {
@@ -34,29 +32,30 @@ function Install-WindowsFeatures{
 }
 
 function Get-WindowsFeatures {
-    if($script:dismFeatures.Count -le 0)
-    {
+    if(!(Test-Path "$env:TEMP\WindowsFeatures.txt")){
         $allFeatures = DISM.exe /ONLINE /Get-Features /FORMAT:List | Where-Object { $_.StartsWith("Feature Name") -OR $_.StartsWith("State") } 
+        
         for($i = 0; $i -lt $allFeatures.length; $i=$i+2) {
-            $feature = $allFeatures[$i]
-            $state = $allFeatures[$i+1]
-            $script:dismFeatures.add(@{feature=$feature.split(":")[1].trim();state=$state.split(":")[1].trim()}) | OUT-NULL
+            $feature = $allFeatures[$i].split(":")[1].trim()
+            $state = $allFeatures[$i+1].split(":")[1].trim()
+
+            Add-Content "$env:TEMP\WindowsFeatures.txt" "$feature=$state"
         }
     }
-    return $script:dismFeatures
+
+    return Get-Content "$env:TEMP\WindowsFeatures.txt" | ConvertFrom-StringData
 }
 
 #
 # Private Methods
 #
 function Assert-WindowsFeatures {
-    $featureList = @()
-    Get-WindowsFeatures | %{
-        $featureList+=$_.Feature
-    }
+    $feature = $_
+    $allFeatures = Get-WindowsFeatures
+    $ht = $allFeatures | ? {$_[$feature]}
 
-    if(-not ($featureList -contains $_) -and -not($_.EndsWith("?"))){
-        throw $msgs.error_feature_set_invalid -f $_, $($featureList -join ', ')
+    if(-not ($ht) -and -not($_.EndsWith("?"))){
+        throw "{0} is not a member of {1}" -f $_, $($allFeatures.Keys -join ", ")
         Exit 1
     }
 
