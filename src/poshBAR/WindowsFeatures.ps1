@@ -1,3 +1,7 @@
+if(-not $script:dismFeatures){
+    $script:dismFeatures = new-object System.Collections.ArrayList
+}
+
 function Install-WindowsFeatures{
     [CmdletBinding()]
     param(
@@ -30,14 +34,16 @@ function Install-WindowsFeatures{
 }
 
 function Get-WindowsFeatures {
-    $dismFeatures = new-object System.Collections.ArrayList
-    $allFeatures = DISM.exe /ONLINE /Get-Features /FORMAT:List | Where-Object { $_.StartsWith("Feature Name") -OR $_.StartsWith("State") } 
-    for($i = 0; $i -lt $allFeatures.length; $i=$i+2) {
-        $feature = $allFeatures[$i]
-        $state = $allFeatures[$i+1]
-        $dismFeatures.add(@{feature=$feature.split(":")[1].trim();state=$state.split(":")[1].trim()}) | OUT-NULL
+    if($script:dismFeatures.Count -le 0)
+    {
+        $allFeatures = DISM.exe /ONLINE /Get-Features /FORMAT:List | Where-Object { $_.StartsWith("Feature Name") -OR $_.StartsWith("State") } 
+        for($i = 0; $i -lt $allFeatures.length; $i=$i+2) {
+            $feature = $allFeatures[$i]
+            $state = $allFeatures[$i+1]
+            $script:dismFeatures.add(@{feature=$feature.split(":")[1].trim();state=$state.split(":")[1].trim()}) | OUT-NULL
+        }
     }
-    return $dismFeatures
+    return $script:dismFeatures
 }
 
 #
