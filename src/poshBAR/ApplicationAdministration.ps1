@@ -57,12 +57,14 @@ function New-Application
 }
 
 function Update-Application{
+    [CmdletBinding()]
     param(
         [parameter( Mandatory=$true, position=0 )] [string] $siteName,
         [parameter( Mandatory=$true, position=1 )] [string] $appName,
         [parameter( Mandatory=$true, position=2 )] [string] $appPath,
         [parameter( Mandatory=$true, position=3 )] [string] $appPoolName
     )
+    $ErrorActionPreference = "Stop"
 
     Write-Host "Updating Application: $siteName/$appName" -NoNewLine
     $exists = Confirm-ApplicationExists $siteName $appName

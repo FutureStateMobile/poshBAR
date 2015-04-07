@@ -19,7 +19,7 @@ function Invoke-MSBuild {
 
     $VisualStudioVersionParam = "VisualStudioVersion=$("{0:N1}" -f $VisualStudioVersion)"
 
-    exec { msbuild /t:build /p:OutDir="$outDir\" $projectFile /p:"$VisualStudioVersionParam" /l:"FileLogger,Microsoft.Build.Engine;$logFileParam" } ($msgs.error_msbuild_compile -f $projectFile)
+    exec { msbuild /t:build /p:OutDir="$outDir\" $projectFile /p:"ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=false" /p:"$VisualStudioVersionParam" /l:"FileLogger,Microsoft.Build.Engine;$logFileParam" } ($msgs.error_msbuild_compile -f $projectFile)
 
     if($namespace){
         New-WarningsFromMSBuildLog $logPath $namespace
