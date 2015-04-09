@@ -72,11 +72,12 @@ function Invoke-AspNetRegIIS {
 
     try{
         Write-Host "Executing: '$path\aspnet_regiis.exe $($PsCmdlet.ParameterSetName)'." -NoNewline
-        Exec {"$path\aspnet_regiis.exe $argument"} "An error occurred while trying to register IIS." | out-null
+        Exec {"$path\aspnet_regiis.exe $argument"} "An error occurred while trying to register IIS. If you're running this command on Server => 2012, please add IIS-ASPNET45 as a Windows Feature."
         Write-Host "`tDone" -f Green
     } catch {
         Write-Host '' # just inputs a carriage return if an error occurs
-        throw $_
+        Write-Host $_
+        Write-Host 'The deployment will continue...'
     }
 }
 Set-Alias aspnet_regiis Invoke-AspNetRegIIS
