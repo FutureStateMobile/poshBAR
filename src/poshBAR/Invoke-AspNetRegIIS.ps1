@@ -76,7 +76,7 @@ function Invoke-AspNetRegIIS {
         Write-Host "`tDone" -f Green
     } catch {
         Write-Host '' # just inputs a carriage return if an error occurs
-        Write-Host $_
+        Write-Warning $_
         Write-Host 'The deployment will continue...'
     }
 }
