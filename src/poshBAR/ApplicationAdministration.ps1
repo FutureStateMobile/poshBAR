@@ -43,8 +43,8 @@ function New-Application
     $exists = Confirm-ApplicationExists $siteName $appName
     
     if (!$exists) {
-        & $appcmd add App /site.name:$siteName /path:/$appName /physicalPath:$appPath | Out-Null
-        & $appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName | Out-Null
+        Exec { Invoke-Expression  "$appcmd add App /site.name:$siteName /path:/$appName /physicalPath:$appPath" } -retry 10 | Out-Null
+        Exec { Invoke-Expression  "$appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName"} -retry 10 | Out-Null
         Write-Host "`tDone" -f Green
     } else {
         Write-Host "`tApplication already exists..." -f Cyan
@@ -57,19 +57,21 @@ function New-Application
 }
 
 function Update-Application{
+    [CmdletBinding()]
     param(
         [parameter( Mandatory=$true, position=0 )] [string] $siteName,
         [parameter( Mandatory=$true, position=1 )] [string] $appName,
         [parameter( Mandatory=$true, position=2 )] [string] $appPath,
         [parameter( Mandatory=$true, position=3 )] [string] $appPoolName
     )
+    $ErrorActionPreference = "Stop"
 
     Write-Host "Updating Application: $siteName/$appName" -NoNewLine
     $exists = Confirm-ApplicationExists $siteName $appName
 
     if ($exists){
-        & $appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName | Out-Null
-        & $appcmd set app /app.name:$siteName/$appName "/[path='/'].physicalPath:$appPath" | Out-Null
+        Exec { Invoke-Expression  "$appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName"} -retry 10 | Out-Null
+        Exec { Invoke-Expression  "$appcmd set app /app.name:$siteName/$appName `"/[path='/'].physicalPath:$appPath`"" } -retry 10 | Out-Null
         Write-Host "`tDone" -f Green
     }else{
         Write-Host "" #forces a new line

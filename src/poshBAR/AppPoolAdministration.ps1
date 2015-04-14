@@ -29,11 +29,11 @@ function New-AppPool{
     [CmdletBinding()]
     param(
         [parameter(Mandatory=$true, position=0)] [string] $appPoolName,
-        [parameter(Mandatory=$false,position=1)] [IdentityType] $appPoolIdentityType = [IdentityType]::NetworkService,
+        [parameter(Mandatory=$false,position=1)] [string] [ValidateSet('LocalSystem','LocalService','NetworkService','SpecificUser','ApplicationPoolIdentity')] $appPoolIdentityType = 'NetworkService',
         [parameter(Mandatory=$false,position=2)] [int] $maxProcesses = 1,
         [parameter(Mandatory=$false,position=3)] [string] $username,
         [parameter(Mandatory=$false,position=4)] [string] $password,
-        [parameter(Mandatory=$false,position=5)] [PipelineMode] $managedPipelineMode = [PipelineMode]::Integrated,
+        [parameter(Mandatory=$false,position=5)] [string] [ValidateSet('Integrated','Classic')] $managedPipelineMode = 'Integrated',
         [parameter(Mandatory=$false,position=6)] [string] $managedRuntimeVersion = "v4.0",
         [parameter(Mandatory=$false,position=7)] [switch] $alwaysRunning
     )
@@ -56,21 +56,21 @@ function New-AppPool{
             $newAppPool += " /processModel.password:$password"
         }
 
-        Invoke-Expression $newAppPool | Out-Null
+        Exec { Invoke-Expression  $newAppPool } -retry 10 | Out-Null
         Write-Host "`tDone" -f Green
     }else{
         Update-AppPool $appPoolName $appPoolIdentityType $maxProcesses $username $password $managedPipelineMode $managedRuntimeVersion
     }
-}
+}    
 
 function Update-AppPool{
     param(
         [parameter(Mandatory=$true, position=0)] [string] $appPoolName,
-        [parameter(Mandatory=$false,position=1)] [IdentityType] $appPoolIdentityType = [IdentityType]::NetworkService,
+        [parameter(Mandatory=$false,position=1)] [string] [ValidateSet('LocalSystem','LocalService','NetworkService','SpecificUser','ApplicationPoolIdentity')] $appPoolIdentityType = 'NetworkService',
         [parameter(Mandatory=$false,position=2)] [int] $maxProcesses = 1,
         [parameter(Mandatory=$false,position=3)] [string] $username,
         [parameter(Mandatory=$false,position=4)] [string] $password,
-        [parameter(Mandatory=$false,position=5)] [string] $managedPipelineMode = [PipelineMode]::Integrated,
+        [parameter(Mandatory=$false,position=5)] [string] [ValidateSet('Integrated','Classic')] $managedPipelineMode = 'Integrated',
         [parameter(Mandatory=$false,position=6)] [string] $managedRuntimeVersion = "v4.0",
         [parameter(Mandatory=$false,position=7)] [switch] $alwaysRunning
     )
@@ -92,7 +92,7 @@ function Update-AppPool{
             $updateAppPool += " /processModel.password:$password"
         }
 
-        Invoke-Expression $updateAppPool | Out-Null
+        Exec { Invoke-Expression  $updateAppPool } -retry 10 | Out-Null
         Write-Host "`tDone" -f Green
     }else{
         Write-Warning ($msgs.wrn_invalid_app_pool -f $appPoolName)
@@ -131,25 +131,4 @@ function Remove-AppPool( $appPoolName ){
 
 function Get-ModuleDirectory {
     return Split-Path $script:MyInvocation.MyCommand.Path
-}
-
-if(!("IdentityType" -as [Type])){
- Add-Type -TypeDefinition @'
-    public enum IdentityType{
-        LocalSystem,
-        LocalService,
-        NetworkService,
-        SpecificUser,
-        ApplicationPoolIdentity
-    }
-'@
-}
-
-if(!("PipelineMode" -as [Type])){
- Add-Type -TypeDefinition @'
-    public enum PipelineMode{
-        Integrated,
-        Classic
-    }
-'@
 }

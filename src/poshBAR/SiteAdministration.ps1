@@ -43,8 +43,8 @@ function New-Site{
     if (!$exists) {
         $bindingString = @()
         $bindings | % { $bindingString += "$($_.protocol)/*:$($_.port):$($_.hostName)" }
-        & $appcmd add site /name:$siteName /physicalPath:$sitePath /bindings:$($bindingString -join ",") | Out-Null
-        & $appcmd set app $siteName/ /applicationPool:$appPoolName | Out-Null
+        Exec { Invoke-Expression  "$appcmd add site /name:$siteName /physicalPath:$sitePath /bindings:$($bindingString -join ",")"} -retry 10 | Out-Null
+        Exec { Invoke-Expression  "$appcmd set app $siteName/ /applicationPool:$appPoolName"} -retry 10 | Out-Null
         Write-Host "`tDone" -f Green
     }else{
         Write-Host "`tExists" -f Cyan
@@ -72,9 +72,9 @@ function Update-Site{
         $bindingString = @()
         $bindings | % { $bindingString += "$($_.protocol)/*:$($_.port):$($_.hostName)" }
         
-        & $appcmd set Site $siteName/ /bindings:$($bindingString -join ",")  | Out-Null
-        & $appcmd set App $siteName/ /applicationPool:$appPoolName | Out-Null
-        & $appcmd set App $siteName/ "/[path='/'].physicalPath:$sitePath" | Out-Null
+        Exec { Invoke-Expression  "$appcmd set Site $siteName/ /bindings:$($bindingString -join ",")"} -retry 10  | Out-Null
+        Exec { Invoke-Expression  "$appcmd set App $siteName/ /applicationPool:$appPoolName"} -retry 10 | Out-Null
+        Exec { Invoke-Expression  "$appcmd set App $siteName/ `"/[path='/'].physicalPath:$sitePath`""} -retry 10 | Out-Null
         Write-Host "`tDone" -f Green
     }else{
         Write-Host "" #forces a new line

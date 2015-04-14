@@ -125,6 +125,7 @@ Export-ModuleMember `
           'Set-IISAuthentication',
           'Set-IISCustomHeader',
           'Set-PowershellScriptSigning',
+          'Set-WebConfigurationPropertyExtended',
           'Start-Application',
           'Start-AppPool',
           'Start-Site',
