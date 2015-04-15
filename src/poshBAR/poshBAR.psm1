@@ -30,7 +30,6 @@ Push-Location $psScriptRoot
 . .\Invoke-DeployOctopusNugetPackage.ps1
 . .\Invoke-ElevatedCommand.ps1
 . .\Invoke-ExternalCommand.ps1
-. .\Invoke-HealthCheck.ps1
 . .\MSBuild.ps1
 . .\Nuget.ps1
 . .\nUnit.ps1
@@ -97,7 +96,6 @@ Export-ModuleMember `
           'Invoke-ExternalCommand',
           'Invoke-FromBase64', 
           'Invoke-GruntMinification',
-          'Invoke-HealthCheck',
           'Invoke-HtmlDecode', 
           'Invoke-HtmlEncode',
           'Invoke-KarmaTests',

@@ -24,12 +24,12 @@ function Set-IISAuthentication
 {
     [CmdletBinding()]
     param(
-        [parameter(Mandatory=$true,position=0)] [string[]] [ValidateSet('anonymousAuthentication','basicAuthentication','clientCertificateMappingAuthentication','digestAuthentication','iisClientCertificateMappingAuthentication','windowsAuthentication')] [AllowNull()] $authTypes,
+        [parameter(Mandatory=$true,position=0)] [AuthType[]] [AllowEmptyCollection()] [AllowNull()] $authTypes,
         [parameter(Mandatory=$true,position=1)] [PSObject] $value,
         [parameter(Mandatory=$true,position=2)] [string] $location,
         [parameter(Mandatory=$false, position=3)] [switch] $disableOthers
     )
-
+    
     $ErrorActionPreference = "Stop"
     Import-Module "WebAdministration"
 
@@ -45,14 +45,12 @@ function Set-IISAuthentication
         Write-Host "`tDone" -f Green
     }
 
-    # no need to check if $authTypes is null, if it is, nothing happens.
-    $validSet = @('anonymousAuthentication','basicAuthentication','clientCertificateMappingAuthentication','digestAuthentication','iisClientCertificateMappingAuthentication','windowsAuthentication')
+    if(!$authTypes) { return }
+
     $authTypes | % {
-        if($validSet -contains $_){
-            Write-Host ($msgs.msg_update_auth -f $_, $location, $value) -NoNewLine
-            Set-WebConfigurationPropertyExtended -filter "/system.webServer/security/authentication/$_" -name enabled -value "$value" -PSPath "IIS:\" -location $location -retry 10
-            Write-Host "`tDone" -f Green
-        }
+        Write-Host ($msgs.msg_update_auth -f $_, $location, $value) -NoNewLine
+        Set-WebConfigurationPropertyExtended -filter "/system.webServer/security/authentication/$_" -name enabled -value "$value" -PSPath "IIS:\" -location $location -retry 10
+        Write-Host "`tDone" -f Green
     }
       
 
@@ -103,4 +101,17 @@ function Set-WebConfigurationPropertyExtended {
             }
         }
     }
+}
+
+if(!("AuthType" -as [Type])){
+ Add-Type -TypeDefinition @'
+    public enum AuthType{
+        anonymousAuthentication,
+        basicAuthentication,
+        clientCertificateMappingAuthentication,
+        digestAuthentication,
+        iisClientCertificateMappingAuthentication,
+        windowsAuthentication    
+    }
+'@
 }
