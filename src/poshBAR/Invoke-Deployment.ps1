@@ -1,5 +1,4 @@
 function Invoke-Deployment {
-    [CmdletBinding()]
     $currentContext = $poshBARDeploy.context.Peek()
     $deploymentStopWatch = [System.Diagnostics.Stopwatch]::StartNew()
     $stepList = $currentContext.steps

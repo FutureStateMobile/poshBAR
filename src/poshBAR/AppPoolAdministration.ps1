@@ -64,6 +64,7 @@ function New-AppPool{
 }    
 
 function Update-AppPool{
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true, position=0)] [string] $appPoolName,
         [parameter(Mandatory=$false,position=1)] [string] [ValidateSet('LocalSystem','LocalService','NetworkService','SpecificUser','ApplicationPoolIdentity')] $appPoolIdentityType = 'NetworkService',
