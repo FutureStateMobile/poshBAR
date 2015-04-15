@@ -1,4 +1,5 @@
 function Invoke-Deployment {
+    [CmdletBinding()]
     $currentContext = $fsmbr.context.Peek()
     $deploymentStopWatch = [System.Diagnostics.Stopwatch]::StartNew()
     $stepList = $currentContext.steps
@@ -66,14 +67,16 @@ function WriteStepTimeSummary($totalDeploymentDuration) {
 }
 
 function RequiredWindowsFeatures {
-    param([string[]] $script:features)
+    [CmdletBinding()]
+    param([string[]] $features)
     Step InstallRequiredWindowsFeatures {
-        Install-WindowsFeatures $script:features
+        Install-WindowsFeatures $features
     }
 }
 set-alias RequiredFeatures RequiredWindowsFeatures
 
 function Step{
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string] $name,
         [parameter(Mandatory=$true,position=1)] [scriptblock] $action
