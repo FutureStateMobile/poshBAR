@@ -1,4 +1,21 @@
+<#
+    .SYNOPSIS
+        Invokes the deployment steps on the target machine
+
+    .EXAMPLE
+        Invoke-Deployment
+
+    .DESCRIPTION
+        Call this after all deployment steps are defined within your deploy script. 
+        This method will iterate over all of the deployment steps, execute the script block, and capture the timing.
+
+    .LINK 
+        Step
+
+#>
 function Invoke-Deployment {
+    [CmdletBinding()]
+    param()
     $currentContext = $poshBARDeploy.context.Peek()
     $deploymentStopWatch = [System.Diagnostics.Stopwatch]::StartNew()
     $stepList = $currentContext.steps
@@ -11,7 +28,7 @@ function Invoke-Deployment {
     $poshBARDeploy = $null
 }
 
-function Invoke-Step{
+function Invoke-Step {
     [CmdletBinding()]
     param(
         [Parameter(Position=0,Mandatory=1)] [string]$stepName
@@ -65,6 +82,20 @@ function WriteStepTimeSummary($totalDeploymentDuration) {
     }
 }
 
+
+<#
+    .SYNOPSIS
+        Creates a deployment step that verifies that the required windows features are installed
+
+    .DESCRIPTION
+        When certain Windows Features are required for an application to run, simply add those required windows features to an array and pass them into this function
+
+    .PARAMETER requiredWindowsFeatures
+        The collection of windows features required.
+
+    .EXAMPLE
+        RequiredWindowsFeatures @('IIS-WebServer','IIS-WebServerRole')
+#>
 function RequiredWindowsFeatures {
     [CmdletBinding()]
     param([string[]] $requiredWindowsFeatures)

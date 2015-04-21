@@ -3,16 +3,19 @@
        Will register asp.net into IIS
 
     .EXAMPLE
-        Invoke-AspNetRegIIS '-i'
+        Invoke-AspNetRegIIS -i
 
     .EXAMPLE 
-        aspnet_regiis '-iur' -framework 3.5
+        aspnet_regiis -iur -framework 3.5
 
-    .PARAMETER argument
-        The registration options
-        -i - Install ASP.NET and updates existing applications to use the specified version of the application pool.
-        -ir - Installs and registers ASP.NET. This option is the same as the -i option except that it does not change the CLR version associated with any existing application pools.
-        -iur - If ASP.NET is not currently registered with IIS, performs the tasks of -i. If a previous version of ASP.NET is already registered with IIS, performs the tasks of -ir.
+    .PARAMETER i
+        Install ASP.NET and updates existing applications to use the specified version of the application pool.
+
+    .PARAMETER ir
+        Installs and registers ASP.NET. This option is the same as the -i option except that it does not change the CLR version associated with any existing application pools.
+
+    .PARAMETER iur
+        If ASP.NET is not currently registered with IIS, performs the tasks of -i. If a previous version of ASP.NET is already registered with IIS, performs the tasks of -ir.
 
     .PARAMETER framework
         The framework version to register.
