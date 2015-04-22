@@ -56,6 +56,28 @@ function New-Application
     }
 }
 
+<#
+    .DESCRIPTION
+       Update IIS Application
+    .SYNOPSIS
+       Will update an IIS Application, only works if the application already exists.
+
+    .EXAMPLE
+        Update-Application 'mySite' 'myApp' 'C:\inetput\wwwroot' 'appPoolName'
+
+    .PARAMETER siteName
+        Name of the associated IIS Website
+
+    .PARAMETER appName
+        Name of the IIS Application to be updated
+
+    .PARAMETER appPath
+        Fully qualified path to the application being updated.
+
+    .PARAMETER appPoolName
+        Name of the application pool that the app is running under.
+
+#>
 function Update-Application{
     [CmdletBinding()]
     param(
@@ -79,6 +101,23 @@ function Update-Application{
     }
 }
 
+<#
+    .DESCRIPTION
+       Confirms that the application in question actually exists in IIS
+
+    .SYNOPSIS
+        Confirms that the application in question actually exists in IIS
+
+    .EXAMPLE
+        Confirm-ApplicatonExists 'mySite' 'myApp'
+
+    .PARAMETER siteName
+        Name of the assocaited IIS website
+
+    .PARAMETER appName
+        Name of the IIS application that we're confirming.
+
+#>
 function Confirm-ApplicationExists( $siteName, $appName ){
     $getApp = Get-Application $siteName $appName
     
@@ -89,26 +128,105 @@ function Confirm-ApplicationExists( $siteName, $appName ){
     return ($getApp -ne $null)
 }
 
+<#
+    .DESCRIPTION
+        Removes an application from IIS
+       
+    .SYNOPSIS
+        Removes an application from IIS
+
+    .EXAMPLE
+        Remove-Application 'mySite' 'myApp'
+
+    .PARAMETER siteName
+        Name of the associated IIS website
+
+    .PARAMETER appName
+        Name of the IIS application being removed.
+#>
 function Remove-Application( $siteName, $appName ){
     $getApp = "$appcmd delete App '$siteName/$appName/'"
     return Invoke-Expression $getApp
 }
 
+<#
+    .DESCRIPTION
+        Starts an application from IIS
+       
+    .SYNOPSIS
+        Starts an application from IIS
+
+    .EXAMPLE
+        Start-Application 'mySite' 'myApp'
+
+    .PARAMETER siteName
+        Name of the associated IIS website
+
+    .PARAMETER appName
+        Name of the IIS application being started.
+#>
 function Start-Application( $siteName, $appName ){
     $getApp = "$appcmd start App '$siteName/$appName/'"
     return Invoke-Expression $getApp
 }
 
+<#
+    .DESCRIPTION
+        Stops an application from IIS
+       
+    .SYNOPSIS
+        Stops an application from IIS
+
+    .EXAMPLE
+        Stop-Application 'mySite' 'myApp'
+
+    .PARAMETER siteName
+        Name of the associated IIS website
+
+    .PARAMETER appName
+        Name of the IIS application being stopped.
+#>
 function Stop-Application( $siteName, $appName ){
     $getApp = "$appcmd stop App '$siteName/$appName/'"
     return Invoke-Expression $getApp
 }
 
-function Get-Application( $siteName, $appName ){
+<#
+    .DESCRIPTION
+        Retrieves an application from IIS
+       
+    .SYNOPSIS
+        Retrieves an application from IIS
+
+    .EXAMPLE
+        Get-Application 'mySite' 'myApp'
+
+    .PARAMETER siteName
+        Name of the associated IIS website
+
+    .PARAMETER appName
+        Name of the IIS application being retrieved.
+#>
+function Get-Application{
+[CmdletBinding()]
+    param(
+        [parameter][string]$siteName, 
+        [parameter][string]$appName
+    )
     $getApp = "$appcmd list App '$siteName/$appName/'"
     return Invoke-Expression $getApp
 }
 
+<#
+    .DESCRIPTION
+        Retrieves all applications from IIS
+       
+    .SYNOPSIS
+        Retrieves all applications from IIS
+
+    .EXAMPLE
+        Get-Applications
+#>
 function Get-Applications{
     $getApp = "$appcmd list Apps"
     Invoke-Expression $getApp

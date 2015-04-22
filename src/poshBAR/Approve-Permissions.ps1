@@ -1,3 +1,24 @@
+<#
+    .DESCRIPTION
+       Sets permissions to a specified path for a specific trustee (user)
+
+    .SYNOPSIS
+        Sets permissions to a specified path for a specific trustee (user)
+
+    .EXAMPLE
+        Approve-Permissions 'c:\inetpub\wwwroot' 'Network Service' 'read-execute'
+    
+    .PARAMETER path
+        The path that you are modifying permissions on
+
+    .PARAMETER trustee
+        The user who is being granted the specified permission
+
+    .PARAMETER permission
+        The permission level
+        [full, modify, read-execute, read-only, write-only]
+
+#>
 function Approve-Permissions{
     [CmdletBinding()]
 	param(

@@ -1,5 +1,22 @@
+<#
+    .SYNOPSIS
+        Invokes the deployment steps on the target machine
+
+    .EXAMPLE
+        Invoke-Deployment
+
+    .DESCRIPTION
+        Call this after all deployment steps are defined within your deploy script. 
+        This method will iterate over all of the deployment steps, execute the script block, and capture the timing.
+
+    .LINK 
+        Step
+
+#>
 function Invoke-Deployment {
-    $currentContext = $fsmbr.context.Peek()
+    [CmdletBinding()]
+    param()
+    $currentContext = $poshBARDeploy.context.Peek()
     $deploymentStopWatch = [System.Diagnostics.Stopwatch]::StartNew()
     $stepList = $currentContext.steps
     if ($stepList) {
@@ -8,17 +25,17 @@ function Invoke-Deployment {
         }
     }
     WriteStepTimeSummary $deploymentStopWatch.Elapsed
-    $fsmbr = $null
+    $poshBARDeploy = $null
 }
 
-function Invoke-Step{
+function Invoke-Step {
     [CmdletBinding()]
     param(
         [Parameter(Position=0,Mandatory=1)] [string]$stepName
     )
 
     $stepKey = $stepName.ToLower()
-    $currentContext = $fsmbr.context.Peek()
+    $currentContext = $poshBARDeploy.context.Peek()
     $step = $currentContext.steps.$stepKey
     
     Format-TaskNameToHost $step.Name
@@ -29,21 +46,21 @@ function Invoke-Step{
 }
 
 function Initialize-Context{
-    $script:fsmbr = @{}
-    $fsmbr.context = new-object system.collections.stack
-    $fsmbr.context.push(@{
+    $script:poshBARDeploy = @{}
+    $poshBARDeploy.context = new-object system.collections.stack
+    $poshBARDeploy.context.push(@{
         "steps" = New-Object System.Collections.Specialized.OrderedDictionary}
     )
 }
 
 function WriteStepTimeSummary($totalDeploymentDuration) {
-    if ($fsmbr.context.count -gt 0) {
+    if ($poshBARDeploy.context.count -gt 0) {
         Write-Host "Deployment Complete" -f Green
         "-" * 70
         "Deployment Report"
         "-" * 70
         $list = @()
-        $currentContext = $fsmbr.context.Peek()
+        $currentContext = $poshBARDeploy.context.Peek()
 
         $stepList = $currentContext.steps
         if ($stepList) {
@@ -65,15 +82,33 @@ function WriteStepTimeSummary($totalDeploymentDuration) {
     }
 }
 
+
+<#
+    .SYNOPSIS
+        Creates a deployment step that verifies that the required windows features are installed
+
+    .DESCRIPTION
+        When certain Windows Features are required for an application to run, simply add those required windows features to an array and pass them into this function
+
+    .PARAMETER requiredWindowsFeatures
+        The collection of windows features required.
+
+    .EXAMPLE
+        RequiredWindowsFeatures @('IIS-WebServer','IIS-WebServerRole')
+#>
 function RequiredWindowsFeatures {
-    param([string[]] $script:features)
+    [CmdletBinding()]
+    param([string[]] $requiredWindowsFeatures)
+
+    $script:requiredWindowsFeatures = $requiredWindowsFeatures
     Step InstallRequiredWindowsFeatures {
-        Install-WindowsFeatures $script:features
+        Install-WindowsFeatures $script:requiredWindowsFeatures
     }
 }
 set-alias RequiredFeatures RequiredWindowsFeatures
 
 function Step{
+    [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string] $name,
         [parameter(Mandatory=$true,position=1)] [scriptblock] $action
@@ -85,11 +120,11 @@ function Step{
 
     $stepKey = $name.ToLower()
     
-    if(!$fsmbr){
+    if(!$poshBARDeploy){
         Initialize-Context
     }
 
-    $currentContext = $fsmbr.context.Peek()
+    $currentContext = $poshBARDeploy.context.Peek()
     #Assert (!$currentContext.steps.ContainsKey($stepKey)) ($msgs.error_duplicate_step_name -f $name)
         
     $currentContext.steps.$stepKey = $newStep

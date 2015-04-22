@@ -2,6 +2,7 @@ $baseDir  = resolve-path ".\.."
 $script:this = @{
     buildDir = "$baseDir\build-artifacts" 
     buildPublishDir = "$baseDir\build-artifacts\publish"
+    documentationDir = "$baseDir\docs"
     packagesDir = "$baseDir\Packages"
     workingDir = "$baseDir\build-artifacts\Working\poshBAR"
     modulesDir = "$baseDir\src\poshBAR"
@@ -27,6 +28,7 @@ Task MakeBuildDir {
     rm -r $this.buildDir -force -ea SilentlyContinue
     New-Item -ItemType Directory -Force -Path $this.buildPublishDir
     New-Item -ItemType Directory -Force -Path $this.workingDir
+    New-Item -ItemType Directory -Force -Path $this.documentationDir
 }
 
 Task UpdateVersion -depends MakeBuildDir {
@@ -47,6 +49,10 @@ Task UpdateVersion -depends MakeBuildDir {
         "$filename - Updated to $version.$buildNumber"
     }
     Pop-Location
+}
+
+Task Convenience-GenerateDocumentation -depends SetupPaths, UpdateVersion, MakeBuildDir -alias docs {
+    .\out-html.ps1 -moduleName 'poshBAR' -outputDir "$($this.documentationDir)"
 }
 
 Task PackageBuildRelease -depends SetupPaths, UpdateVersion, MakeBuildDir {

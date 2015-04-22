@@ -30,7 +30,6 @@ Push-Location $psScriptRoot
 . .\Invoke-DeployOctopusNugetPackage.ps1
 . .\Invoke-ElevatedCommand.ps1
 . .\Invoke-ExternalCommand.ps1
-. .\Invoke-HealthCheck.ps1
 . .\MSBuild.ps1
 . .\Nuget.ps1
 . .\nUnit.ps1
@@ -61,7 +60,6 @@ Export-ModuleMember `
           'Add-IISMimeType',
           'Add-LoopbackFix',
           'Add-XmlConfigValue',
-          'Add-XmlTransformToPath',
           'Approve-Permissions',
           'Assert-That',
           'Assert-PSVersion',
@@ -80,7 +78,6 @@ Export-ModuleMember `
           'Get-EnvironmentSettings',
           'Get-Site',
           'Get-Sites',
-          'Get-TestFileName',
           'Get-WindowsFeatures',
           'Install-WebApplication',
           'Install-WindowsFeatures',
@@ -97,7 +94,6 @@ Export-ModuleMember `
           'Invoke-ExternalCommand',
           'Invoke-FromBase64', 
           'Invoke-GruntMinification',
-          'Invoke-HealthCheck',
           'Invoke-HtmlDecode', 
           'Invoke-HtmlEncode',
           'Invoke-KarmaTests',

@@ -3,7 +3,7 @@
         Writes the message to the Host formatted to be easy to read
 
     .EXAMPLE
-        Format-WriteHost "Doing Some Task"
+        Format-TaskNameToHost "Doing Some Task"
 
     .PARAMETER taskName
         The Name of the task you are executing
@@ -12,7 +12,11 @@
         This is just a simple helper function to write the current task name to screen in a nice friendly way.
 
     .NOTES
-        Nothing yet...
+        We use this in conjunction with psake for writing headers. `n
+        `tFormatTaskName { `n
+           `t`tparam($taskName) `n
+           `t`tFormat-TaskNameToHost $taskName `n
+        `t}
 #>
 function Format-TaskNameToHost
 {

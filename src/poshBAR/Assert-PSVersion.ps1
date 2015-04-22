@@ -1,3 +1,17 @@
+<#
+    .DESCRIPTION
+        Enforces a specific PS Version
+         
+    .SYNOPSIS
+        Some powershell modules are only available on a specific version of PS. Call this to ensure the user is running under the appropriate version.
+
+    .EXAMPLE
+        Assert-PSVersion 4
+
+    .PARAMETER requiredVersion
+        The version of powershell required
+
+#>
 function Assert-PSVersion{
   [CmdletBinding()]
   param(
