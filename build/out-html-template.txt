@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+		<title>$moduleName Documentation</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,6 +13,11 @@
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
 		<style>
+			.navbar-nav {
+				height:100%;
+				overflow-y: auto;
+
+			}
 			/* make sidebar nav vertical */ 
 			@media (min-width: 768px) {
 			  .sidebar-nav .navbar .navbar-collapse {
@@ -94,15 +100,24 @@ foreach ($c in $commandsHelp) {@"
 				<div id=`"$(FixString($c.Name))`" class="toggle_container">
 					<div class="page-header">
 						<h1>$(FixString($c.Name))</h1>
-						<p class="lead">$(FixString($c.synopsis))</p>
+"@
+	$syn = FixString($c.synopsis)
+    if(!($syn).StartsWith($(FixString($c.Name)))){@"
+						<p class="lead">$syn</p>
+"@
+	}
+@"
 					</div>
 				    <div class=`"row`">
+"@
+	if (!($c.syntax | Out-String ).Trim().Contains('syntaxItem')) {@"
 						<div class=`"col-md-12`">
 							<h2> Syntax </h2>
 							<pre>
 <code>$(FixString($c.syntax | out-string))</code></pre>
 						</div>
 "@
+	}
     if($c.parameters.parameter.Count -gt 0){
 @"
 						<div class=`"col-md-12`">
@@ -121,12 +136,12 @@ foreach ($c in $commandsHelp) {@"
 "@
         foreach($param in $c.parameters.parameter){
 @"
-									<tr valign='top'>
-										<td>$($param.Name)&nbsp;</td>
-										<td>$(FixString(($param.Description  | out-string  -width 2000).Trim()))&nbsp;</td>
-										<td>$(FixString($param.Required))&nbsp;</td>
-										<td>$(FixString($param.PipelineInput))&nbsp;</td>
-										<td>$(FixString($param.DefaultValue))&nbsp;</td>
+									<tr>
+										<td>$(FixString($param.Name))</td>
+										<td>$(FixString(($param.Description  | out-string).Trim()))</td>
+										<td>$(FixString($param.Required))</td>
+										<td>$(FixString($param.PipelineInput))</td>
+										<td>$(FixString($param.DefaultValue))</td>
 									</tr>
 "@
         }
@@ -184,6 +199,7 @@ foreach ($c in $commandsHelp) {@"
 }
 @'
 		</div>
+	</div>
 	</div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" ></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js" charset="utf-8"></script>

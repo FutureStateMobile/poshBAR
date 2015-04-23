@@ -4,7 +4,7 @@ function FixString {
     if ($in -eq $null) {
         $in = ""
     }
-    return $in.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace('`n', '</br>').Replace('`t', "&nbsp;&nbsp;&nbsp;&nbsp;").Trim()
+    return $in.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace('`n', '<br>').Replace('`t', "&nbsp;&nbsp;&nbsp;&nbsp;").Trim()
 
 }
 
