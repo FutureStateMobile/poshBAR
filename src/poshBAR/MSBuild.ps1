@@ -19,7 +19,7 @@ function Invoke-MSBuild {
 
     $VisualStudioVersionParam = "VisualStudioVersion=$("{0:N1}" -f $VisualStudioVersion)"
 
-    exec { msbuild /t:build /p:OutDir="$outDir\" $projectFile /p:"ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=false" /p:"$VisualStudioVersionParam" /l:"FileLogger,Microsoft.Build.Engine;$logFileParam" } ($msgs.error_msbuild_compile -f $projectFile)
+    exec { msbuild @('/t:build', "/p:OutDir=$outDir", $projectFile, "/p:ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=false", "/p:$VisualStudioVersionParam", "/l:FileLogger,Microsoft.Build.Engine;$logFileParam") } ($msgs.error_msbuild_compile -f $projectFile)
 
     if($namespace){
         New-WarningsFromMSBuildLog $logPath $namespace
@@ -32,7 +32,7 @@ function Invoke-CleanMSBuild {
         [Parameter(Mandatory=$true, Position=0)] [string] $solutionFile,
         [Parameter(Mandatory=$false, Position=1)] [double] $VisualStudioVersion = 12.0
     )
-    exec { msbuild $solutionFile /t:clean /v:q /nologo /p:VisualStudioVersion=12.0 } "Error cleaning the solution."
+    exec { msbuild @($solutionFile, '/t:clean', '/v:q', '/nologo', '/p:VisualStudioVersion=12.0') } "Error cleaning the solution."
 }
 
 function New-WarningsFromMSBuildLog {
