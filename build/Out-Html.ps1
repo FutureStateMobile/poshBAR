@@ -1,15 +1,14 @@
-param($moduleName, $outputDir = "./help")
+param($moduleName, $outputDir = './help', $fileName = 'default.html')
 function FixString {
-    param($in = "")
+    param($in = '')
     if ($in -eq $null) {
-        $in = ""
+        $in = ''
     }
-    return $in.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace('`n', '<br>').Replace('`t', "&nbsp;&nbsp;&nbsp;&nbsp;").Trim()
+    return $in.Replace('&', '&amp;').Replace('<', '&lt;').Replace('>', '&gt;').Replace('`n', '<br>').Replace('`t', '&nbsp;&nbsp;&nbsp;&nbsp;').Trim()
 
 }
 
 $commandsHelp = (Get-Command -module $moduleName) | get-help -full
-
 $template = Get-Content 'C:\Dev\poshBAR\build\out-html-template.txt' -raw -force
-$out = Invoke-Expression $template
-$out | Out-File "$outputDir\default.html"
+
+Invoke-Expression $template > "$outputDir\$fileName"
