@@ -83,11 +83,12 @@
                 <div class="navbar-collapse collapse sidebar-navbar-collapse">
                   <ul class="nav navbar-nav">
 "@
-
+$progress = 0
 $commandsHelp | %  {
+	Update-Progress $_.Name 'Navigation'
+	$progress++
 "					<li class=`"nav-menu`"><a href=`"#$($_.Name)`">$($_.Name)</a></li>"
 }
-
 @'
                   </ul>
                 </div><!--/.nav-collapse -->
@@ -96,13 +97,17 @@ $commandsHelp | %  {
           </div>
           <div class="col-sm-9">
 '@
-foreach ($c in $commandsHelp) {@"
-				<div id=`"$(FixString($c.Name))`" class="toggle_container">
+$progress = 0
+$commandsHelp | % {
+	Update-Progress $_.Name 'Documentation'
+	$progress++
+@"
+				<div id=`"$(FixString($_.Name))`" class="toggle_container">
 					<div class="page-header">
-						<h1>$(FixString($c.Name))</h1>
+						<h1>$(FixString($_.Name))</h1>
 "@
-	$syn = FixString($c.synopsis)
-    if(!($syn).StartsWith($(FixString($c.Name)))){@"
+	$syn = FixString($_.synopsis)
+    if(!($syn).StartsWith($(FixString($_.Name)))){@"
 						<p class="lead">$syn</p>
 "@
 	}
@@ -110,15 +115,15 @@ foreach ($c in $commandsHelp) {@"
 					</div>
 				    <div class=`"row`">
 "@
-	if (!($c.syntax | Out-String ).Trim().Contains('syntaxItem')) {@"
+	if (!($_.syntax | Out-String ).Trim().Contains('syntaxItem')) {@"
 						<div class=`"col-md-12`">
 							<h2> Syntax </h2>
 							<pre>
-<code>$(FixString($c.syntax | out-string))</code></pre>
+<code>$(FixString($_.syntax | out-string))</code></pre>
 						</div>
 "@
 	}
-    if($c.parameters.parameter.Count -gt 0){
+    if($_.parameters.parameter.Count -gt 0){
 @"
 						<div class=`"col-md-12`">
 							<h2> Parameters </h2>
@@ -134,7 +139,7 @@ foreach ($c in $commandsHelp) {@"
 								</thead>
 								<tbody>
 "@
-        foreach($param in $c.parameters.parameter){
+        foreach($param in $_.parameters.parameter){
 @"
 									<tr>
 										<td>$(FixString($param.Name))</td>
@@ -151,37 +156,37 @@ foreach ($c in $commandsHelp) {@"
 						</div>				
 "@
     }
-    if (($c.inputTypes | Out-String ).Trim().Length -gt 0) {
+    if (($_.inputTypes | Out-String ).Trim().Length -gt 0) {
 @"
 						<div class=`"col-md-12`">
 					        <h2> Input Type </h2>
-					        <div>$(FixString($c.inputTypes  | out-string))</div>
+					        <div>$(FixString($_.inputTypes  | out-string))</div>
 					    </div>
 "@
 	}
-    if (($c.returnValues | Out-String ).Trim().Length -gt 0) {
+    if (($_.returnValues | Out-String ).Trim().Length -gt 0) {
 @"
 						<div class=`"col-md-12`">
 							<h2> Return Values </h2>
-							<div>$(FixString($c.returnValues  | out-string))</div>
+							<div>$(FixString($_.returnValues  | out-string))</div>
 						</div>
 "@
 	}
-    if (($c.alertSet | Out-String ).Trim().Length -gt 0) {
+    if (($_.alertSet | Out-String ).Trim().Length -gt 0) {
 @"
 						<div class=`"col-md-12`">
 							<h2> Notes </h2>
-							<div>$(FixString($c.alertSet  | out-string -Width 2000).Trim())</div>
+							<div>$(FixString($_.alertSet  | out-string -Width 2000).Trim())</div>
 						</div>
 "@
 	}
-	if(($c.examples | Out-String).Trim().Length -gt 0) {
+	if(($_.examples | Out-String).Trim().Length -gt 0) {
 @"
 						<div class=`"col-md-12`">
 							<h2> Examples </h2>
 							<hr>
 "@
-		foreach($example in $c.examples.example){
+		foreach($example in $_.examples.example){
 @"
 							<h3>$(FixString($example.title.Trim(('-',' '))))</h3>
 							<pre>$(FixString($example.code | out-string ).Trim())</pre>
