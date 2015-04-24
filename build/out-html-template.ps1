@@ -107,7 +107,8 @@ $commandsHelp | % {
 						<h1>$(FixString($_.Name))</h1>
 "@
 	$syn = FixString($_.synopsis)
-    if(!($syn).StartsWith($(FixString($_.Name)))){@"
+    if(!($syn).StartsWith($(FixString($_.Name)))){
+@"
 						<p class="lead">$syn</p>
 "@
 	}
@@ -115,7 +116,24 @@ $commandsHelp | % {
 					</div>
 				    <div class=`"row`">
 "@
-	if (!($_.syntax | Out-String ).Trim().Contains('syntaxItem')) {@"
+	if (!($_.alias.Length -eq 0)) {
+@"
+						<div class=`"col-md-12`">
+							<h2> Aliases </h2>
+							<ul>
+"@
+	$_.alias | % {
+@"
+								<li>$($_.Name)</li>
+"@
+	}
+@"
+							</ul>
+						</div>
+"@
+	}
+	if (!($_.syntax | Out-String ).Trim().Contains('syntaxItem')) {
+@"
 						<div class=`"col-md-12`">
 							<h2> Syntax </h2>
 							<pre>
@@ -142,7 +160,7 @@ $commandsHelp | % {
         foreach($param in $_.parameters.parameter){
 @"
 									<tr>
-										<td>$(FixString($param.Name))</td>
+										<td>-$(FixString($param.Name))</td>
 										<td>$(FixString(($param.Description  | out-string).Trim()))</td>
 										<td>$(FixString($param.Required))</td>
 										<td>$(FixString($param.PipelineInput))</td>
@@ -156,27 +174,30 @@ $commandsHelp | % {
 						</div>				
 "@
     }
-    if (($_.inputTypes | Out-String ).Trim().Length -gt 0) {
+    $inputTypes = $(FixString($_.inputTypes  | out-string))
+    if ($inputTypes.Length -gt 0 -and -not $inputTypes.Contains('inputType')) {
 @"
 						<div class=`"col-md-12`">
 					        <h2> Input Type </h2>
-					        <div>$(FixString($_.inputTypes  | out-string))</div>
+					        <div>$inputTypes</div>
 					    </div>
 "@
 	}
-    if (($_.returnValues | Out-String ).Trim().Length -gt 0) {
+    $returnValues = $(FixString($_.returnValues  | out-string))
+    if ($returnValues.Length -gt 0 -and -not $returnValues.StartsWith("returnValue")) {
 @"
 						<div class=`"col-md-12`">
 							<h2> Return Values </h2>
-							<div>$(FixString($_.returnValues  | out-string))</div>
+							<div>$returnValues</div>
 						</div>
 "@
 	}
-    if (($_.alertSet | Out-String ).Trim().Length -gt 0) {
+    $notes = $(FixString($_.alertSet  | out-string))
+    if ($notes.Trim().Length -gt 0) {
 @"
 						<div class=`"col-md-12`">
 							<h2> Notes </h2>
-							<div>$(FixString($_.alertSet  | out-string -Width 2000).Trim())</div>
+							<div>$notes</div>
 						</div>
 "@
 	}
@@ -190,7 +211,7 @@ $commandsHelp | % {
 @"
 							<h3>$(FixString($example.title.Trim(('-',' '))))</h3>
 							<pre>$(FixString($example.code | out-string ).Trim())</pre>
-							<div>$(FixString($example.remarks | out-string -Width 2000).Trim())</div>
+							<div>$(FixString($example.remarks | out-string ).Trim())</div>
 "@
 		}
 @"

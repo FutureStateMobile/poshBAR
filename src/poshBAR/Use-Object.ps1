@@ -4,21 +4,16 @@
         scriptblock is finished executing.
         
     .EXAMPLE
-        Use-Object ($foo = new-object System.Some.Disposable.Object) {
-            $foo.DoSomething
-        }
+        Use-Object ($foo = new-object System.Some.Disposable.Object) { $foo.DoSomething }
         
     .PARAMETER InputObject
-        A disposable object
+        A disposable object. This object will be disposed of once the script block finishes execution.
 
     .PARAMETER ScriptBlock
-        The script block that  you need to dispose of.
+        The script block to be executed.
 
     .SYNOPSIS
         Wrap a disposable object in this method, and after the scriptblock executes, it will dispose of the object.
-
-    .NOTES
-        Nothing yet...
 #> 
 function Use-Object
 {
