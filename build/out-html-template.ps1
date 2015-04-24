@@ -157,14 +157,14 @@ $commandsHelp | % {
 								</thead>
 								<tbody>
 "@
-        foreach($param in $_.parameters.parameter){
+        $_.parameters.parameter | % {
 @"
 									<tr>
-										<td>-$(FixString($param.Name))</td>
-										<td>$(FixString(($param.Description  | out-string).Trim()))</td>
-										<td>$(FixString($param.Required))</td>
-										<td>$(FixString($param.PipelineInput))</td>
-										<td>$(FixString($param.DefaultValue))</td>
+										<td>-$(FixString($_.Name))</td>
+										<td>$(FixString(($_.Description  | out-string).Trim()))</td>
+										<td>$(FixString($_.Required))</td>
+										<td>$(FixString($_.PipelineInput))</td>
+										<td>$(FixString($_.DefaultValue))</td>
 									</tr>
 "@
         }
@@ -207,11 +207,11 @@ $commandsHelp | % {
 							<h2> Examples </h2>
 							<hr>
 "@
-		foreach($example in $_.examples.example){
+		$_.examples.example | % {
 @"
-							<h3>$(FixString($example.title.Trim(('-',' '))))</h3>
-							<pre>$(FixString($example.code | out-string ).Trim())</pre>
-							<div>$(FixString($example.remarks | out-string ).Trim())</div>
+							<h3>$(FixString($_.title.Trim(('-',' '))))</h3>
+							<pre>$(FixString($_.code | out-string ).Trim())</pre>
+							<div>$(FixString($_.remarks | out-string ).Trim())</div>
 "@
 		}
 @"
