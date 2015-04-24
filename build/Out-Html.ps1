@@ -1,7 +1,8 @@
 param(
-    [parameter(Mandatory=$true, Position=0)]$moduleName, 
-    [parameter(Mandatory=$false, Position=1)]$outputDir = './help', 
-    [parameter(Mandatory=$false, Position=2)]$fileName = 'default.html'
+    [parameter(Mandatory=$true, Position=0)] [string] $moduleName, 
+    [parameter(Mandatory=$false, Position=1)] [string] $templiate = "./out-html-template.ps1",
+    [parameter(Mandatory=$false, Position=2)] [string] $outputDir = './help', 
+    [parameter(Mandatory=$false, Position=3)] [string] $fileName = 'default.html'
 )
 
 function FixString {
@@ -20,6 +21,6 @@ $commandsHelp = (Get-Command -module $moduleName) | get-help -full
 
 $totalCommands = $commandsHelp.Count
 
-$template = Get-Content 'C:\Dev\poshBAR\build\out-html-template.ps1' -raw -force
+$template = Get-Content $templiate -raw -force
 
 Invoke-Expression $template > "$outputDir\$fileName"
