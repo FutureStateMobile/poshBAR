@@ -51,11 +51,11 @@ Task UpdateVersion -depends MakeBuildDir {
     Pop-Location
 }
 
-Task Convenience-GenerateDocumentation -depends SetupPaths, UpdateVersion, MakeBuildDir -alias docs {
+Task GenerateDocumentation -depends SetupPaths, UpdateVersion, MakeBuildDir -alias docs {
     .\out-html.ps1 -moduleName 'poshBAR' -outputDir "$($this.documentationDir)"
 }
 
-Task PackageBuildRelease -depends SetupPaths, UpdateVersion, MakeBuildDir {
+Task PackageBuildRelease -depends SetupPaths, UpdateVersion, MakeBuildDir, GenerateDocumentation {
 
     Update-XmlConfigValues $this.devopsNugetPackage "//*[local-name() = 'version']" $version
     Update-XmlConfigValues $this.devopsNugetPackage "//*[local-name() = 'summary']" "$($this.devopsSummary) v-$version"

@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+		<title>$moduleName Documentation</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,6 +13,11 @@
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
 		<style>
+			.navbar-nav {
+				height:100%;
+				overflow-y: auto;
+
+			}
 			/* make sidebar nav vertical */ 
 			@media (min-width: 768px) {
 			  .sidebar-nav .navbar .navbar-collapse {
@@ -77,11 +83,12 @@
                 <div class="navbar-collapse collapse sidebar-navbar-collapse">
                   <ul class="nav navbar-nav">
 "@
-
+$progress = 0
 $commandsHelp | %  {
+	Update-Progress $_.Name 'Navigation'
+	$progress++
 "					<li class=`"nav-menu`"><a href=`"#$($_.Name)`">$($_.Name)</a></li>"
 }
-
 @'
                   </ul>
                 </div><!--/.nav-collapse -->
@@ -90,20 +97,51 @@ $commandsHelp | %  {
           </div>
           <div class="col-sm-9">
 '@
-foreach ($c in $commandsHelp) {@"
-				<div id=`"$(FixString($c.Name))`" class="toggle_container">
+$progress = 0
+$commandsHelp | % {
+	Update-Progress $_.Name 'Documentation'
+	$progress++
+@"
+				<div id=`"$(FixString($_.Name))`" class="toggle_container">
 					<div class="page-header">
-						<h1>$(FixString($c.Name))</h1>
-						<p class="lead">$(FixString($c.synopsis))</p>
+						<h1>$(FixString($_.Name))</h1>
+"@
+	$syn = FixString($_.synopsis)
+    if(!($syn).StartsWith($(FixString($_.Name)))){
+@"
+						<p class="lead">$syn</p>
+"@
+	}
+@"
 					</div>
 				    <div class=`"row`">
+"@
+	if (!($_.alias.Length -eq 0)) {
+@"
+						<div class=`"col-md-12`">
+							<h2> Aliases </h2>
+							<ul>
+"@
+	$_.alias | % {
+@"
+								<li>$($_.Name)</li>
+"@
+	}
+@"
+							</ul>
+						</div>
+"@
+	}
+	if (!($_.syntax | Out-String ).Trim().Contains('syntaxItem')) {
+@"
 						<div class=`"col-md-12`">
 							<h2> Syntax </h2>
 							<pre>
-<code>$(FixString($c.syntax | out-string))</code></pre>
+<code>$(FixString($_.syntax | out-string))</code></pre>
 						</div>
 "@
-    if($c.parameters.parameter.Count -gt 0){
+	}
+    if($_.parameters.parameter.Count -gt 0){
 @"
 						<div class=`"col-md-12`">
 							<h2> Parameters </h2>
@@ -119,14 +157,14 @@ foreach ($c in $commandsHelp) {@"
 								</thead>
 								<tbody>
 "@
-        foreach($param in $c.parameters.parameter){
+        $_.parameters.parameter | % {
 @"
-									<tr valign='top'>
-										<td>$($param.Name)&nbsp;</td>
-										<td>$(FixString(($param.Description  | out-string  -width 2000).Trim()))&nbsp;</td>
-										<td>$(FixString($param.Required))&nbsp;</td>
-										<td>$(FixString($param.PipelineInput))&nbsp;</td>
-										<td>$(FixString($param.DefaultValue))&nbsp;</td>
+									<tr>
+										<td>-$(FixString($_.Name))</td>
+										<td>$(FixString(($_.Description  | out-string).Trim()))</td>
+										<td>$(FixString($_.Required))</td>
+										<td>$(FixString($_.PipelineInput))</td>
+										<td>$(FixString($_.DefaultValue))</td>
 									</tr>
 "@
         }
@@ -136,41 +174,44 @@ foreach ($c in $commandsHelp) {@"
 						</div>				
 "@
     }
-    if (($c.inputTypes | Out-String ).Trim().Length -gt 0) {
+    $inputTypes = $(FixString($_.inputTypes  | out-string))
+    if ($inputTypes.Length -gt 0 -and -not $inputTypes.Contains('inputType')) {
 @"
 						<div class=`"col-md-12`">
 					        <h2> Input Type </h2>
-					        <div>$(FixString($c.inputTypes  | out-string))</div>
+					        <div>$inputTypes</div>
 					    </div>
 "@
 	}
-    if (($c.returnValues | Out-String ).Trim().Length -gt 0) {
+    $returnValues = $(FixString($_.returnValues  | out-string))
+    if ($returnValues.Length -gt 0 -and -not $returnValues.StartsWith("returnValue")) {
 @"
 						<div class=`"col-md-12`">
 							<h2> Return Values </h2>
-							<div>$(FixString($c.returnValues  | out-string))</div>
+							<div>$returnValues</div>
 						</div>
 "@
 	}
-    if (($c.alertSet | Out-String ).Trim().Length -gt 0) {
+    $notes = $(FixString($_.alertSet  | out-string))
+    if ($notes.Trim().Length -gt 0) {
 @"
 						<div class=`"col-md-12`">
 							<h2> Notes </h2>
-							<div>$(FixString($c.alertSet  | out-string -Width 2000).Trim())</div>
+							<div>$notes</div>
 						</div>
 "@
 	}
-	if(($c.examples | Out-String).Trim().Length -gt 0) {
+	if(($_.examples | Out-String).Trim().Length -gt 0) {
 @"
 						<div class=`"col-md-12`">
 							<h2> Examples </h2>
 							<hr>
 "@
-		foreach($example in $c.examples.example){
+		$_.examples.example | % {
 @"
-							<h3>$(FixString($example.title.Trim(('-',' '))))</h3>
-							<pre>$(FixString($example.code | out-string ).Trim())</pre>
-							<div>$(FixString($example.remarks | out-string -Width 2000).Trim())</div>
+							<h3>$(FixString($_.title.Trim(('-',' '))))</h3>
+							<pre>$(FixString($_.code | out-string ).Trim())</pre>
+							<div>$(FixString($_.remarks | out-string ).Trim())</div>
 "@
 		}
 @"
@@ -184,6 +225,7 @@ foreach ($c in $commandsHelp) {@"
 }
 @'
 		</div>
+	</div>
 	</div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" ></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js" charset="utf-8"></script>
