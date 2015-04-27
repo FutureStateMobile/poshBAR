@@ -51,7 +51,7 @@ function New-WarningsFromMSBuildLog {
         % { $_.trim() -replace "^s*d+>",""  } | # Strip out any project number and caret prefixes
         sort | gu -asString)                    # remove duplicates by sorting and filtering for unique strings
      
-    $count = $warnings.Count
+    [int]$count = $warnings.Count
     $global:TeamCityWrnCount += $count
 
     if($count -eq 0) {return}
@@ -61,8 +61,9 @@ function New-WarningsFromMSBuildLog {
     $warnings | % { Write-Host " * $_" }
      
     #TeamCity output
-    $msgs.msg_teamcity_buildstatus -f "{build.status.text}, Build warnings: $TeamCityWrnCount"
-    $msgs.msg_teamcity_buildstatisticvalue -f 'buildWarnings', $TeamCityWrnCount
+
+    $msgs.msg_teamcity_buildstatus -f "{build.status.text}, Build warnings: $global:TeamCityWrnCount"
+    $msgs.msg_teamcity_buildstatisticvalue -f 'buildWarnings', $global:TeamCityWrnCount
      
     # file output
     if( $txtOutputPath ){
