@@ -1,5 +1,7 @@
-$version = "1.1.1" # contains the current version of poshBAR
-$script:poshBAR = @{}
+$version = '1.0.3.61' # contains the current version of poshBAR
+$global:poshBAR = @{
+  Paths = @{}
+}
 Write-Host "`nposhBAR version $version `nCopyright ($([char]0x00A9)) Future State Mobile Inc. & Contributors`n"
 
 Remove-Item alias:new -ea SilentlyContinue
@@ -60,6 +62,7 @@ Export-ModuleMember `
           'Add-IISMimeType',
           'Add-LoopbackFix',
           'Add-XmlConfigValue',
+          'Add-XmlTransformToPath',
           'Approve-Permissions',
           'Assert-That',
           'Assert-PSVersion',
@@ -78,6 +81,7 @@ Export-ModuleMember `
           'Get-EnvironmentSettings',
           'Get-Site',
           'Get-Sites',
+          'Get-TestFileName',
           'Get-WindowsFeatures',
           'Install-WebApplication',
           'Install-WindowsFeatures',

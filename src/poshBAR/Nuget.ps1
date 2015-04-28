@@ -6,5 +6,6 @@ function New-NugetPackage{
         [parameter(Mandatory=$true, Position=2)][string] $outputDirectory
 	)
 
+    Add-ToolToPath 'nuget'
 	exec { NuGet.exe Pack $nuspecFile -Version $version -OutputDirectory $outputDirectory -NoPackageAnalysis } "Failed to package $nuspecFile."
 }

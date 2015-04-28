@@ -198,5 +198,5 @@ function Add-XmlTransformToPath {
 
     throw 'Could not find XmlTransform, please specify it to `$poshbar["XmlTransformPath"]'
 }
-
 set-alias xdt Invoke-XmlDocumentTransform
+set-alias XmlDocumentTransform Invoke-XmlDocumentTransform

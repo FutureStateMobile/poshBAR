@@ -16,7 +16,7 @@ function Invoke-SpecFlow {
     $xmlFile = "$fileName-TestResults.xml"
     $txtFile = "$fileName-TestResults.txt"
     $htmlFile = "$fileName.html"
-
+    Add-ToolToPath 'specflow'
     try{        
         if($testingFramework -eq "nunit"){
             $tf = "nunitexecutionreport"

@@ -77,7 +77,7 @@ task PackageSecondApp -depends CompileSolution {
 }
 
 # the init task simply finishes setting everything up.
-task Init -depends MakeBuildDir {
+task Init -depends MakeBuildDir SetupPaths {
     $this.version = $version
     $this.environment = $buildEnvironment
     $this.buildNumber = $buildNumber
@@ -96,6 +96,11 @@ task MakeBuildDir {
     }
     # uncomment if you want MSBUILD to clean the build output directory.
     # Invoke-CleanMSBuild $this.solutionFile
+}
+
+task SetupPaths {
+    # used to add a custom tool to your $env:PATH if it's not in a standard location.
+    $poshBAR.Paths['someToolPath'] = "$here\tools\someTool"
 }
 
 <#
