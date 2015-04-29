@@ -13,6 +13,7 @@ Push-Location $psScriptRoot
 . .\Add-IISHttpVerb.ps1
 . .\Add-IISMimeType.ps1
 . .\Add-LoopbackFix.ps1
+. .\Add-ToolToPath.ps1
 . .\ApplicationAdministration.ps1
 . .\AppPoolAdministration.ps1
 . .\Approve-Permissions.ps1
@@ -62,7 +63,7 @@ Export-ModuleMember `
           'Add-IISMimeType',
           'Add-LoopbackFix',
           'Add-XmlConfigValue',
-          'Add-XmlTransformToPath',
+          'Add-ToolToPath'
           'Approve-Permissions',
           'Assert-That',
           'Assert-PSVersion',
@@ -160,6 +161,7 @@ convertfrom-stringdata @"
     error_msbuild_compile = Error compiling '{0}'.
     error_specflow_generation = Error generating the specflow feature files for '{0}'.
     error_chutzpah = Error running the chutzpah javascipt tests for '{0}'.
+    error_cannot_find_tool = Could not find {0}, please specify it's path to `$poshBAR.Paths["{1}"]
     wrn_full_permission = You have applied FULL permission to '{0}' for '{1}'. THIS IS DANGEROUS!
     wrn_cant_find = Could not find {0} with the name: {0}.
     msg_grant_permission = Granting {0} permissions to {1} for {2}.

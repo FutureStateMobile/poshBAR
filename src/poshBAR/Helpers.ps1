@@ -34,33 +34,3 @@ function Assert-That
     }
 }
 Set-Alias Assert Assert-That
-
-function Add-ToolToPath ($toolName){
-
-    if($env:Path -like "*$toolName*" ) { return }
-
-    $toolNameVariable = $toolName + 'Path'
-    if($poshbar.Paths["$toolNameVariable"] -and (Test-Path $poshbar.Paths["$toolNameVariable"])){
-        $env:Path += ";$(Resolve-Path $poshbar.Paths[$toolNameVariable])"
-        return
-    }
-
-    $here = Split-Path $script:MyInvocation.MyCommand.Path
-    $packagePath = "$here\..\..\..\$toolName.*\tools"
-    if(Test-Path $packagePath) {
-        $env:Path += ";$(Resolve-Path $packagePath)"
-        return
-    }
-
-    $nuspecToolsPath = "$here\..\..\tools"
-    if(Test-Path $nuspecToolsPath) {
-        $path = (Resolve-Path $nuspecToolsPath).Path
-        $exists = Get-ChildItem $path | ? {$_ -like "*$toolName*"}
-        if($exists) {
-            $env:Path += ";$(Resolve-Path $nuspecToolsPath)"
-            return
-        }
-    }
-
-    throw "Could not find $toolName, please specify it's path to `$poshbar.Paths[`"$toolNameVariable`"]"
-}
