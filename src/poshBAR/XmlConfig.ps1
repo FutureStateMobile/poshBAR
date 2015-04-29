@@ -166,7 +166,7 @@ function Invoke-XmlDocumentTransform
         [Parameter(Mandatory=$false, Position=3)] 
         [string] $outputPathAndFile
     )    
-    Add-ToolToPath 'xmltransform'
+    Find-ToolPath 'xmltransform'
 
     Write-Host "Transforming '$inputPathAndFile' with '$transformPathAndFile'."
     $outputPathAndFile = if($outputPathAndFile) {$outputPathAndFile} else {$inputPathAndFile}

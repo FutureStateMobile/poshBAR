@@ -13,7 +13,7 @@ Push-Location $psScriptRoot
 . .\Add-IISHttpVerb.ps1
 . .\Add-IISMimeType.ps1
 . .\Add-LoopbackFix.ps1
-. .\Add-ToolToPath.ps1
+. .\Find-ToolPath.ps1
 . .\ApplicationAdministration.ps1
 . .\AppPoolAdministration.ps1
 . .\Approve-Permissions.ps1
@@ -63,7 +63,7 @@ Export-ModuleMember `
           'Add-IISMimeType',
           'Add-LoopbackFix',
           'Add-XmlConfigValue',
-          'Add-ToolToPath'
+          'Find-ToolPath'
           'Approve-Permissions',
           'Assert-That',
           'Assert-PSVersion',
