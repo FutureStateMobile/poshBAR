@@ -22,6 +22,6 @@
     <file src="..\build-artifacts\working\poshBAR\**\*.*" target="tools\modules" />
     <file src="..\build\files\init.ps1" target="tools\init.ps1" />
     <file src="..\build\files\templates\**\*.*" target="tools\templates\" />
-    <file src="..\docs\*.htm" target="docs\" />
+    <file src="..\index.html" target="docs\index.html" />
   </files>
 </package>
