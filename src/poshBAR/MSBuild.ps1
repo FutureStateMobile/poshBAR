@@ -1,4 +1,4 @@
-[int]$global:TeamCityWrnCount = 0
+[array]$poshBAR.TotalWarnings = @()
 function Invoke-MSBuild {
     [CmdletBinding()]
     param(
@@ -45,25 +45,26 @@ function New-WarningsFromMSBuildLog {
     $FilePath       = "$logPath\MSBuild\Raw.$namespace.txt"
     $txtOutputPath  = "$logPath\MSBuild\Wrn.$namespace.txt"
     $htmlOutputPath = "$logPath\MSBuild\Wrn.$namespace.html"
-     Write-Host $namespace
+    
     $warnings = @(cat -ea Stop $FilePath |      # Get the file content
         ? { $_ -match '^.*warning CS.*$' } |    # Extract lines that match warnings
         % { $_.trim() -replace "^s*d+>",""  } | # Strip out any project number and caret prefixes
         sort | gu -asString)                    # remove duplicates by sorting and filtering for unique strings
      
     [int]$count = $warnings.Count
-    $global:TeamCityWrnCount += $count
-
     if($count -eq 0) {return}
+
+    # Merge current warnings with the existing ones, and ensure there are no duplicates.
+    $poshBAR.TotalWarnings = @($poshBAR.TotalWarnings + $warnings | sort -unique)
+
+    # this is the warning count for teamcity.
+    $TeamCityWrnCount = $poshBAR.TotalWarnings.Count
+    $msgs.msg_teamcity_buildstatus -f "{build.status.text}, Build warnings: $($TeamCityWrnCount)"
+    $msgs.msg_teamcity_buildstatisticvalue -f 'buildWarnings', $TeamCityWrnCount
     
     # raw output
     Write-Host "MSBuild Warnings - $count warnings ==================================================="
     $warnings | % { Write-Host " * $_" }
-     
-    #TeamCity output
-
-    $msgs.msg_teamcity_buildstatus -f "{build.status.text}, Build warnings: $global:TeamCityWrnCount"
-    $msgs.msg_teamcity_buildstatisticvalue -f 'buildWarnings', $global:TeamCityWrnCount
      
     # file output
     if( $txtOutputPath ){
@@ -78,15 +79,17 @@ function New-WarningsFromMSBuildLog {
     # html report output
     if( $htmlOutputPath -and $txtOutputPath ){
         $stream = [System.IO.StreamWriter] $htmlOutputPath
-        $stream.WriteLine(@"
+        $stream.WriteLine(
+@'
 <html>
     <head>
         <style>*{margin:0;padding:0;box-sizing:border-box}body{margin:auto 10px}table{color:#333;font-family:sans-serif;font-size:.9em;font-weight:300;text-align:left;line-height:40px;border-spacing:0;border:1px solid #428bca;width:100%;margin:20px auto}thead tr:first-child{background:#428bca;color:#fff;border:none}th{font-weight:700}td:first-child,th:first-child{padding:0 15px 0 20px}thead tr:last-child th{border-bottom:2px solid #ddd}tbody tr:hover{background-color:#f0fbff}tbody tr:last-child td{border:none}tbody td{border-bottom:1px solid #ddd}td:last-child{text-align:left;padding-left:10px}</style>
 </head>
 <body>
-"@)
-        $stream.WriteLine("<table>")
-        $stream.WriteLine(@"
+'@)
+        $stream.WriteLine('<table>')
+        $stream.WriteLine(
+@'
 <thead>
     <tr>
         <th colspan="2">Build Warnings</th>
@@ -97,10 +100,10 @@ function New-WarningsFromMSBuildLog {
     </tr>
 </thead>
 <tbody>
-"@)
+'@)
         $warnings | % {$i=1} { $stream.WriteLine("<tr><td>$i</td><td>$_</td></tr>"); $i++ }
-        $stream.WriteLine("</tbody></table>")
-        $stream.WriteLine("</body></html>")
+        $stream.WriteLine('</tbody></table>')
+        $stream.WriteLine('</body></html>')
         $stream.Close()
     }
 }

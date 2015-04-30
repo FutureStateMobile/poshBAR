@@ -27,6 +27,8 @@ function Invoke-XUnit{
         [bool] $includeCoverage,
         [string] $coverageRulesPath )
 
+        Find-ToolPath 'xunit'
+
     if ( $includeCoverage ){
         Invoke-XUnitWithCoverage $targetAssembly $outputDir $runCommand $coverageRulesPath
     } else {
@@ -64,6 +66,9 @@ function Invoke-XUnitWithCoverage {
         [string] $outputDir, 
         [string] $runCommand, 
         [string] $coverageRulesPath)
+        
+        Find-ToolPath 'xunit'
+        Find-ToolPath 'dotcover'
     
     $fileName = Get-TestFileName $outputDir $runCommand
 

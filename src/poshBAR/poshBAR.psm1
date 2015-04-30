@@ -1,5 +1,5 @@
-$version = "1.1.1" # contains the current version of poshBAR
-$script:poshBAR = @{}
+$version = '1.0.3.61' # contains the current version of poshBAR
+$global:poshBAR = @{}
 Write-Host "`nposhBAR version $version `nCopyright ($([char]0x00A9)) Future State Mobile Inc. & Contributors`n"
 
 Remove-Item alias:new -ea SilentlyContinue
@@ -11,6 +11,7 @@ Push-Location $psScriptRoot
 . .\Add-IISHttpVerb.ps1
 . .\Add-IISMimeType.ps1
 . .\Add-LoopbackFix.ps1
+. .\Find-ToolPath.ps1
 . .\ApplicationAdministration.ps1
 . .\AppPoolAdministration.ps1
 . .\Approve-Permissions.ps1
@@ -60,6 +61,7 @@ Export-ModuleMember `
           'Add-IISMimeType',
           'Add-LoopbackFix',
           'Add-XmlConfigValue',
+          'Find-ToolPath'
           'Approve-Permissions',
           'Assert-That',
           'Assert-PSVersion',
@@ -78,6 +80,7 @@ Export-ModuleMember `
           'Get-EnvironmentSettings',
           'Get-Site',
           'Get-Sites',
+          'Get-TestFileName',
           'Get-WindowsFeatures',
           'Install-WebApplication',
           'Install-WindowsFeatures',
@@ -140,7 +143,6 @@ Export-ModuleMember `
           'Use-Object'
           )
 
-
 # Messages
 DATA msgs {
 convertfrom-stringdata @"
@@ -156,6 +158,7 @@ convertfrom-stringdata @"
     error_msbuild_compile = Error compiling '{0}'.
     error_specflow_generation = Error generating the specflow feature files for '{0}'.
     error_chutzpah = Error running the chutzpah javascipt tests for '{0}'.
+    error_cannot_find_tool = Could not find {0}, please specify it's path to `$env:PATH
     wrn_full_permission = You have applied FULL permission to '{0}' for '{1}'. THIS IS DANGEROUS!
     wrn_cant_find = Could not find {0} with the name: {0}.
     msg_grant_permission = Granting {0} permissions to {1} for {2}.
