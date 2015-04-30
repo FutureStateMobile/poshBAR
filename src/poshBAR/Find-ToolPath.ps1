@@ -28,12 +28,6 @@ function Find-ToolPath {
 
     if($env:Path -like "*$toolName*" ) { return }
 
-    $toolNameVariable = $toolName + 'Path'
-    if($poshbar.Paths["$toolNameVariable"] -and (Test-Path $poshbar.Paths["$toolNameVariable"])){
-        $env:Path += ";$(Resolve-Path $poshbar.Paths[$toolNameVariable])"
-        return
-    }
-
     # try to find it in the packages path
     $packagePath = "$upOne\packages\$toolName.*\tools"
     if(Test-Path $packagePath) {
@@ -53,12 +47,12 @@ function Find-ToolPath {
         }
     }
 
-    # Heavy Weight, search entire directly tree from '$upOne' in an attempt to find an `exe` that contains the tool name.
+    # Heavy Weight, search entire directly tree from '$upOne' to search
     $itm = Get-ChildItem -Path $loc -Recurse | ? {$_ -like "*$toolName*" -and $_.Extension -eq '.exe'} | select -First 1
     if($itm){
         $env:Path += ";$($itm.DirectoryName)"
         return
     }
 
-    throw msgs.error_cannot_find_tool -f $toolName, $toolNameVariable
+    throw ($msgs.error_cannot_find_tool -f $toolName)
 }
