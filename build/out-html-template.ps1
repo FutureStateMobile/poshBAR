@@ -65,10 +65,10 @@
 	<body>
     <div class="container-fluid">
 		<div class="row">
-        	<div class="col-xs-12"><h1>$moduleName</h1></div>
+        	<div class="col-md-12"><h1>$moduleName</h1></div>
         </div>    
 		<div class="row">
-          <div class="col-sm-3">
+          <div class="col-md-2">
             <div class="sidebar-nav">
               <div class="navbar navbar-default" role="navigation">
                 <div class="navbar-header">
@@ -95,7 +95,7 @@ $commandsHelp | %  {
               </div>
             </div>
           </div>
-          <div class="col-sm-9">
+          <div class="col-md-8">
 '@
 $progress = 0
 $commandsHelp | % {
