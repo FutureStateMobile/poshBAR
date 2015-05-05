@@ -1,5 +1,8 @@
-$version = '1.0.3.61' # contains the current version of poshBAR
-$global:poshBAR = @{}
+$version = '1.0.0.0' # contains the current version of poshBAR
+if (Get-Module 'poshBAR') { return }
+$global:poshBAR = @{
+    'version' = $version
+}
 Write-Host "`nposhBAR version $version `nCopyright ($([char]0x00A9)) Future State Mobile Inc. & Contributors`n"
 
 Remove-Item alias:new -ea SilentlyContinue
