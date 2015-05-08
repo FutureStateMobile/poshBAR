@@ -6,13 +6,24 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCore.min.css" rel="stylesheet" charset="utf-8">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCoreDefault.min.css" rel="stylesheet" charset="utf-8">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" charset="utf-8">
+				
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
 			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
 		<style>
+			  .syntaxhighlighter { 
+			     overflow-y: hidden !important; 
+			     overflow-x: auto !important; 
+			  }
+			pre {
+			    min-height: 30px;
+			}
 			.navbar-nav {
 				height:100%;
 				overflow-y: auto;
@@ -136,8 +147,7 @@ $commandsHelp | % {
 @"
 						<div class=`"col-md-12`">
 							<h2> Syntax </h2>
-							<pre>
-<code>$(FixString($_.syntax | out-string))</code></pre>
+<pre class="brush: ps">$(FixString($_.syntax | out-string))</pre>
 						</div>
 "@
 	}
@@ -210,7 +220,7 @@ $commandsHelp | % {
 		$_.examples.example | % {
 @"
 							<h3>$(FixString($_.title.Trim(('-',' '))))</h3>
-							<pre>$(FixString($_.code | out-string ).Trim())</pre>
+<pre class="brush: ps">$(FixString($_.code | out-string ).Trim())</pre>
 							<div>$(FixString($_.remarks | out-string ).Trim())</div>
 "@
 		}
@@ -229,6 +239,8 @@ $commandsHelp | % {
 	</div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" ></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js" charset="utf-8"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js" charset="utf-8"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushPowerShell.min.js" charset="utf-8"></script>
 	<script>
 		$(document).ready(function() {
 			$(".toggle_container").hide();
@@ -251,7 +263,9 @@ $commandsHelp | % {
 				window.scrollTo(0, 0);
 				return false;
 			});
-
+			SyntaxHighlighter.defaults['toolbar'] = false;
+			SyntaxHighlighter.defaults['gutter'] = false;
+			SyntaxHighlighter.all();
 		});
 	</script>
 	</body>

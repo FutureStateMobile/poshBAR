@@ -21,7 +21,7 @@ $commandsHelp | % {
         $_ | Add-Member Alias $alias
     }
 }
-$aliases = gcm -Module poshbar | % {gal -Definition $_.name -ea 0}
+$aliases = gcm -Module $moduleName | % {gal -Definition $_.name -ea 0}
 $totalCommands = $commandsHelp.Count
 $template = Get-Content $template -raw -force
 
