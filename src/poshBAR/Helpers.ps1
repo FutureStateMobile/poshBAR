@@ -14,6 +14,8 @@ function Get-TestFileName ( [string] $outputDir, [string] $runCommand ){
     .EXAMPLE
         Assert-That ($name -ne $null) "Name cannot be null."
 
+    .EXAMPLE
+        Assert ($foo -eq $bar) '$foo and $bar must be equal.'
 
     .PARAMETER conditionToCheck
         The condition that you're asserting

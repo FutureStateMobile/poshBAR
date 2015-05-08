@@ -5,9 +5,15 @@ param(
     [parameter(Mandatory=$false, Position=3)] [string] $fileName = 'index.html'
 )
 
-function FixString ($in = ''){
+function FixString ($in = '', [bool]$includeBreaks = $false){
     if ($in -eq $null) { return }
-    return $in.Replace('&', '&amp;').Replace('<', '&lt;').Replace('>', '&gt;').Replace('`n', '<br>').Replace('`t', '&nbsp;&nbsp;&nbsp;&nbsp;').Trim()
+    
+    $rtn = $in.Replace('&', '&amp;').Replace('<', '&lt;').Replace('>', '&gt;').Trim()
+    
+    if($includeBreaks){
+        $rtn = $rtn.Replace([Environment]::NewLine, '<br>')
+    }
+    return $rtn
 }
 
 function Update-Progress($name, $action){

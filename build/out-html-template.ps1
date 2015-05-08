@@ -121,6 +121,7 @@ $commandsHelp | % {
     if(!($syn).StartsWith($(FixString($_.Name)))){
 @"
 						<p class="lead">$syn</p>
+						<p>$(FixString(($_.Description  | out-string).Trim()) $true)</p>
 "@
 	}
 @"
@@ -151,7 +152,7 @@ $commandsHelp | % {
 						</div>
 "@
 	}
-    if($_.parameters.parameter.Count -gt 0){
+    if($_.parameters){
 @"
 						<div class=`"col-md-12`">
 							<h2> Parameters </h2>
@@ -171,7 +172,7 @@ $commandsHelp | % {
 @"
 									<tr>
 										<td>-$(FixString($_.Name))</td>
-										<td>$(FixString(($_.Description  | out-string).Trim()))</td>
+										<td>$(FixString(($_.Description  | out-string).Trim()) $true)</td>
 										<td>$(FixString($_.Required))</td>
 										<td>$(FixString($_.PipelineInput))</td>
 										<td>$(FixString($_.DefaultValue))</td>
