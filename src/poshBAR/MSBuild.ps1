@@ -83,15 +83,39 @@ function Invoke-MSBuild {
 Set-Alias msbuild Invoke-MSBuild
 Set-Alias compile Invoke-MSBuild
 
+<#
+    .SYNOPSIS
+        Cleans the project/solution
+    
+    .EXAMPLE
+        Invoke-CleanMSBuild $buildOutputDir 
+        Cleans the solution quietly
+        
+    .EXAMPLE
+        Invoke-CleanMSBuild $buildOutputDir -verbosity n
+        Cleans the solution with the normal msbuild output
+
+    .PARAMETER projectFile
+        The path to your project (.csproj) or solution (.sln) file
+        
+    .PARAMETER verbosity
+        Sets the MSBuild verbosity
+        - [q] = quiet
+        - [m] - minimal
+        - [n] = normal
+        - [d] = detailed
+        - [diag] = diagnostic
+#>
 function Invoke-CleanMSBuild {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true, Position=0)] [string] $solutionFile
+        [Parameter(Mandatory=$true, Position=0)] [string] $projectFile,
+        [Parameter(Mandatory=$false, Position=1)] [string] [ValidateSet('q', 'm', 'n','d','diag')] $verbosity = 'q'
     )
     
-    exec { msbuild.exe @($solutionFile, 
+    exec { msbuild.exe @($projectFile, 
                      '/t:clean', 
-                     '/v:q', 
+                     "/v:$verbosity", 
                      '/nologo') } "Error cleaning the solution."
 }
 
