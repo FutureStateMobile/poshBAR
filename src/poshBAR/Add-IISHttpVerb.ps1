@@ -1,10 +1,11 @@
 $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
 <#
     .DESCRIPTION
-        Will add or remove a VERB from your website
+        Secure your site by only allowing approved HTTP Verbs ('GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'TRACE', 'OPTIONS', 'CONNECT', 'PATCH')
 
     .EXAMPLE
         Add-IISHttpVerb PUT "apps.example.ca"
+            
     .PARAMETER verb
         The name of the verb.
         valid verbs are: [GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH]

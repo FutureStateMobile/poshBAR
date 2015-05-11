@@ -6,13 +6,24 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCore.min.css" rel="stylesheet" charset="utf-8">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCoreDefault.min.css" rel="stylesheet" charset="utf-8">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" charset="utf-8">
+				
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
 			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
 		<style>
+			  .syntaxhighlighter { 
+			     overflow-y: hidden !important; 
+			     overflow-x: auto !important; 
+			  }
+			pre {
+			    min-height: 30px;
+			}
 			.navbar-nav {
 				height:100%;
 				overflow-y: auto;
@@ -65,10 +76,10 @@
 	<body>
     <div class="container-fluid">
 		<div class="row">
-        	<div class="col-xs-12"><h1>$moduleName</h1></div>
+        	<div class="col-md-12"><h1>$moduleName</h1></div>
         </div>    
 		<div class="row">
-          <div class="col-sm-3">
+          <div class="col-md-2">
             <div class="sidebar-nav">
               <div class="navbar navbar-default" role="navigation">
                 <div class="navbar-header">
@@ -95,7 +106,7 @@ $commandsHelp | %  {
               </div>
             </div>
           </div>
-          <div class="col-sm-9">
+          <div class="col-md-8">
 '@
 $progress = 0
 $commandsHelp | % {
@@ -110,6 +121,7 @@ $commandsHelp | % {
     if(!($syn).StartsWith($(FixString($_.Name)))){
 @"
 						<p class="lead">$syn</p>
+						<p>$(FixString(($_.Description  | out-string).Trim()) $true)</p>
 "@
 	}
 @"
@@ -136,12 +148,11 @@ $commandsHelp | % {
 @"
 						<div class=`"col-md-12`">
 							<h2> Syntax </h2>
-							<pre>
-<code>$(FixString($_.syntax | out-string))</code></pre>
+<pre class="brush: ps">$(FixString($_.syntax | out-string))</pre>
 						</div>
 "@
 	}
-    if($_.parameters.parameter.Count -gt 0){
+    if($_.parameters){
 @"
 						<div class=`"col-md-12`">
 							<h2> Parameters </h2>
@@ -161,7 +172,7 @@ $commandsHelp | % {
 @"
 									<tr>
 										<td>-$(FixString($_.Name))</td>
-										<td>$(FixString(($_.Description  | out-string).Trim()))</td>
+										<td>$(FixString(($_.Description  | out-string).Trim()) $true)</td>
 										<td>$(FixString($_.Required))</td>
 										<td>$(FixString($_.PipelineInput))</td>
 										<td>$(FixString($_.DefaultValue))</td>
@@ -210,7 +221,7 @@ $commandsHelp | % {
 		$_.examples.example | % {
 @"
 							<h3>$(FixString($_.title.Trim(('-',' '))))</h3>
-							<pre>$(FixString($_.code | out-string ).Trim())</pre>
+<pre class="brush: ps">$(FixString($_.code | out-string ).Trim())</pre>
 							<div>$(FixString($_.remarks | out-string ).Trim())</div>
 "@
 		}
@@ -229,6 +240,8 @@ $commandsHelp | % {
 	</div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" ></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js" charset="utf-8"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js" charset="utf-8"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushPowerShell.min.js" charset="utf-8"></script>
 	<script>
 		$(document).ready(function() {
 			$(".toggle_container").hide();
@@ -251,7 +264,9 @@ $commandsHelp | % {
 				window.scrollTo(0, 0);
 				return false;
 			});
-
+			SyntaxHighlighter.defaults['toolbar'] = false;
+			SyntaxHighlighter.defaults['gutter'] = false;
+			SyntaxHighlighter.all();
 		});
 	</script>
 	</body>

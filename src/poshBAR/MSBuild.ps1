@@ -1,4 +1,46 @@
 [array]$poshBAR.TotalWarnings = @()
+
+<#
+    .SYNOPSIS
+        Compiles a solution or project against MSBuild
+    
+    .EXAMPLE
+        Invoke-MSBuild $buildOutputDir $solutionFile
+        Standard build against the defaults
+
+    .EXAMPLE
+        Invoke-MSBuild $buildOutputDir $solutionFile -DotNetVersion 4.0
+        Builds the $solutionFile against a different version of the .NET framework.
+
+    .PARAMETER outDir
+        The output directory for your compilation
+
+    .PARAMETER projectFile
+        The path to your project (.csproj) or solution (.sln) file
+
+    .PARAMETER logPath
+        The directory where your logs should end up
+
+    .PARAMETER namespace
+        Used when generating build warnings.
+
+    .PARAMETER VisualStudioVersion
+        The version of Visual Studio that the solution or project was built against
+
+    .PARAMETER dotNetVersion
+        The version of the .NET framework that the solution or project targets
+
+    .PARAMETER maxCpuCount
+        Maximum number of CPU's to use during the compilation
+        
+    .PARAMETER verbosity
+        Sets the MSBuild verbosity
+        - [q] = quiet
+        - [m] - minimal
+        - [n] = normal
+        - [d] = detailed
+        - [diag] = diagnostic
+#>
 function Invoke-MSBuild {
     [CmdletBinding()]
     param(
@@ -6,7 +48,10 @@ function Invoke-MSBuild {
         [Parameter(Mandatory=$true, Position=1)] [string] $projectFile,
         [Parameter(Mandatory=$false, Position=2)] [string] $logPath,
         [Parameter(Mandatory=$false, Position=3)] [string] $namespace,
-        [Parameter(Mandatory=$false, Position=4)] [double] $VisualStudioVersion = 12.0
+        [Parameter(Mandatory=$false, Position=4)] [AllowNull()] [double] $VisualStudioVersion = $null,
+        [Parameter(Mandatory=$false, Position=5)] [AllowNull()] [double] $dotNetVersion = $null,
+        [Parameter(Mandatory=$false, Position=6)] [AllowNull()] [int] $maxCpuCount = $null,
+        [Parameter(Mandatory=$false, Position=7)] [string] [ValidateSet('q', 'm', 'n','d','diag')] $verbosity = 'm'
     )
 
     if($namespace){
@@ -16,23 +61,62 @@ function Invoke-MSBuild {
 
         $logFileParam = "logfile=$logPath\MSBuild\Raw.$namespace.txt"
     }
-
-    $VisualStudioVersionParam = "VisualStudioVersion=$("{0:N1}" -f $VisualStudioVersion)"
-
-    exec { msbuild @('/t:build', "/p:OutDir=$outDir", $projectFile, "/p:ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=false", "/p:$VisualStudioVersionParam", "/l:FileLogger,Microsoft.Build.Engine;$logFileParam") } ($msgs.error_msbuild_compile -f $projectFile)
+    
+    $params = @(
+        '/t:build', 
+        "/p:OutDir=$outDir", 
+        "/verbosity:$verbosity"
+        $projectFile, 
+        '/p:ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=false',
+        "/l:FileLogger,Microsoft.Build.Engine;$logFileParam") 
+    
+    if($visualStudioVersion){ $params += ("/p:VisualStudioVersion=$("{0:N1}" -f $VisualStudioVersion)") }
+    if($dotNetVersion){ $params += ("/p:ToolsVersion=$("{0:N1}" -f $dotNetVersion)") }
+    if($maxCpuCount) {$params += ("/m:$maxCpuCount")}
+    
+    exec { msbuild.exe $params } ($msgs.error_msbuild_compile -f $projectFile)
 
     if($namespace){
         New-WarningsFromMSBuildLog $logPath $namespace
     }
 }
+Set-Alias msbuild Invoke-MSBuild
+Set-Alias compile Invoke-MSBuild
 
+<#
+    .SYNOPSIS
+        Cleans the project/solution
+    
+    .EXAMPLE
+        Invoke-CleanMSBuild $buildOutputDir 
+        Cleans the solution quietly
+        
+    .EXAMPLE
+        Invoke-CleanMSBuild $buildOutputDir -verbosity n
+        Cleans the solution with the normal msbuild output
+
+    .PARAMETER projectFile
+        The path to your project (.csproj) or solution (.sln) file
+        
+    .PARAMETER verbosity
+        Sets the MSBuild verbosity
+        - [q] = quiet
+        - [m] - minimal
+        - [n] = normal
+        - [d] = detailed
+        - [diag] = diagnostic
+#>
 function Invoke-CleanMSBuild {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true, Position=0)] [string] $solutionFile,
-        [Parameter(Mandatory=$false, Position=1)] [double] $VisualStudioVersion = 12.0
+        [Parameter(Mandatory=$true, Position=0)] [string] $projectFile,
+        [Parameter(Mandatory=$false, Position=1)] [string] [ValidateSet('q', 'm', 'n','d','diag')] $verbosity = 'q'
     )
-    exec { msbuild @($solutionFile, '/t:clean', '/v:q', '/nologo', '/p:VisualStudioVersion=12.0') } "Error cleaning the solution."
+    
+    exec { msbuild.exe @($projectFile, 
+                     '/t:clean', 
+                     "/v:$verbosity", 
+                     '/nologo') } "Error cleaning the solution."
 }
 
 function New-WarningsFromMSBuildLog {

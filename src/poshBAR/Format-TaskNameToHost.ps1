@@ -4,6 +4,11 @@
 
     .EXAMPLE
         Format-TaskNameToHost "Doing Some Task"
+        This is a sample of how to use the method on it's own
+            
+    .EXAMPLE
+        FormatTaskName { param($taskName) Format-TaskNameToHost $taskName }
+        Input this into your psake build script to upgrade the output headers.
 
     .PARAMETER taskName
         The Name of the task you are executing
@@ -13,17 +18,12 @@
 
     .NOTES
         We use this in conjunction with psake for writing headers. `n
-        `tFormatTaskName { `n
-           `t`tparam($taskName) `n
-           `t`tFormat-TaskNameToHost $taskName `n
-        `t}
 #>
 function Format-TaskNameToHost
 {
     [CmdletBinding()]
     param(
-        [parameter(Mandatory=$true,position=0)] [string] $taskName,
-        [parameter(Mandatory=$false)]           [switch] $suppressTimer
+        [parameter(Mandatory=$true,position=0)] [string] $taskName
     )
 
     $ErrorActionPreference = "Stop"
