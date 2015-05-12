@@ -8,6 +8,10 @@ Install via [NuGet](https://www.nuget.org/packages/poshBAR)
 
 -----
 
+###Documentation
+
+  - https://futurestatemobile.github.io/poshBAR/
+
 ###Dependencies###
   
   - [psake](https://github.com/psake/psake) (for builds)
