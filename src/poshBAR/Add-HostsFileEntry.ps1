@@ -24,7 +24,10 @@
         Will add a hosts file entry for the host name specified targeting the specified ip address.
 
     .NOTES
-        Nothing yet...
+        If you '-includeLoopbackFix', this method will call the 'Add-LoopbackFix' module (see Links below) 
+
+    .LINK
+        Add-LoopbackFix
 #>
 function Add-HostsFileEntry
 {

@@ -13,7 +13,7 @@
 
     .NOTES
         Applies method 1 workaround fix for "You receive error 401.1 when you browse a Web site that uses Integrated Authentication and is hosted on 
-        IIS 5.1 or a later version"
+        IIS 5.1 or a later version" (see Links below)
 
     .LINK
         http://support.microsoft.com/kb/896861
