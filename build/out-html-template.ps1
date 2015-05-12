@@ -285,6 +285,7 @@ $commandsHelp | % {
 		    }
 
 			$('.nav-menu a, .psLink a').click(function() {
+                $(".sidebar-navbar-collapse").collapse('hide');
 				$('.toggle_container').hide();                 // Hide all
 				var elem = $(this).prop("hash");
 				$(elem).toggle('fast');   						// Show HREF/to/ID one
