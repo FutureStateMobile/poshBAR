@@ -3,7 +3,8 @@
         Attempts to locate the path for the specified tool, and adds it to the $env:PATH so that the tool is accessable throughout the build/release cycle
 
     .DESCRIPTION
-        Takes the name of a tool and tries to guess it's location. If it can't find it, it'll require the user to add the variable `$poshBAR.Paths['toolNamePath']`
+        Takes the name of a tool and tries to guess it's location. If it can't find it, it'll require the user to add the variable `$poshBAR.Paths['toolNamePath']`.
+        If the tool cannot be located and added to the $env:PATH, an exception will be thrown.
 
     .PARAMETER toolName
         The name of the tool to add

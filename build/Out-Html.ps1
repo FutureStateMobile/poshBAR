@@ -26,9 +26,16 @@ $commandsHelp | % {
     if($alias){ 
         $_ | Add-Member Alias $alias
     }
+    if(($_.relatedLinks | Out-String).Trim().Length -gt 0) {
+        $links = $_.relatedLinks.navigationLink | % {
+            if($_.uri){ @{name = $_.uri; link = $_.uri; target='_blank'} } 
+            if($_.linkText){ @{name = $_.linkText; link = "#$($_.linkText)"; cssClass = 'psLink'} }
+        }
+        $_.relatedLinks.linkText #| % { "<a href='#'" }
+        $_ | Add-Member Links $links
+    }
 }
-$aliases = gcm -Module $moduleName | % {gal -Definition $_.name -ea 0}
+
 $totalCommands = $commandsHelp.Count
 $template = Get-Content $template -raw -force
-
 Invoke-Expression $template > "$outputDir\$fileName"

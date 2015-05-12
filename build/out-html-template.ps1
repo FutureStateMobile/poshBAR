@@ -17,65 +17,58 @@
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
 		<style>
-		  .syntaxhighlighter { 
-		     overflow-y: hidden !important; 
-		     overflow-x: auto !important; 
+		  .syntaxhighlighter {
+		      overflow-y: hidden !important;
+		      overflow-x: auto !important;
 		  }
-			pre {
-			    min-height: 30px;
-			}
-			.navbar-nav {
-				height:100%;
-				overflow-y: auto;
-
-			}
-			  .form-group {
-			  	padding-top:12px;
-				padding-left:12px;
-				padding-right: 12px;
-			  }
-			
-			/* make sidebar nav vertical */ 
-			@media (min-width: 768px) {
-			  .sidebar-nav .navbar .navbar-collapse {
-				padding: 0;
-				max-height: none;
-			  }
-			  .sidebar-nav .navbar ul {
-				float: none;
-			  }
-			  .sidebar-nav .navbar ul:not {
-				display: block;
-
-			  }
-			  .sidebar-nav .navbar li {
-				float: none;
-				display: block;
-			  }
-			  .sidebar-nav .navbar li a {
-				padding-top: 6px;
-				padding-bottom: 6px;
-			  }
-			  .navbar {
-				  width: 300px;
-			  }
-			}
-
-			@media (min-width: 992px) {
-			  .navbar {
-				  width: 300px;
-			  }
-			}
-
-
-			}
-			@media (min-width: 1200px) {
-			  .navbar {
-				  width: 300px;
-			  }
-			}
-
-			.sidebar-nav .navbar-header{ float: none; }
+		  pre {
+		      min-height: 30px;
+		  }
+		  .navbar-nav {
+		      height: 100%;
+		      overflow-y: auto;
+		  }
+		  .form-group {
+		      padding-top: 12px;
+		      padding-left: 12px;
+		      padding-right: 12px;
+		  }
+		  .sidebar-nav .navbar-header {
+		      float: none;
+		  }
+		  @media (min-width: 768px) {
+		      .sidebar-nav .navbar .navbar-collapse {
+		          padding: 0;
+		          max-height: none;
+		      }
+		      .sidebar-nav .navbar ul {
+		          float: none;
+		      }
+		      .sidebar-nav .navbar ul:not {
+		          display: block;
+		      }
+		      .sidebar-nav .navbar li {
+		          float: none;
+		          display: block;
+		      }
+		      .sidebar-nav .navbar li a {
+		          padding-top: 6px;
+		          padding-bottom: 6px;
+		      }
+		      .navbar {
+		          width: 300px;
+		      }
+		  }
+		  @media (min-width: 992px) {
+		      .navbar {
+		          width: 300px;
+		      }
+		  }
+		  @media (min-width: 1200px) {
+		      .navbar {
+		          width: 300px;
+		      }
+		  }
 		</style>
 
 	</head>
@@ -100,7 +93,7 @@
                 <div class="navbar-collapse collapse sidebar-navbar-collapse">
 
 			      <div class="form-group">
-					<input class="form-control" id="searchinput" type="search" placeholder="Search..." />
+					<input class="form-control" id="searchinput" type="search" placeholder="Filter..." />
 				  </div>
 
                   <ul class="nav navbar-nav list-group" id="searchList">
@@ -142,7 +135,7 @@ $commandsHelp | % {
 	if (!($_.alias.Length -eq 0)) {
 @"
 						<div class=`"col-md-12`">
-							<h2> Aliases </h2>
+							<h3> Aliases </h3>
 							<ul>
 "@
 	$_.alias | % {
@@ -158,7 +151,7 @@ $commandsHelp | % {
 	if (!($_.syntax | Out-String ).Trim().Contains('syntaxItem')) {
 @"
 						<div class=`"col-md-12`">
-							<h2> Syntax </h2>
+							<h3> Syntax </h3>
 <pre class="brush: ps">$(FixString($_.syntax | out-string))</pre>
 						</div>
 "@
@@ -166,7 +159,7 @@ $commandsHelp | % {
     if($_.parameters){
 @"
 						<div class=`"col-md-12`">
-							<h2> Parameters </h2>
+							<h3> Parameters </h3>
 							<table class="table table-striped table-bordered table-condensed">
 								<thead>
 									<tr>
@@ -200,7 +193,7 @@ $commandsHelp | % {
     if ($inputTypes.Length -gt 0 -and -not $inputTypes.Contains('inputType')) {
 @"
 						<div class=`"col-md-12`">
-					        <h2> Input Type </h2>
+					        <h3> Input Type </h3>
 					        <div>$inputTypes</div>
 					    </div>
 "@
@@ -209,7 +202,7 @@ $commandsHelp | % {
     if ($returnValues.Length -gt 0 -and -not $returnValues.StartsWith("returnValue")) {
 @"
 						<div class=`"col-md-12`">
-							<h2> Return Values </h2>
+							<h3> Return Values </h3>
 							<div>$returnValues</div>
 						</div>
 "@
@@ -218,7 +211,7 @@ $commandsHelp | % {
     if ($notes.Trim().Length -gt 0) {
 @"
 						<div class=`"col-md-12`">
-							<h2> Notes </h2>
+							<h3> Notes </h3>
 							<div>$notes</div>
 						</div>
 "@
@@ -226,7 +219,7 @@ $commandsHelp | % {
 	if(($_.examples | Out-String).Trim().Length -gt 0) {
 @"
 						<div class=`"col-md-12`">
-							<h2> Examples </h2>
+							<h3> Examples </h3>
 							<hr>
 "@
 		$_.examples.example | % {
@@ -240,6 +233,29 @@ $commandsHelp | % {
 						</div>
 "@
 	}
+	
+	
+	
+		if(($_.relatedLinks | Out-String).Trim().Length -gt 0) {
+@"
+						<div class=`"col-md-12`">
+							<h3> Links </h3>
+"@
+		$_.links | % {
+@"
+							<div class='$($_.cssClass)'><a href='$($_.link)' target=$($_.target)>$($_.name)</a></div>
+"@
+		}
+@"
+						</div>
+"@
+	}
+	
+	
+	
+	
+	
+	
 @"
 					</div>
 				</div>
@@ -268,7 +284,7 @@ $commandsHelp | % {
 		        previousId = id;
 		    }
 
-			$('.nav-menu a').click(function() {
+			$('.nav-menu a, .psLink a').click(function() {
 				$('.toggle_container').hide();                 // Hide all
 				var elem = $(this).prop("hash");
 				$(elem).toggle('fast');   						// Show HREF/to/ID one

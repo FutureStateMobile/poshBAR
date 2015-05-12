@@ -1,5 +1,43 @@
 $ErrorActionPreference = "Stop"
 
+<#
+    .SYNOPSIS
+        Installs a web application into IIS.
+    
+    .DESCRIPTION
+        This is a helper method used to simplify the installation of a web application. There are a lot of dependent modules, see the links below.
+    
+    .PARAMETER environment
+        The environment name that the web application is being installed into. [dev, qual, uat, production]
+        
+    .PARAMETER websiteSettings
+        An XML node defining all of the required XML settings. An example can be found in the repository.
+    
+    .PARAMETER version
+        The version number of the application
+        
+    .EXAMPLE
+        Install-WebApplication 'dev' $environmentSettings.websites.myWebsite '1.0.2.1234'
+    
+    .NOTES
+        The environment name should always line up with the environment names listed in your deployment tool (Octopus Deploy)
+        
+    .LINK
+        Approve-Permissions
+        
+    .LINK
+        New-AppPool
+        
+    .LINK
+        New-Site
+        
+    .LINK
+        New-Application
+        
+    .LINK 
+        Set-IISAuthentication
+
+#>
 function Install-WebApplication() {
     [CmdletBinding()]
     param( 
