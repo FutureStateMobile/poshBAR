@@ -47,3 +47,4 @@ function Add-LoopbackFix
 
     Write-Host ($msgs.msg_loopback_note -f $siteHostName) -f DarkGray
 }
+Set-Alias loopbackFix Add-LoopbackFix

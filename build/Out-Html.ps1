@@ -22,10 +22,13 @@ function Update-Progress($name, $action){
 
 $commandsHelp = (Get-Command -module $moduleName) | get-help -full
 $commandsHelp | % {
-    $alias = get-alias -definition $_.Name   -ErrorAction SilentlyContinue
+    # Get any aliases associated with the method
+    $alias = get-alias -definition $_.Name -ErrorAction SilentlyContinue
     if($alias){ 
         $_ | Add-Member Alias $alias
     }
+    
+    # Parse the related links and assign them to a links hashtable.
     if(($_.relatedLinks | Out-String).Trim().Length -gt 0) {
         $links = $_.relatedLinks.navigationLink | % {
             if($_.uri){ @{name = $_.uri; link = $_.uri; target='_blank'} } 

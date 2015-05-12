@@ -1,3 +1,19 @@
+<#
+    .SYNOPSIS
+        Ensures all Windows Features listed within the $features arrray are installed
+        
+    .PARAMETER features
+        The collection of Windows Features to install
+        
+    .EXAMPLE
+        Install-WindowsFeatures @('IIS-WebServer','IIS-WebServerRole','IIS-ISAPIFilter',  'IIS-ISAPIExtensions',  'IIS-NetFxExtensibility','IIS-ASPNET')
+        
+    .EXAMPLE
+        Install-WindowsFeatures 'IIS-ASPNET45?'
+        
+    .NOTES
+        Optional features can be passed in with a trailing `?` (see Example 2).
+#>
 function Install-WindowsFeatures{
     [CmdletBinding()]
     param(
@@ -30,6 +46,16 @@ function Install-WindowsFeatures{
     }
 }
 
+<#
+    .SYNOPSIS
+        Get's all windows features available to the current machine and stores them in $env:TEMP
+        
+    .EXAMPLE
+        Get-WindowsFeatures
+    .NOTES
+        Windows features are stored in $env:TEMP in order to improve future lookup times.
+        The lookup is done using DISM.exe
+#>
 function Get-WindowsFeatures {
     if(!(Test-Path "$env:TEMP\WindowsFeatures.txt")){
         $allFeatures = DISM.exe /ONLINE /Get-Features /FORMAT:List | Where-Object { $_.StartsWith("Feature Name") -OR $_.StartsWith("State") } 

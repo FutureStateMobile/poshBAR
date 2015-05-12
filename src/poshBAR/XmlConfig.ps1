@@ -155,8 +155,6 @@ function Invoke-XmlDocumentTransform
 {
     [CmdletBinding()]
     param(
-
-
         [Parameter(Mandatory=$true, Position=1)] 
         [string] $inputPathAndFile,
         
