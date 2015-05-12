@@ -1,7 +1,6 @@
 <#
     .DESCRIPTION
-        This will allow you to wrap a disposable object in a using statement (akin to C#), and it will dispose of that object when the 
-        scriptblock is finished executing.
+        This will allow you to wrap a disposable object in a using statement (akin to C#), and it will dispose of that object when the scriptblock is finished executing.
         
     .EXAMPLE
         Use-Object ($foo = new-object System.Some.Disposable.Object) { $foo.DoSomething }

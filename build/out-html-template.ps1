@@ -36,6 +36,10 @@
 		  .sidebar-nav .navbar-header {
 		      float: none;
 		  }
+	      .sidebar-nav .navbar li a {
+	          padding-top: 4px;
+	          padding-bottom: 4px;
+	      }
 		  @media (min-width: 768px) {
 		      .sidebar-nav .navbar .navbar-collapse {
 		          padding: 0;
@@ -51,40 +55,22 @@
 		          float: none;
 		          display: block;
 		      }
-		      .sidebar-nav .navbar li a {
-		          padding-top: 6px;
-		          padding-bottom: 6px;
-		      }
-		      .navbar {
-		          width: 300px;
-		      }
-		  }
-		  @media (min-width: 992px) {
-		      .navbar {
-		          width: 300px;
-		      }
-		  }
-		  @media (min-width: 1200px) {
-		      .navbar {
-		          width: 300px;
-		      }
 		  }
 		</style>
 
 	</head>
 	<body>
     <div class="container-fluid">
-		<div class="row">
-        	<div class="col-md-12"><h1>$moduleName</h1></div>
+		<div class="row-fluid">
+        	<div><h1>$moduleName</h1></div>
         </div>    
-		<div class="row">
-          <div class="col-md-2">
+		<div class="row-fluid">
+          <div class="col-lg-3 col-md-4 col-sm-5 col-xs-12">
             <div class="sidebar-nav">
               <div class="navbar navbar-default" role="navigation">
                 <div class="navbar-header">
                   <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-navbar-collapse">
                     <span class="sr-only">Toggle</span>
-                    <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                   </button>
@@ -110,7 +96,7 @@ $commandsHelp | %  {
               </div>
             </div>
           </div>
-          <div class="col-md-8">
+          <div class="col-lg-9 col-md-8 col-sm-7 col-xs-12">
 '@
 $progress = 0
 $commandsHelp | % {
@@ -130,11 +116,10 @@ $commandsHelp | % {
 	}
 @"
 					</div>
-				    <div class=`"row`">
 "@
 	if (!($_.alias.Length -eq 0)) {
 @"
-						<div class=`"col-md-12`">
+						<div>
 							<h3> Aliases </h3>
 							<ul>
 "@
@@ -150,7 +135,7 @@ $commandsHelp | % {
 	}
 	if (!($_.syntax | Out-String ).Trim().Contains('syntaxItem')) {
 @"
-						<div class=`"col-md-12`">
+						<div>
 							<h3> Syntax </h3>
 <pre class="brush: ps">$(FixString($_.syntax | out-string))</pre>
 						</div>
@@ -158,7 +143,7 @@ $commandsHelp | % {
 	}
     if($_.parameters){
 @"
-						<div class=`"col-md-12`">
+						<div>
 							<h3> Parameters </h3>
 							<table class="table table-striped table-bordered table-condensed">
 								<thead>
@@ -192,7 +177,7 @@ $commandsHelp | % {
     $inputTypes = $(FixString($_.inputTypes  | out-string))
     if ($inputTypes.Length -gt 0 -and -not $inputTypes.Contains('inputType')) {
 @"
-						<div class=`"col-md-12`">
+						<div>
 					        <h3> Input Type </h3>
 					        <div>$inputTypes</div>
 					    </div>
@@ -201,7 +186,7 @@ $commandsHelp | % {
     $returnValues = $(FixString($_.returnValues  | out-string))
     if ($returnValues.Length -gt 0 -and -not $returnValues.StartsWith("returnValue")) {
 @"
-						<div class=`"col-md-12`">
+						<div>
 							<h3> Return Values </h3>
 							<div>$returnValues</div>
 						</div>
@@ -210,7 +195,7 @@ $commandsHelp | % {
     $notes = $(FixString($_.alertSet  | out-string))
     if ($notes.Trim().Length -gt 0) {
 @"
-						<div class=`"col-md-12`">
+						<div>
 							<h3> Notes </h3>
 							<div>$notes</div>
 						</div>
@@ -218,7 +203,7 @@ $commandsHelp | % {
 	}
 	if(($_.examples | Out-String).Trim().Length -gt 0) {
 @"
-						<div class=`"col-md-12`">
+						<div>
 							<h3> Examples </h3>
 							<hr>
 "@
@@ -233,12 +218,9 @@ $commandsHelp | % {
 						</div>
 "@
 	}
-	
-	
-	
-		if(($_.relatedLinks | Out-String).Trim().Length -gt 0) {
+	if(($_.relatedLinks | Out-String).Trim().Length -gt 0) {
 @"
-						<div class=`"col-md-12`">
+						<div>
 							<h3> Links </h3>
 "@
 		$_.links | % {
@@ -250,14 +232,7 @@ $commandsHelp | % {
 						</div>
 "@
 	}
-	
-	
-	
-	
-	
-	
 @"
-					</div>
 				</div>
 "@
 }
