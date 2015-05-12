@@ -253,7 +253,7 @@ $commandsHelp | % {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js" charset="utf-8"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js" charset="utf-8"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushPowerShell.min.js" charset="utf-8"></script>
-	<script src="http://labs.easyblog.it/bootstrap-list-filter/bootstrap-list-filter.min.js" charset="utf-8"></script>
+	<script src="lib/bootstrap-list-filter.min.js" charset="utf-8"></script>
 	<script>
 		$(document).ready(function() {
 			$(".toggle_container").hide();
