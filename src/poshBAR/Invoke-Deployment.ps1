@@ -9,9 +9,6 @@
         Call this after all deployment steps are defined within your deploy script. 
         This method will iterate over all of the deployment steps, execute the script block, and capture the timing.
 
-    .LINK 
-        Step
-
 #>
 function Invoke-Deployment {
     [CmdletBinding()]

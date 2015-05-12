@@ -6,6 +6,9 @@
     .EXAMPLE
         Use-Object ($foo = new-object System.Some.Disposable.Object) { $foo.DoSomething }
         
+    .EXAMPLE
+        psUsing($foo = new-object System.Some.Disposable.Object) { $foo.DoSomething }
+        
     .PARAMETER InputObject
         A disposable object. This object will be disposed of once the script block finishes execution.
 
