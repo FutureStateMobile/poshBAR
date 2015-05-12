@@ -17,10 +17,10 @@
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
 		<style>
-			  .syntaxhighlighter { 
-			     overflow-y: hidden !important; 
-			     overflow-x: auto !important; 
-			  }
+		  .syntaxhighlighter { 
+		     overflow-y: hidden !important; 
+		     overflow-x: auto !important; 
+		  }
 			pre {
 			    min-height: 30px;
 			}
@@ -29,6 +29,12 @@
 				overflow-y: auto;
 
 			}
+			  .form-group {
+			  	padding-top:12px;
+				padding-left:12px;
+				padding-right: 12px;
+			  }
+			
 			/* make sidebar nav vertical */ 
 			@media (min-width: 768px) {
 			  .sidebar-nav .navbar .navbar-collapse {
@@ -47,8 +53,11 @@
 				display: block;
 			  }
 			  .sidebar-nav .navbar li a {
-				padding-top: 12px;
-				padding-bottom: 12px;
+				padding-top: 6px;
+				padding-bottom: 6px;
+			  }
+			  .navbar {
+				  width: 300px;
 			  }
 			}
 
@@ -58,10 +67,7 @@
 			  }
 			}
 
-			@media (min-width: 768px) {
-			  .navbar {
-				  width: 300px;
-			  }
+
 			}
 			@media (min-width: 1200px) {
 			  .navbar {
@@ -92,13 +98,18 @@
                   <span class="visible-xs navbar-brand">click menu to open</span>
                 </div>
                 <div class="navbar-collapse collapse sidebar-navbar-collapse">
-                  <ul class="nav navbar-nav">
+
+			      <div class="form-group">
+					<input class="form-control" id="searchinput" type="search" placeholder="Search..." />
+				  </div>
+
+                  <ul class="nav navbar-nav list-group" id="searchList">
 "@
 $progress = 0
 $commandsHelp | %  {
 	Update-Progress $_.Name 'Navigation'
 	$progress++
-"					<li class=`"nav-menu`"><a href=`"#$($_.Name)`">$($_.Name)</a></li>"
+"					<li class=`"nav-menu list-group-item`"><a href=`"#$($_.Name)`">$($_.Name)</a></li>"
 }
 @'
                   </ul>
@@ -242,6 +253,7 @@ $commandsHelp | % {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js" charset="utf-8"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js" charset="utf-8"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushPowerShell.min.js" charset="utf-8"></script>
+	<script src="http://labs.easyblog.it/bootstrap-list-filter/bootstrap-list-filter.min.js" charset="utf-8"></script>
 	<script>
 		$(document).ready(function() {
 			$(".toggle_container").hide();
@@ -267,6 +279,8 @@ $commandsHelp | % {
 			SyntaxHighlighter.defaults['toolbar'] = false;
 			SyntaxHighlighter.defaults['gutter'] = false;
 			SyntaxHighlighter.all();
+			
+			$('#searchList').btsListFilter('#searchinput', {itemChild: 'a', initial: false});
 		});
 	</script>
 	</body>
