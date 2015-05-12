@@ -23,5 +23,6 @@
     <file src="..\build\files\init.ps1" target="tools\init.ps1" />
     <file src="..\build\files\templates\**\*.*" target="tools\templates\" />
     <file src="..\index.html" target="docs\index.html" />
+    <file src="..\lib\bootstrap-list-filter.min.js" target="docs\lib\bootstrap-list-filter.min.js" />
   </files>
 </package>
