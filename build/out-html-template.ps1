@@ -224,7 +224,7 @@ $commandsHelp | % {
 "@
 		$_.examples.example | % {
 @"
-							<h3>$(FixString($_.title.Trim(('-',' '))))</h3>
+							<h4>$(FixString($_.title.Trim(('-',' '))))</h4>
 <pre class="brush: ps">$(FixString($_.code | out-string ).Trim())</pre>
 							<div>$(FixString($_.remarks | out-string ).Trim())</div>
 "@

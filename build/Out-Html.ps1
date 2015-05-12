@@ -19,8 +19,8 @@ function FixString ($in = '', [bool]$includeBreaks = $false){
 function Update-Progress($name, $action){
     Write-Progress -Activity "Rendering $action for $name" -CurrentOperation "Completed $progress of $totalCommands." -PercentComplete $(($progress/$totalCommands)*100)
 }
-
-$commandsHelp = (Get-Command -module $moduleName) | get-help -full
+$i = 0
+$commandsHelp = (Get-Command -module $moduleName) | get-help -full 
 $commandsHelp | % {
     # Get any aliases associated with the method
     $alias = get-alias -definition $_.Name -ErrorAction SilentlyContinue

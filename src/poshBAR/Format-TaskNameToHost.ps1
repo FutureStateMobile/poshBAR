@@ -17,7 +17,7 @@
         This is just a simple helper function to write the current task name to screen in a nice friendly way.
 
     .NOTES
-        We use this in conjunction with psake for writing headers. `n
+        We use this in conjunction with psake for writing headers. 
 #>
 function Format-TaskNameToHost
 {
@@ -36,3 +36,4 @@ function Format-TaskNameToHost
     write-host ""
     write-host $taskName.padleft($leftLength, "-").padright($headingLength, "-") -foregroundcolor cyan
 }
+Set-Alias ftnhost Format-TaskNameToHost
