@@ -11,14 +11,15 @@
         path = Resolve-Path "$rootDir\build"
         modulesDir = "$rootDir\build\modules"
         environmentsDir = "$rootDir\build\environments"
-            artifactsDir = @{
-                rootDir = "$rootDir\build-artifacts"
-                logsDir = "$rootDir\build-artifacts\logs"
-                outputDir =  "$rootDir\build-artifacts\output"
-                resultsDir = "$rootDir\build-artifacts\results"
-                publishDir = "$rootDir\build-artifacts\publish"
-                workingDir = "$rootDir\build-artifacts\working"
-            }
+        visualStudioVersion = "12.0"
+        artifactsDir = @{
+            rootDir = "$rootDir\build-artifacts"
+            logsDir = "$rootDir\build-artifacts\logs"
+            outputDir =  "$rootDir\build-artifacts\output"
+            resultsDir = "$rootDir\build-artifacts\results"
+            publishDir = "$rootDir\build-artifacts\publish"
+            workingDir = "$rootDir\build-artifacts\working"
+        }
         packagesDir = "$rootDir\packages"
         nuspecDir = "$rootDir\nuspec"
         solutionFile = "$rootDir\[MY-APP].sln"
@@ -51,7 +52,7 @@ task default -depends TestFirstApp, TestSecondApp, PackageFirstApp, PackageSecon
 task CompileSolution -depends Init {
     Update-AssemblyVersions $this.version $this.buildNumber $this.informationalVersion $this.myFirstApp.projectDir
     Update-AssemblyVersions $this.version $this.buildNumber $this.informationalVersion $this.mySecondApp.projectDir
-    Invoke-MSBuild $this.buildOutputDir $this.solutionFile $this.artifactsDir.logsDir $this.rootNamespace 
+    Invoke-MSBuild $this.artifactsDir.outputDir $this.solutionFile $this.artifactsDir.logsDir $this.rootNamespace $this.visualStudioVersion 
 }
 
 task TestFirstApp -depends CompileSolution {
