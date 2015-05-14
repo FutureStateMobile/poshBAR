@@ -26,12 +26,15 @@
 
     .PARAMETER VisualStudioVersion
         The version of Visual Studio that the solution or project was built against
+        - Default: VS 2013
 
     .PARAMETER dotNetVersion
         The version of the .NET framework that the solution or project targets
+        - Default: .NET 4.5
 
     .PARAMETER maxCpuCount
         Maximum number of CPU's to use during the compilation
+        - Default: 1
         
     .PARAMETER verbosity
         Sets the MSBuild verbosity
@@ -48,11 +51,13 @@ function Invoke-MSBuild {
         [Parameter(Mandatory=$true, Position=1)] [string] $projectFile,
         [Parameter(Mandatory=$false, Position=2)] [string] $logPath,
         [Parameter(Mandatory=$false, Position=3)] [string] $namespace,
-        [Parameter(Mandatory=$false, Position=4)] [AllowNull()] [double] $VisualStudioVersion = $null,
-        [Parameter(Mandatory=$false, Position=5)] [AllowNull()] [double] $dotNetVersion = $null,
-        [Parameter(Mandatory=$false, Position=6)] [AllowNull()] [int] $maxCpuCount = $null,
+        [Parameter(Mandatory=$false, Position=4)] [AllowNull()] [double] $VisualStudioVersion = 12.0,
+        [Parameter(Mandatory=$false, Position=5)] [AllowNull()] [double] $dotNetVersion = 4.5,
+        [Parameter(Mandatory=$false, Position=6)] [AllowNull()] [int] $maxCpuCount = 1,
         [Parameter(Mandatory=$false, Position=7)] [string] [ValidateSet('q', 'm', 'n','d','diag')] $verbosity = 'm'
     )
+    # make sure the output directory has a trailing slash
+    $outDir = if(!$outDir.EndsWith('\')){"$outDir\"}
 
     if($namespace){
         if(-not (Test-Path "$logPath\MSBuild")) {
