@@ -32,7 +32,7 @@ $commandsHelp | % {
     if(($_.relatedLinks | Out-String).Trim().Length -gt 0) {
         $links = $_.relatedLinks.navigationLink | % {
             if($_.uri){ @{name = $_.uri; link = $_.uri; target='_blank'} } 
-            if($_.linkText){ @{name = $_.linkText; link = "#$($_.linkText)"; cssClass = 'psLink'} }
+            if($_.linkText){ @{name = $_.linkText; link = "#$($_.linkText)"; cssClass = 'psLink'; target='_top'} }
         }
         $_.relatedLinks.linkText #| % { "<a href='#'" }
         $_ | Add-Member Links $links
