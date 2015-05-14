@@ -240,7 +240,7 @@ $commandsHelp | % {
 "@
 		$_.links | % {
 @"
-							<div class='$($_.cssClass)'><a href='$($_.link)' target=$($_.target)>$($_.name)</a></div>
+							<div class='$($_.cssClass)'><a href='$($_.link)' target='$($_.target)'>$($_.name)</a></div>
 "@
 		}
 @"
