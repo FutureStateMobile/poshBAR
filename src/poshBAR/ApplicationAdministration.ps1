@@ -209,10 +209,7 @@ function Stop-Application( $siteName, $appName ){
 #>
 function Get-Application{
 [CmdletBinding()]
-    param(
-        [parameter][string]$siteName, 
-        [parameter][string]$appName
-    )
+    param([string]$siteName, [string]$appName)
     $getApp = "$appcmd list App '$siteName/$appName/'"
     return Invoke-Expression $getApp
 }
