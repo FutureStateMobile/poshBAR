@@ -8,7 +8,7 @@ if ( $OctopusParameters ) {
 }
 
 $here = Split-Path $script:MyInvocation.MyCommand.Path
-Import-Module "$here\..\packages\poshBAR.*\tools\modules\poshBAR" -force
+Import-Module "$currentDir\modules\poshBAR\poshBAR" -force
 
 $environmentSettings = Get-EnvironmentSettings $environment "//environmentSettings"
 $websiteSettings = $environmentSettings.webSites.[NameOfYourWebsiteNode]
@@ -37,8 +37,8 @@ Step InstallWebsite {
 if($environment -eq 'local'){
     Step AddHostFileEntry {
         Test-RunAsAdmin
-        Add-HostsFileEntry $($websiteSettings.siteHost) -IncludeLoopbackFix    
-    } 
+        Add-HostsFileEntry $($websiteSettings.siteName) -IncludeLoopbackFix    
+    }
 }
 
 Invoke-Deployment
