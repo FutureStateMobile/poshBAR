@@ -14,6 +14,8 @@ Push-Location $psScriptRoot
 . .\Add-IISHttpVerb.ps1
 . .\Add-IISMimeType.ps1
 . .\Add-LoopbackFix.ps1
+. .\Assert-That.ps1
+. .\Assert-PSVersion.ps1
 . .\Find-ToolPath.ps1
 . .\ApplicationAdministration.ps1
 . .\AppPoolAdministration.ps1
