@@ -287,7 +287,17 @@ $commandsHelp | % {
 			SyntaxHighlighter.defaults['gutter'] = false;
 			SyntaxHighlighter.all();
 			
-			$('#searchList').btsListFilter('#searchinput', {itemChild: 'a', initial: false});
+			$('#searchList').btsListFilter('#searchinput', {itemChild: 'a', initial: false, resetOnBlur: true});
+            
+            $(document).keyup(function( e ) {
+                if(!$('#searchinput').is(':focus') && e.which >= 56 && e.which <= 90 ){
+                   $('#searchinput').val(String.fromCharCode(e.keyCode));
+                   $('#searchinput').focus();
+                }
+            });
+            $(document).click(function() {
+                $('#searchinput').blur();
+            });
 		});
 	</script>
 	</body>
