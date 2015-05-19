@@ -9,8 +9,8 @@
         Standard build against the defaults
 
     .EXAMPLE
-        Invoke-MSBuild $buildOutputDir $solutionFile -DotNetVersion 4.0
-        Builds the $solutionFile against a different version of the .NET framework.
+        Invoke-MSBuild $buildOutputDir $solutionFile -target 'clean' -logPath 'c:\logs' -namespace 'My.App.Namespace' -VisualStudioVersion 11.0 -DotNetVersion 4.0 -maxCpuCount 8 -verbosity 'normal' -ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch $true 
+        Builds the $solutionFile with all command parameters
 
     .PARAMETER outDir
         The output directory for your compilation
@@ -26,63 +26,64 @@
 
     .PARAMETER VisualStudioVersion
         The version of Visual Studio that the solution or project was built against
-        - Default: VS 2013
 
     .PARAMETER dotNetVersion
         The version of the .NET framework that the solution or project targets
-        - Default: .NET 4.5
 
     .PARAMETER maxCpuCount
         Maximum number of CPU's to use during the compilation
-        - Default: 1
+
+    .PARAMETER resolveAssemblyWarnOrErrorOnTargetArchitectureMismatch
+        Show warnings for architecture missmatch (x86 and x64) [MSB3270]
         
     .PARAMETER verbosity
         Sets the MSBuild verbosity
-        - [q] = quiet
-        - [m] - minimal
-        - [n] = normal
-        - [d] = detailed
-        - [diag] = diagnostic
+        - [q]uiet
+        - [m]inimal
+        - [n]ormal
+        - [d]etailed
+        - [diag]nostic
 #>
 function Invoke-MSBuild {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true, Position=0)] [string] $outDir,
         [Parameter(Mandatory=$true, Position=1)] [string] $projectFile,
-        [Parameter(Mandatory=$false, Position=2)] [string] $logPath,
-        [Parameter(Mandatory=$false, Position=3)] [string] $namespace,
-        [Parameter(Mandatory=$false, Position=4)] [AllowNull()] [double] $VisualStudioVersion = 12.0,
-        [Parameter(Mandatory=$false, Position=5)] [AllowNull()] [double] $dotNetVersion = 4.5,
-        [Parameter(Mandatory=$false, Position=6)] [AllowNull()] [int] $maxCpuCount = 1,
-        [Parameter(Mandatory=$false, Position=7)] [string] [ValidateSet('q', 'm', 'n','d','diag')] $verbosity = 'm'
+        [Parameter(Mandatory=$false)] [string] $target = 'build',
+        [Parameter(Mandatory=$false)] [string] $logPath,
+        [Parameter(Mandatory=$false)] [string] $namespace,
+        [Parameter(Mandatory=$false)] [double] $VisualStudioVersion = 12.0,
+        [Parameter(Mandatory=$false)] [string] $dotNetVersion = 4.5,
+        [Parameter(Mandatory=$false)] [int] $maxCpuCount = 1,
+        [Parameter(Mandatory=$false)] [string] [ValidateSet('q', 'quiet', 'm', 'minimal', 'n', 'normal','d', 'detailed','diag', 'diagnostic')] $verbosity = 'minimal',
+        [Parameter(Mandatory=$false)] [bool] $ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch = $false
     )
     # make sure the output directory has a trailing slash
     $outDir = if(!$outDir.EndsWith('\')){"$outDir\"}
 
-    if($namespace){
-        if(-not (Test-Path "$logPath\MSBuild")) {
-            mkdir "$logPath\MSBuild"
-        }
-
-        $logFileParam = "logfile=$logPath\MSBuild\Raw.$namespace.txt"
+    if(-not (Test-Path "$logPath\MSBuild")) {
+        mkdir "$logPath\MSBuild" | out-null
     }
+
+    $logFileParam = "logfile=$logPath\MSBuild\" + $(if($namespace){"Raw.$namespace.txt" } else { 'msbuild.txt' })
     
     $params = @(
-        '/t:build', 
-        "/p:OutDir=$outDir", 
-        "/verbosity:$verbosity"
-        $projectFile, 
-        '/p:ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=false',
-        "/l:FileLogger,Microsoft.Build.Engine;$logFileParam") 
-    
-    if($visualStudioVersion){ $params += ("/p:VisualStudioVersion=$("{0:N1}" -f $VisualStudioVersion)") }
-    if($dotNetVersion){ $params += ("/p:ToolsVersion=$("{0:N1}" -f $dotNetVersion)") }
-    if($maxCpuCount) {$params += ("/m:$maxCpuCount")}
-    
-    exec { msbuild.exe $params } ($msgs.error_msbuild_compile -f $projectFile)
-
-    if($namespace){
-        New-WarningsFromMSBuildLog $logPath $namespace
+        "/target:$target", 
+        "/verbosity:$verbosity",
+        "/logger:FileLogger,Microsoft.Build.Engine;$logFileParam",
+        "/property:OutDir=$outDir", 
+        "/property:VisualStudioVersion=$("{0:N1}" -f $VisualStudioVersion)",
+        "/property:ToolsVersion=$("{0:N1}" -f $dotNetVersion)",
+        "/property:ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=$ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch",
+        "/maxcpucount:$maxCpuCount") 
+ 
+    Write-Host "Invoking: `nmsbuild.exe $projectFile $params `n"
+    try {
+        exec { msbuild.exe $projectFile $params } ($msgs.error_msbuild_compile -f $projectFile)
+    } finally {
+        if($namespace){
+            New-WarningsFromMSBuildLog $logPath $namespace
+        }
     }
 }
 Set-Alias msbuild Invoke-MSBuild

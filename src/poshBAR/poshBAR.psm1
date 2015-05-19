@@ -14,7 +14,6 @@ Push-Location $psScriptRoot
 . .\Add-IISHttpVerb.ps1
 . .\Add-IISMimeType.ps1
 . .\Add-LoopbackFix.ps1
-. .\Assert-That.ps1
 . .\Find-ToolPath.ps1
 . .\ApplicationAdministration.ps1
 . .\AppPoolAdministration.ps1
@@ -100,6 +99,7 @@ Export-ModuleMember `
           'Invoke-EntityFrameworkMigrations',
           'Invoke-ExternalCommand',
           'Invoke-FromBase64', 
+          'Invoke-GruntMinification',
           'Invoke-HtmlDecode', 
           'Invoke-HtmlEncode',
           'Invoke-KarmaTests',
@@ -119,7 +119,7 @@ Export-ModuleMember `
           'New-AppPool',
           'New-NugetPackage',
           'New-Site',
-          'New-WarningsFromMSBuildLogs', 
+          #'New-WarningsFromMSBuildLogs', 
           'Remove-Application',
           'Remove-AppPool',
           'Remove-Site',
