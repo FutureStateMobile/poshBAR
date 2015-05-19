@@ -151,10 +151,7 @@ function New-WarningsFromMSBuildLog {
     $TeamCityWrnCount = $poshBAR.TotalWarnings.Count
     $msgs.msg_teamcity_buildstatus -f "{build.status.text}, Build warnings: $($TeamCityWrnCount)"
     $msgs.msg_teamcity_buildstatisticvalue -f 'buildWarnings', $TeamCityWrnCount
-    
-    # raw output
-    Write-Host "MSBuild Warnings - $count warnings ==================================================="
-    $warnings | % { Write-Host " * $_" }
+   
      
     # file output
     if( $txtOutputPath ){
