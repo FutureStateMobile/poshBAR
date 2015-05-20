@@ -5,9 +5,7 @@ $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
         Will create a Website with the specified settings if one doesn't exist.
 
     .EXAMPLE
-        $b = @{"protocol" = "http"; "port" = 80; "hostName"="mysite.com"}
-        $bindings = @($b)
-        New-Site "myWebsite.com" "c:\inetpub\wwwroot" $bindings "myAppPool" -updateIfFound
+        New-Site "myWebsite.com" "c:\inetpub\wwwroot" @(@{"protocol" = "http"; "port" = 80; "hostName"="mysite.com"}) "myAppPool" -updateIfFound
 
     .PARAMETER siteName
         The name of the Website that we are creating.
@@ -22,10 +20,10 @@ $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
         The name of the app pool to use
 
     .PARAMETER updateIfFound
-        Should we update an existing website if it's found?
+        Should we update an existing website if it already exists?
         
     .SYNOPSIS
-        Will setup a web application under the specified Website and AppPool.
+        Will setup a website under the specified site name and AppPool.
 #>
 function New-Site{
     [CmdletBinding()]
@@ -57,6 +55,29 @@ function New-Site{
     }
 }
 
+
+<#
+    .DESCRIPTION
+        Will update a Website with the specified settings if one doesn't exist.
+
+    .EXAMPLE
+        Update-Site "myWebsite.com" "c:\inetpub\wwwroot" @(@{"protocol" = "http"; "port" = 80; "hostName"="mysite.com"}) "myAppPool"
+
+    .PARAMETER siteName
+        The name of the Website that we are updating.
+
+    .PARAMETER sitePath
+        The physical path where this Website is located on disk.
+
+    .PARAMETER bindings
+        An Object Array of bindings. Must include "protocol", "port", and "hostName"
+
+    .PARAMETER appPoolName
+        The name of the app pool to use
+        
+    .SYNOPSIS
+        Will update a website under the specified site name and AppPool.
+#>
 function Update-Site{
     param(
             [parameter(Mandatory=$true,position=0)] [string] $siteName,
@@ -82,31 +103,102 @@ function Update-Site{
     }
 }
 
-function Confirm-SiteExists( $siteName ){
+<#
+    .SYNOPSIS
+        Checks to see if a website already exists
+
+    .EXAMPLE
+        Confirm-SiteExists "myWebsite.com"
+
+    .PARAMETER siteName
+        Name of the website as it appears in IIS
+#>
+function Confirm-SiteExists{
+    [CmdletBinding()]
+    param([string] $siteName)
+    
     $getSite = Get-Site($siteName)
     return ($getSite -ne $null)
 }
+<#
+    .SYNOPSIS
+        Removes an existing website
 
-function Remove-Site( $siteName ){
+    .EXAMPLE
+        Remove-Site "myWebsite.com"
+
+    .PARAMETER siteName
+        Name of the website as it appears in IIS
+#>
+function Remove-Site{
+    [CmdletBinding()]
+    param([Parameter(Mandatory=$true)][string] $siteName)
+
     $getSite = "$appcmd delete App $siteName/"
     return Invoke-Expression $getSite
 }
 
-function Start-Site( $siteName ){
+<#
+    .SYNOPSIS
+        Starts a website
+
+    .EXAMPLE
+        Start-Site "myWebsite.com"
+
+    .PARAMETER siteName
+        Name of the website as it appears in IIS
+#>
+function Start-Site{
+    [CmdletBinding()]
+    param([Parameter(Mandatory=$true)][string] $siteName)
+
     $getSite = "$appcmd start App $siteName/"
     return Invoke-Expression $getSite
 }
 
-function Stop-Site( $siteName ){
+<#
+    .SYNOPSIS
+        Stops a website
+
+    .EXAMPLE
+        Stop-Site "myWebsite.com"
+
+    .PARAMETER siteName
+        Name of the website as it appears in IIS
+#>
+function Stop-Site{
+    [CmdletBinding()]
+    param([Parameter(Mandatory=$true)][string] $siteName)
+
     $getSite = "$appcmd stop App $siteName/"
     return Invoke-Expression $getSite
 }
 
-function Get-Site( $siteName ){
+<#
+    .SYNOPSIS
+        Gets a website's details
+
+    .EXAMPLE
+        Get-Site "myWebsite.com"
+
+    .PARAMETER siteName
+        Name of the website as it appears in IIS
+#>
+function Get-Site{
+    [CmdletBinding()]
+    param([Parameter(Mandatory=$true)][string] $siteName)
+
     $getSite = "$appcmd list App $siteName/"
     return Invoke-Expression $getSite
 }
 
+<#
+    .SYNOPSIS
+        Gets all websites from IIS
+
+    .EXAMPLE
+        Get-Sites
+#>
 function Get-Sites{
     $getSite = "$appcmd list Apps"
     Invoke-Expression $getSite
