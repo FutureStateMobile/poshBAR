@@ -50,15 +50,15 @@ function Invoke-ExternalCommand
             & $command
 
             if ($lastexitcode -ne 0) {
-                $em = if($errorMessage){$errorMessage} else {$error[0].InvocationInfo.PositionMessage} 
-                throw ($em)
+                $e = if($errorMessage){$errorMessage} else {($error[0] | out-string)} 
+                throw $e
             } else {
                 $completed = $true
             }
         } catch {
             if ($retrycount -ge $retry) {
                 Write-Verbose ("Command [{0}] failed after {1} retries." -f $command, $retrycount)
-                throw
+                throw $_
             } else {
                 Write-Verbose ("Command [{0}] failed. Retrying in {1}ms" -f $command, $msDelay)
                 Start-Sleep -m $msDelay
