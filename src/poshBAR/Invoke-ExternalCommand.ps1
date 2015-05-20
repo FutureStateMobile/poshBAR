@@ -13,6 +13,7 @@ The command in the form of a script block that you want to execute.
 
 .PARAMETER errorMessage
 The message you'd like to display on failure of the command.
+Defaults to thrown exception if left blank.
 
 .PARAMETER retry
 The number of times to retry the command before failing.
@@ -32,7 +33,7 @@ function Invoke-ExternalCommand
     [CmdletBinding()]
     param(
         [Parameter(Position=0,Mandatory=$true)][scriptblock] $command,
-        [Parameter(Position=1,Mandatory=$false)][string] $errorMessage = ($msgs.error_bad_command -f $command),
+        [Parameter(Position=1,Mandatory=$false)][string] $errorMessage,
         [Parameter(Mandatory=$false)] [int] $retry = 0,
         [Parameter(Mandatory=$false)] [int] $msDelay = 250
     )
@@ -49,14 +50,15 @@ function Invoke-ExternalCommand
             & $command
 
             if ($lastexitcode -ne 0) {
-                throw ($errorMessage)
+                $em = if($errorMessage){$errorMessage} else {$error[0].InvocationInfo.PositionMessage} 
+                throw (em)
             } else {
                 $completed = $true
             }
         } catch {
             if ($retrycount -ge $retry) {
                 Write-Verbose ("Command [{0}] failed after {1} retries." -f $command, $retrycount)
-                throw ($errorMessage)
+                throw
             } else {
                 Write-Verbose ("Command [{0}] failed. Retrying in {1}ms" -f $command, $msDelay)
                 Start-Sleep -m $msDelay
