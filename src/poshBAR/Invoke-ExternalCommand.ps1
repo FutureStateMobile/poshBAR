@@ -47,6 +47,7 @@ function Invoke-ExternalCommand
 
     while (-not $completed) {
         try {
+            $lastexitcode = 0
             & $command
 
             if ($lastexitcode -ne 0) {
