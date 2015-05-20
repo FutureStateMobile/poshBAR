@@ -37,7 +37,7 @@ function Invoke-ExternalCommand
         [Parameter(Mandatory=$false)] [int] $retry = 0,
         [Parameter(Mandatory=$false)] [int] $msDelay = 250
     )
-
+ 
     # Setting ErrorAction to Stop is important. This ensures any errors that occur in the command are 
     # treated as terminating errors, and will be caught by the catch block.
     $ErrorAction = "Stop"
@@ -47,7 +47,6 @@ function Invoke-ExternalCommand
 
     while (-not $completed) {
         try {
-            $lastexitcode = 0
             & $command
 
             if ($lastexitcode -ne 0) {
@@ -62,9 +61,11 @@ function Invoke-ExternalCommand
                 throw $_
             } else {
                 Write-Verbose ("Command [{0}] failed. Retrying in {1}ms" -f $command, $msDelay)
+                Write-Verbose $_
                 Start-Sleep -m $msDelay
                 $retrycount++
             }
+        $lastexitcode = 0
         }
     }
 }
