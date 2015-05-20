@@ -16,17 +16,25 @@ The message you'd like to display on failure of the command.
 
 .PARAMETER retry
 The number of times to retry the command before failing.
+
+.PARAMETER msDelay
+The number of milliseconds to delay between retries. (only applies when $retry -gt 0)
  
 .EXAMPLE
-  Invoke-ExternalCommand { svn info $repository_trunk } "Error executing SVN. Please verify SVN command-line client is installed"
+Exec { git st } "Error getting GIT status. Please verify GIT command-line client is installed"
+ 
+.EXAMPLE
+Invoke-ExternalCommand {get st} "Error getting GIT status. Please verify GIT command-line client is installed" -retry 10 -msDelay 1000
+In this example, we retry the `git st` command 10 times with a 1 second delay in between. 
 #>
 function Invoke-ExternalCommand
 {
     [CmdletBinding()]
     param(
-        [Parameter(Position=0,Mandatory=1)][scriptblock] $command,
-        [Parameter(Position=1,Mandatory=0)][string] $errorMessage = ($msgs.error_bad_command -f $command),
-        [Parameter(Mandatory=0)] [int] $retry = 0
+        [Parameter(Position=0,Mandatory=$true)][scriptblock] $command,
+        [Parameter(Position=1,Mandatory=$false)][string] $errorMessage = ($msgs.error_bad_command -f $command),
+        [Parameter(Mandatory=$false)] [int] $retry = 0,
+        [Parameter(Mandatory=$false)] [int] $msDelay = 250
     )
 
     # Setting ErrorAction to Stop is important. This ensures any errors that occur in the command are 
@@ -50,10 +58,12 @@ function Invoke-ExternalCommand
                 Write-Verbose ("Command [{0}] failed after {1} retries." -f $command, $retrycount)
                 throw ($errorMessage)
             } else {
-                Write-Verbose ("Command [{0}] failed. Retrying..." -f $command, $secondsDelay)
+                Write-Verbose ("Command [{0}] failed. Retrying in {1}ms" -f $command, $msDelay)
+                Start-Sleep -m $msDelay
                 $retrycount++
             }
         }
     }
 }
 Set-Alias Exec Invoke-ExternalCommand
+Set-Alias Execute Invoke-ExternalCommand
