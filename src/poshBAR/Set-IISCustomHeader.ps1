@@ -4,7 +4,7 @@ $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
        Will set the specified Authentication value for the specified applicaiton or website
 
     .EXAMPLE
-        Set-IISCustomHeader "cls-w-85544.transcanada.com" "access-control-allow-origin" "*"
+        Set-IISCustomHeader "xyz.mysite.com" "access-control-allow-origin" "*"
 
     .PARAMETER siteName
         The name of the site to add custom header to.

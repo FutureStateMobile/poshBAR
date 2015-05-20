@@ -3,7 +3,7 @@
         Adds a registry entry that overrides the default windows behaviour regarding allowing a different "C" name to point back to 127.0.0.1
 
     .EXAMPLE
-        Add-LoopbackFix "local.tcpl.ca"
+        Add-LoopbackFix "local.mysite.com"
 
     .PARAMETER siteHostName
         The hostname that you want to loop back to the local host.

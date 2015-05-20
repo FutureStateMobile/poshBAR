@@ -50,7 +50,7 @@ Task UpdateVersion -depends MakeBuildDir {
 }
 
 Task GenerateDocumentation -depends SetupPaths, UpdateVersion, MakeBuildDir -alias docs {
-    .\out-html.ps1 -moduleName 'poshBAR' -outputDir "$baseDir"
+    Exec {.\out-html.ps1 -moduleName 'poshBAR' -outputDir "$baseDir"} -retry 10 # retry because of the build agent issues when committing multiple branches.
 }
 
 Task PackageBuildRelease -depends SetupPaths, UpdateVersion, MakeBuildDir, GenerateDocumentation {

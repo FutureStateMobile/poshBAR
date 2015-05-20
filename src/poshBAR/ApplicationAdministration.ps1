@@ -5,7 +5,7 @@ $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
         Will setup a web application under the specified Website and AppPool.
 
     .EXAMPLE
-        New-Application "MyApp" "apps.tcpl.ca" "C:\inetpub\apps.tcpl.ca\MyApp" "MyApp"
+        New-Application "MyApp" "apps.mysite.com" "C:\inetpub\apps.mysite.com\MyApp" "MyApp"
 
     .PARAMETER appName
         The name of the application.

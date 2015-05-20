@@ -36,6 +36,7 @@ Push-Location $psScriptRoot
 . .\Invoke-DeployOctopusNugetPackage.ps1
 . .\Invoke-ElevatedCommand.ps1
 . .\Invoke-ExternalCommand.ps1
+. .\Lock-Object.ps1
 . .\MSBuild.ps1
 . .\Nuget.ps1
 . .\nUnit.ps1
@@ -117,6 +118,7 @@ Export-ModuleMember `
           'Invoke-XmlDocumentTransform',
           'Invoke-XUnit',
           'Invoke-XUnitWithCoverage',
+          'Lock-Object',
           'New-Application',
           'New-AppPool',
           'New-NugetPackage',
