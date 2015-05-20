@@ -51,7 +51,7 @@ function Invoke-ExternalCommand
 
             if ($lastexitcode -ne 0) {
                 $em = if($errorMessage){$errorMessage} else {$error[0].InvocationInfo.PositionMessage} 
-                throw (em)
+                throw ($em)
             } else {
                 $completed = $true
             }
