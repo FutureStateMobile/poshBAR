@@ -138,7 +138,7 @@ foreach($_ in $commandsHelp) {
 							<h3> Aliases </h3>
 							<ul>
 "@
-	$_.alias | % {
+	foreach($_ in $_.alias) {
 @"
 								<li>$($_.Name)</li>
 "@
@@ -224,7 +224,7 @@ foreach($_ in $commandsHelp) {
 							<h3> Examples </h3>
 							<hr>
 "@
-		$_.examples.example | % {
+		foreach($_ in $_.examples.example) {
 @"
 							<h4>$(FixString($_.title.Trim(('-',' '))))</h4>
 <pre class="brush: ps">$(FixString($_.code | out-string ).Trim())</pre>

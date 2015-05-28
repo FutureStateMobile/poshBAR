@@ -41,6 +41,7 @@ foreach ($h in $commandsHelp){
         $h | Add-Member Links $links
     }
 
+    # Add parameter aliases to the object.
     foreach($p in $h.parameters.parameter ){
         $paramAliases = ($cmdHelp.parameters.values | where name -like $p.name | select aliases).Aliases
         if($paramAliases){
