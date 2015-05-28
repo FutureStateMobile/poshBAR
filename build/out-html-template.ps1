@@ -100,7 +100,7 @@
                   <ul class="nav navbar-nav list-group" id="searchList">
 "@
 $progress = 0
-foreach($_ in $commandsHelp) {
+$commandsHelp | %  {
 	Update-Progress $_.Name 'Navigation'
 	$progress++
 "					<li class=`"nav-menu list-group-item`"><a href=`"#$($_.Name)`">$($_.Name)</a></li>"
@@ -114,7 +114,7 @@ foreach($_ in $commandsHelp) {
           <div class="col-lg-9 col-md-8 col-sm-7 col-xs-12">
 '@
 $progress = 0
-foreach($_ in $commandsHelp) {
+$commandsHelp | % {
 	Update-Progress $_.Name 'Documentation'
 	$progress++
 @"
@@ -138,7 +138,7 @@ foreach($_ in $commandsHelp) {
 							<h3> Aliases </h3>
 							<ul>
 "@
-	foreach($_ in $_.alias) {
+	$_.alias | % {
 @"
 								<li>$($_.Name)</li>
 "@
@@ -173,7 +173,7 @@ foreach($_ in $commandsHelp) {
 								</thead>
 								<tbody>
 "@
-        foreach($_ in $_.parameters.parameter) {
+        $_.parameters.parameter | % {
 @"
 									<tr>
 										<td><nobr>-$(FixString($_.Name))</nobr></td>
@@ -224,7 +224,7 @@ foreach($_ in $commandsHelp) {
 							<h3> Examples </h3>
 							<hr>
 "@
-		foreach($_ in $_.examples.example) {
+		$_.examples.example | % {
 @"
 							<h4>$(FixString($_.title.Trim(('-',' '))))</h4>
 <pre class="brush: ps">$(FixString($_.code | out-string ).Trim())</pre>
@@ -240,7 +240,7 @@ foreach($_ in $commandsHelp) {
 						<div>
 							<h3> Links </h3>
 "@
-		foreach($_ in $_.links) {
+		$_.links | % {
 @"
 							<div class='$($_.cssClass)'><a href='$($_.link)' target='$($_.target)'>$($_.name)</a></div>
 "@
