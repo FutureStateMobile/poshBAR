@@ -22,7 +22,7 @@ function Add-LoopbackFix
 {
     [CmdletBinding()]
     param(
-        [parameter(Mandatory=$true,position=0)] [string] $siteHostName
+        [parameter(Mandatory=$true,position=0)] [string] [alias('sn')] $siteHostName
     )
 
     $ErrorActionPreference = "Stop"

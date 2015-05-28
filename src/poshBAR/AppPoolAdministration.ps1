@@ -43,8 +43,8 @@ function New-AppPool{
         [parameter(Mandatory=$true, position=0)] [string] $appPoolName,
         [parameter(Mandatory=$false,position=1)] [string] [ValidateSet('LocalSystem','LocalService','NetworkService','SpecificUser','ApplicationPoolIdentity')] $appPoolIdentityType = 'NetworkService',
         [parameter(Mandatory=$false,position=2)] [int] $maxProcesses = 1,
-        [parameter(Mandatory=$false,position=3)] [string] $username,
-        [parameter(Mandatory=$false,position=4)] [string] $password,
+        [parameter(Mandatory=$false,position=3)] [string] [alias('un')] $username,
+        [parameter(Mandatory=$false,position=4)] [string] [alias('pwd')] $password,
         [parameter(Mandatory=$false,position=5)] [string] [ValidateSet('Integrated','Classic')] $managedPipelineMode = 'Integrated',
         [parameter(Mandatory=$false,position=6)] [string] $managedRuntimeVersion = "v4.0",
         [parameter(Mandatory=$false,position=7)] [switch] $alwaysRunning

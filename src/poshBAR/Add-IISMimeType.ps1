@@ -23,8 +23,8 @@ function Add-IISMimeType
 {
     [CmdletBinding()]
     param(
-        [parameter( Mandatory=$true, position=0 )] [string] $siteName,
-        [parameter( Mandatory=$true, position=1 )] [string] $fileExtension,
+        [parameter( Mandatory=$true, position=0 )] [string] [alias('sn')] $siteName,
+        [parameter( Mandatory=$true, position=1 )] [string] [alias('extension','ext')] $fileExtension,
         [parameter( Mandatory=$true, position=2 )] [string] $mimeType
     )
 

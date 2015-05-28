@@ -33,8 +33,8 @@ function Add-HostsFileEntry
 {
     [CmdletBinding()]
 	param(
-        [parameter(Mandatory=$true,position=0)] [string] $hostName,
-        [parameter(Mandatory=$false,position=1)] [ValidatePattern('\d{1,3}(\.\d{1,3}){3}')] [string] $ipAddress = "127.0.0.1",
+        [parameter(Mandatory=$true,position=0)] [string] [alias('hn')]$hostName,
+        [parameter(Mandatory=$false,position=1)] [ValidatePattern('\d{1,3}(\.\d{1,3}){3}')] [string] [alias('ip')] $ipAddress = "127.0.0.1",
         [parameter(Mandatory=$false,position=2)][switch] $includeLoopbackFix
 	)
 

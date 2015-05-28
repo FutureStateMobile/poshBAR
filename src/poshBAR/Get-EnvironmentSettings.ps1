@@ -28,8 +28,8 @@ function Get-EnvironmentSettings
 {
     [CmdletBinding()]
     param(
-        [parameter(Mandatory=$true,position=0)] [string] $environment,
-        [parameter(Mandatory=$true,position=1)] [string] $nodeXPath = "/",
+        [parameter(Mandatory=$true,position=0)] [string] [alias('env')] $environment,
+        [parameter(Mandatory=$true,position=1)] [string] [alias('xpath')] $nodeXPath = "/",
         [parameter(Mandatory=$false,position=2)] [string] $environmentsPath,
         [parameter(Mandatory=$false,position=3)] [string] $culture
     )

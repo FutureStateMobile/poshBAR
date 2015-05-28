@@ -23,8 +23,8 @@ function Expand-ZipFile
 {
     [CmdletBinding()]
     param(
-        [parameter(Mandatory=$true,position=0)] [alias("name")]  [string] $zipFileName,
-        [parameter(Mandatory=$true,position=1)] [alias("to")]  [string] $destinationFolder
+        [parameter(Mandatory=$true,position=0)] [alias('name')]  [string] $zipFileName,
+        [parameter(Mandatory=$true,position=1)] [alias('to', 'dest')]  [string] $destinationFolder
     )
 
     $ErrorActionPreference = "Stop"

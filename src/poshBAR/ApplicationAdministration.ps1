@@ -30,8 +30,8 @@ function New-Application
 {
     [CmdletBinding()]
     param(
-        [parameter( Mandatory=$true, position=0 )] [string] $siteName,
-        [parameter( Mandatory=$true, position=1 )] [string] $appName,
+        [parameter( Mandatory=$true, position=0 )] [string] [alias('sn')] $siteName,
+        [parameter( Mandatory=$true, position=1 )] [string] [alias('an')] $appName,
         [parameter( Mandatory=$true, position=2 )] [string] $appPath,
         [parameter( Mandatory=$true, position=3 )] [string] $appPoolName,
         [parameter( Mandatory=$false, position=4 )] [switch] $updateIfFound

@@ -21,8 +21,8 @@ function Expand-NugetPackage
 {
     [CmdletBinding()]
     param(
-        [parameter(Mandatory=$true,position=0)] [string] $nugetPackageName,
-        [parameter(Mandatory=$true,position=1)] [string] $destinationFolder
+        [parameter(Mandatory=$true,position=0)] [string] [alias('pkgName')] $nugetPackageName,
+        [parameter(Mandatory=$true,position=1)] [string] [alias('dest')] $destinationFolder
     )
     $ErrorActionPreference = "Stop"
 

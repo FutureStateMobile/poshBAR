@@ -21,7 +21,7 @@
 function Find-ToolPath {
     [CmdletBinding()]
     param(
-        [parameter(Mandatory=$true,position=0)] [string] $toolName
+        [parameter(Mandatory=$true,position=0)] [string] [alias('name')] $toolName
     )
 
     $here = Resolve-Path './'
