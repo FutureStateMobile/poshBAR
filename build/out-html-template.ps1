@@ -160,14 +160,15 @@ $commandsHelp | % {
 @"
 						<div>
 							<h3> Parameters </h3>
-							<table class="table table-striped table-bordered table-condensed">
+							<table class="table table-striped table-bordered table-condensed visible-on">
 								<thead>
 									<tr>
 										<th>Name</th>
+                                        <th class="visible-lg visible-md">Alias</th>
 										<th>Description</th>
-										<th>Required?</th>
-										<th>Pipeline Input</th>
-										<th>Default Value</th>
+										<th class="visible-lg visible-md">Required?</th>
+										<th class="visible-lg">Pipeline Input</th>
+										<th class="visible-lg">Default Value</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -175,11 +176,12 @@ $commandsHelp | % {
         $_.parameters.parameter | % {
 @"
 									<tr>
-										<td>-$(FixString($_.Name))</td>
+										<td><nobr>-$(FixString($_.Name))</nobr></td>
+                                        <td class="visible-lg visible-md">$(FixString($_.Aliases))</td>
 										<td>$(FixString(($_.Description  | out-string).Trim()) $true)</td>
-										<td>$(FixString($_.Required))</td>
-										<td>$(FixString($_.PipelineInput))</td>
-										<td>$(FixString($_.DefaultValue))</td>
+										<td class="visible-lg visible-md">$(FixString($_.Required))</td>
+										<td class="visible-lg">$(FixString($_.PipelineInput))</td>
+										<td class="visible-lg">$(FixString($_.DefaultValue))</td>
 									</tr>
 "@
         }

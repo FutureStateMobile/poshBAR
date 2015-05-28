@@ -9,11 +9,14 @@
         Standard build against the defaults
 
     .EXAMPLE
-        Invoke-MSBuild $buildOutputDir $solutionFile -target 'clean' -logPath 'c:\logs' -namespace 'My.App.Namespace' -VisualStudioVersion 11.0 -DotNetVersion 4.0 -maxCpuCount 8 -verbosity 'normal' -ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch $true 
+        Invoke-MSBuild $buildOutputDir $solutionFile -target 'clean' -logPath 'c:\logs' -namespace 'My.App.Namespace' -visualStudioVersion 11.0 -toolsVersion 4.0 -maxCpuCount 8 -verbosity 'normal' -warnOnArchitectureMismatch $true 
         Builds the $solutionFile with all command parameters
 
     .PARAMETER outDir
         The output directory for your compilation
+
+    .PARAMETER target
+        Build the specified targets in the project. Specify each target separately, or use a semicolon or comma to separate multiple targets
 
     .PARAMETER projectFile
         The path to your project (.csproj) or solution (.sln) file
@@ -24,16 +27,16 @@
     .PARAMETER namespace
         Used when generating build warnings.
 
-    .PARAMETER VisualStudioVersion
+    .PARAMETER visualStudioVersion
         The version of Visual Studio that the solution or project was built against
 
-    .PARAMETER dotNetVersion
+    .PARAMETER toolsVersion
         The version of the .NET framework that the solution or project targets
 
     .PARAMETER maxCpuCount
         Maximum number of CPU's to use during the compilation
 
-    .PARAMETER resolveAssemblyWarnOrErrorOnTargetArchitectureMismatch
+    .PARAMETER warnOnArchitectureMismatch
         Show warnings for architecture missmatch (x86 and x64) [MSB3270]
         
     .PARAMETER verbosity
@@ -43,20 +46,26 @@
         - [n]ormal
         - [d]etailed
         - [diag]nostic
+
+    .NOTES
+        The toolset version isn't the same as the target framework, which is the version of the .NET Framework on which a project is built to run. 
+
+    .LINK
+        https://msdn.microsoft.com/en-us/library/ms164311.aspx
 #>
 function Invoke-MSBuild {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true, Position=0)] [string] $outDir,
         [Parameter(Mandatory=$true, Position=1)] [string] $projectFile,
-        [Parameter(Mandatory=$false)] [string] $target = 'build',
+        [Parameter(Mandatory=$false)] [string] [alias('t')]$target = 'build',
         [Parameter(Mandatory=$false)] [string] $logPath,
         [Parameter(Mandatory=$false)] [string] $namespace,
-        [Parameter(Mandatory=$false)] [double] $VisualStudioVersion = 12.0,
-        [Parameter(Mandatory=$false)] [string] $dotNetVersion = 4.5,
-        [Parameter(Mandatory=$false)] [int] $maxCpuCount = 1,
-        [Parameter(Mandatory=$false)] [string] [ValidateSet('q', 'quiet', 'm', 'minimal', 'n', 'normal','d', 'detailed','diag', 'diagnostic')] $verbosity = 'minimal',
-        [Parameter(Mandatory=$false)] [bool] $ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch = $false
+        [Parameter(Mandatory=$false)] [double] $visualStudioVersion = 12.0,
+        [Parameter(Mandatory=$false)] [string] [alias('tv')]$toolsVersion = 4.0,
+        [Parameter(Mandatory=$false)] [int] [alias('m')]$maxCpuCount = 1,
+        [Parameter(Mandatory=$false)] [string] [alias('v','loglevel')] [ValidateSet('q', 'quiet', 'm', 'minimal', 'n', 'normal','d', 'detailed','diag', 'diagnostic')] $verbosity = 'minimal',
+        [Parameter(Mandatory=$false)] [bool] $warnOnArchitectureMismatch = $false
     )
     # make sure the output directory has a trailing slash
     $outDir = if(!$outDir.EndsWith('\')){"$outDir\"}
@@ -72,9 +81,9 @@ function Invoke-MSBuild {
         "/verbosity:$verbosity",
         "/logger:FileLogger,Microsoft.Build.Engine;$logFileParam",
         "/property:OutDir=$outDir", 
-        "/property:VisualStudioVersion=$("{0:N1}" -f $VisualStudioVersion)",
-        "/property:ToolsVersion=$("{0:N1}" -f $dotNetVersion)",
-        "/property:ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=$ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch",
+        "/property:visualStudioVersion=$("{0:N1}" -f $visualStudioVersion)",
+        "/property:ToolsVersion=$("{0:N1}" -f $toolsVersion)",
+        "/property:warnOnArchitectureMismatch=$warnOnArchitectureMismatch",
         "/maxcpucount:$maxCpuCount") 
  
     Write-Host "Invoking: `nmsbuild.exe $projectFile $params `n"

@@ -21,7 +21,11 @@ function Update-Progress($name, $action){
 }
 $i = 0
 $commandsHelp = (Get-Command -module $moduleName) | get-help -full 
+
 $commandsHelp | % {
+
+    $cmdHelp = (Get-Command $_.Name)
+
     # Get any aliases associated with the method
     $alias = get-alias -definition $_.Name -ErrorAction SilentlyContinue
     if($alias){ 
@@ -34,8 +38,15 @@ $commandsHelp | % {
             if($_.uri){ @{name = $_.uri; link = $_.uri; target='_blank'} } 
             if($_.linkText){ @{name = $_.linkText; link = "#$($_.linkText)"; cssClass = 'psLink'; target='_top'} }
         }
-        $_.relatedLinks.linkText #| % { "<a href='#'" }
+        $_.relatedLinks.linkText
         $_ | Add-Member Links $links
+    }
+
+    foreach($p in $_.parameters.parameter ){
+        $paramAliases = ($cmdHelp.parameters.values | where name -like $p.name | select aliases).Aliases
+        if($paramAliases){
+            $p | Add-Member Aliases "$($paramAliases -join ', ')" -Force
+        }
     }
 }
 

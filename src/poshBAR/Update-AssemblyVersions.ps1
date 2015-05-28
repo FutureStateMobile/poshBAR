@@ -45,7 +45,7 @@ function Update-AssemblyVersions
     
     $msgs.msg_updating_assembly -f $version, $Version.$BuildNumber, $AssemblyInformationalVersion
 
-    Push-Location "$projectRoot\Properties"
+    Push-Location "$projectRoot"
 
     ls -r -filter AssemblyInfo.cs | % {
         $filename = $_.Directory.ToString() + '\' + $_.Name
