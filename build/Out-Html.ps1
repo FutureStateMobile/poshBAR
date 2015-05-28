@@ -22,27 +22,26 @@ function Update-Progress($name, $action){
 $i = 0
 $commandsHelp = (Get-Command -module $moduleName) | get-help -full 
 
-$commandsHelp | % {
-
-    $cmdHelp = (Get-Command $_.Name)
+foreach ($h in $commandsHelp){
+    $cmdHelp = (Get-Command $h.Name)
 
     # Get any aliases associated with the method
-    $alias = get-alias -definition $_.Name -ErrorAction SilentlyContinue
+    $alias = get-alias -definition $h.Name -ErrorAction SilentlyContinue
     if($alias){ 
-        $_ | Add-Member Alias $alias
+        $h | Add-Member Alias $alias
     }
     
     # Parse the related links and assign them to a links hashtable.
-    if(($_.relatedLinks | Out-String).Trim().Length -gt 0) {
-        $links = $_.relatedLinks.navigationLink | % {
-            if($_.uri){ @{name = $_.uri; link = $_.uri; target='_blank'} } 
-            if($_.linkText){ @{name = $_.linkText; link = "#$($_.linkText)"; cssClass = 'psLink'; target='_top'} }
+    if(($h.relatedLinks | Out-String).Trim().Length -gt 0) {
+        $links = $h.relatedLinks.navigationLink | % {
+            if($h.uri){ @{name = $h.uri; link = $h.uri; target='_blank'} } 
+            if($h.linkText){ @{name = $h.linkText; link = "#$($h.linkText)"; cssClass = 'psLink'; target='_top'} }
         }
-        $_.relatedLinks.linkText
-        $_ | Add-Member Links $links
+        $h.relatedLinks.linkText
+        $h | Add-Member Links $links
     }
 
-    foreach($p in $_.parameters.parameter ){
+    foreach($p in $h.parameters.parameter ){
         $paramAliases = ($cmdHelp.parameters.values | where name -like $p.name | select aliases).Aliases
         if($paramAliases){
             $p | Add-Member Aliases "$($paramAliases -join ', ')" -Force

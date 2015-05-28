@@ -100,7 +100,7 @@
                   <ul class="nav navbar-nav list-group" id="searchList">
 "@
 $progress = 0
-$commandsHelp | %  {
+foreach($_ in $commandsHelp) {
 	Update-Progress $_.Name 'Navigation'
 	$progress++
 "					<li class=`"nav-menu list-group-item`"><a href=`"#$($_.Name)`">$($_.Name)</a></li>"
@@ -114,7 +114,7 @@ $commandsHelp | %  {
           <div class="col-lg-9 col-md-8 col-sm-7 col-xs-12">
 '@
 $progress = 0
-$commandsHelp | % {
+foreach($_ in $commandsHelp) {
 	Update-Progress $_.Name 'Documentation'
 	$progress++
 @"
@@ -173,7 +173,7 @@ $commandsHelp | % {
 								</thead>
 								<tbody>
 "@
-        $_.parameters.parameter | % {
+        foreach($_ in $_.parameters.parameter) {
 @"
 									<tr>
 										<td><nobr>-$(FixString($_.Name))</nobr></td>
@@ -240,7 +240,7 @@ $commandsHelp | % {
 						<div>
 							<h3> Links </h3>
 "@
-		$_.links | % {
+		foreach($_ in $_.links) {
 @"
 							<div class='$($_.cssClass)'><a href='$($_.link)' target='$($_.target)'>$($_.name)</a></div>
 "@
