@@ -27,14 +27,15 @@ Describe 'Find-ToolPath' {
         # Setup 
         $orig = $env:PATH
         $mockToolName = 'mock'
-        $env:PATH += ';C:\Temp\Mock'
+        $mockToolPath = 'C:\Temp\Mock'
+        $env:PATH += ";$mockToolPath"
              
         # execute
         $execute = Find-ToolPath $mockToolName  
        
        # assert         
         It 'Will find a mock tool on the path and not throw.' {
-            $execute | should be 'C:\Temp\Mock'
+            $execute | should be $mockToolPath
         }
         
         # tear down
