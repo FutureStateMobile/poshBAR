@@ -5,12 +5,9 @@ Describe 'Find-ToolPath' {
         # setup
         $toolName = 'mage'
         $scriptsLocation = $(Resolve-Path "$here\..\src\poshBAR").Path
-        $orig = $env:PATH
-        $mockToolName = 'mock'
-        $env:PATH += ';C:\Temp\Mock'
-                
+       
         # execute
-        $execute = {$goodResult = Find-ToolPath $toolName} 
+        $execute = {$result = Find-ToolPath $toolName} 
         
         # assert
         It 'Will not thow for a valid tool.' {
@@ -22,14 +19,16 @@ Describe 'Find-ToolPath' {
         }
         
         It 'Will have a valid path on the result.' {
-            $goodResult | should be $scriptsLocation
+            $result | should be $scriptsLocation
         }
         
         It 'Will find a mock tool on the path and not throw.' {
-
+            $orig = $env:PATH
+            $mockToolName = 'mock'
+            $env:PATH += ';C:\Temp\Mock'
             $mockResult = Find-ToolPath $mockToolName
             $mockResult | should be 'C:\Temp\Mock'
-
+            $env:PATH = $orig
         }
     }
     
@@ -53,7 +52,4 @@ Describe 'Find-ToolPath' {
             $badResult | should be $null
         }
     }
-    
-    $env:PATH = $orig
-    Write-Host $env:PATH
 }
