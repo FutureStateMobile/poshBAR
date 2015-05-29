@@ -7,7 +7,7 @@ Describe 'ClickOnce' {
         $manifestPath = 'foo'
         $pfxPath = 'C:\bar'
         $pfxPassword = 'baz'
-        Mock poshBAR\Invoke-ExternalCommand {}
+        Mock Invoke-ExternalCommand {} -moduleName poshBAR
             
         # execute
         $execute = {Invoke-SignAppliationManifest $manifestPath $pfxPath $pfxPassword}
@@ -17,8 +17,8 @@ Describe 'ClickOnce' {
            $execute | should not throw
         }
         
-        It 'Will call Invoke-ExternalCommand' -skip {
-            Assert-MockCalled poshBAR\Invoke-ExternalCommand
+        It 'Will call Mock of poshBAR\Invoke-ExternalCommand' -skip {
+            Assert-MockCalled Invoke-ExternalCommand -moduleName poshBAR
         }
     }
 }
