@@ -1,20 +1,21 @@
+$errorActionPreference = 'Stop'
 $baseDir  = resolve-path ".\.."
 $script:this = @{
     buildDir = "$baseDir\build-artifacts" 
     buildPublishDir = "$baseDir\build-artifacts\publish"
     packagesDir = "$baseDir\Packages"
     workingDir = "$baseDir\build-artifacts\Working\poshBAR"
-    modulesDir = "$baseDir\src\poshBAR"
+    srcDir = "$baseDir\src\poshBAR"
     devopsNugetPackage = "$baseDir\nuspec\poshBAR.nuspec"
     devopsSummary = "Powershell Build `$amp; Release"
+    testDir = "$baseDir\tests"
 }
 
 # Dogfood
-Import-Module "$($this.modulesDir)\poshBAR" -force
-
+Import-Module "$($this.srcDir)\poshBAR" -force
+Import-Module "$($this.packagesDir)\pester.*\tools\pester.psm1"
 
 Task default -depends Package
-Task Package -depends PackageBuildRelease
 
 Task SetupPaths {
     Write-Host "Adding some of our tools to the Path so we can run them easier"
@@ -30,7 +31,7 @@ Task MakeBuildDir {
 }
 
 Task UpdateVersion -depends MakeBuildDir {
-    copy "$($this.modulesDir)\*" $this.workingDir
+    copy "$($this.srcDir)\*" $this.workingDir
 
     Push-Location $this.workingDir
 
@@ -53,12 +54,18 @@ Task GenerateDocumentation -depends SetupPaths, UpdateVersion, MakeBuildDir -ali
     Exec {.\out-html.ps1 -moduleName 'poshBAR' -outputDir "$baseDir"} -retry 10 # retry because of the build agent issues when committing multiple branches.
 }
 
-Task PackageBuildRelease -depends SetupPaths, UpdateVersion, MakeBuildDir, GenerateDocumentation {
-
+Task Package -depends SetupPaths, UpdateVersion, MakeBuildDir, RunPesterTests, GenerateDocumentation {
     Update-XmlConfigValues $this.devopsNugetPackage "//*[local-name() = 'version']" $version
     Update-XmlConfigValues $this.devopsNugetPackage "//*[local-name() = 'summary']" "$($this.devopsSummary) v-$version"
 
     exec { NuGet.exe Pack $this.devopsNugetPackage -Version "$version.$buildNumber" -OutputDirectory $this.buildPublishDir -NoPackageAnalysis } "Failed to package the Devops Scripts."
+}
+
+Task RunPesterTests {
+    $results = Invoke-Pester -relative_path $this.testDir -PassThru
+    if($results.FailedCount -gt 0) {
+        throw "$($results.FailedCount) Tests Failed."
+    }
 }
 
 FormatTaskName {

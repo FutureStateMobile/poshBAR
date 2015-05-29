@@ -24,33 +24,42 @@ function Find-ToolPath {
         [parameter(Mandatory=$true,position=0)] [string] [alias('name')] $toolName
     )
 
-    $here = Resolve-Path './'
-    $upOne = Resolve-Path './../'
+    $here = Split-Path $script:MyInvocation.MyCommand.Path
+    $upOne = Resolve-Path "$here\.."
+
+    Write-Verbose "Current Directory is '$here'"
+    Write-Verbose "Parent Directory is '$upOne'"
 
     if($env:Path -like "*$toolName*" ) { return }
 
     # try to find it in the packages path
     $packagePath = "$upOne\packages\$toolName.*\tools"
+    Write-Verbose "Looking for '$toolName' in '$packagePath'"
     if(Test-Path $packagePath) {
         $private:Path = (Resolve-Path $packagePath).Path
+        Write-Verbose "Found '$toolName' in '$private:Path'"
         $env:Path += ";$private:Path"
         return
     }
 
     # try to find it in the tools directory (usually in a nupkg file)
     $nuspecToolsPath = "$here\tools"
+    Write-Verbose "Looking for '$toolName' in '$nuspecToolsPath'"
     if(Test-Path $nuspecToolsPath) {
         $private:Path = (Resolve-Path $nuspecToolsPath).Path
         $exists = Get-ChildItem $path | ? {$_ -like "*$toolName*"}
         if($exists) {
+            Write-Verbose "Found '$toolName' in '$private:Path'"
             $env:Path += ";$($private:Path)"
             return
         }
     }
 
     # Heavy Weight, search entire directly tree from '$upOne' to search
-    $itm = Get-ChildItem -Path $loc -Recurse | ? {$_ -like "*$toolName*" -and $_.Extension -eq '.exe'} | select -First 1
+    $itm = Get-ChildItem -Path $here -Recurse | ? {$_ -like "*$toolName*" -and $_.Extension -eq '.exe'} | select -First 1
+    Write-Verbose "Looking for '$toolName' recursively from '$here'"
     if($itm){
+        Write-Verbose "Found '$toolName' in '$($itm.DirectoryName)'"
         $env:Path += ";$($itm.DirectoryName)"
         return
     }
