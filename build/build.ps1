@@ -2,6 +2,7 @@ $errorActionPreference = 'Stop'
 $baseDir  = resolve-path ".\.."
 $script:this = @{
     buildDir = "$baseDir\build-artifacts" 
+    resultsDir = "$baseDir\build-artifacts\results"
     buildPublishDir = "$baseDir\build-artifacts\publish"
     packagesDir = "$baseDir\Packages"
     workingDir = "$baseDir\build-artifacts\Working\poshBAR"
@@ -28,6 +29,7 @@ Task MakeBuildDir {
     rm -r $this.buildDir -force -ea SilentlyContinue
     New-Item -ItemType Directory -Force -Path $this.buildPublishDir
     New-Item -ItemType Directory -Force -Path $this.workingDir
+    New-Item -ItemType Directory -Force -Path $this.resultsDir
 }
 
 Task UpdateVersion -depends MakeBuildDir {
@@ -62,7 +64,7 @@ Task Package -depends SetupPaths, UpdateVersion, MakeBuildDir, RunPesterTests, G
 }
 
 Task RunPesterTests {
-    $results = Invoke-Pester -relative_path $this.testDir -PassThru
+    $results = Invoke-Pester -relative_path $this.testDir -PassThru  -OutputFile "$($this.resultsDir)\pester.xml" -OutputFormat NUnitXml
     if($results.FailedCount -gt 0) {
         throw "$($results.FailedCount) Tests Failed."
     }
