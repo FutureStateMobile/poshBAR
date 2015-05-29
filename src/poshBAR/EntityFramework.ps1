@@ -41,4 +41,4 @@ function Invoke-EntityFrameworkMigrations ([string] $targetAssembly, [string] $s
     Write-Host "`nRunning Entity Framework Migrations."
     exec {migrate.exe $targetAssembly /StartUpDirectory=$startupDirectory /connectionString=$connectionString /connectionProviderName="System.Data.SqlClient"}
 }
-Set-Alias efMigrate Invoke-Invoke-EntityFrameworkMigrations
+Set-Alias efMigrate Invoke-EntityFrameworkMigrations
