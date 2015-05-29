@@ -30,28 +30,27 @@ function Find-ToolPath {
     Write-Verbose "Current Directory is '$here'"
     Write-Verbose "Parent Directory is '$upOne'"
 
-    if($env:Path -like "*$toolName*" ) { return }
+    if($env:PATH -like "*$toolName*" ) { return $toolName }
 
     # try to find it in the packages path
     $packagePath = "$upOne\packages\$toolName.*\tools"
     Write-Verbose "Looking for '$toolName' in '$packagePath'"
     if(Test-Path $packagePath) {
-        $private:Path = (Resolve-Path $packagePath).Path
-        Write-Verbose "Found '$toolName' in '$private:Path'"
-        $env:Path += ";$private:Path"
-        return
+        $foundPath = (Resolve-Path $packagePath).Path
+        $env:PATH += ";$foundPath"
+        return $foundPath
     }
 
     # try to find it in the tools directory (usually in a nupkg file)
     $nuspecToolsPath = "$here\tools"
     Write-Verbose "Looking for '$toolName' in '$nuspecToolsPath'"
     if(Test-Path $nuspecToolsPath) {
-        $private:Path = (Resolve-Path $nuspecToolsPath).Path
+        $foundPath = (Resolve-Path $nuspecToolsPath).Path
         $exists = Get-ChildItem $path | ? {$_ -like "*$toolName*"}
         if($exists) {
-            Write-Verbose "Found '$toolName' in '$private:Path'"
-            $env:Path += ";$($private:Path)"
-            return
+            Write-Verbose "Found '$toolName' in '$foundPath'"
+            $env:PATH += ";$foundPath"
+            return $foundPath
         }
     }
 
@@ -60,9 +59,11 @@ function Find-ToolPath {
     Write-Verbose "Looking for '$toolName' recursively from '$here'"
     if($itm){
         Write-Verbose "Found '$toolName' in '$($itm.DirectoryName)'"
-        $env:Path += ";$($itm.DirectoryName)"
-        return
+        $foundPath = $($itm.DirectoryName)
+        $env:PATH += ";$foundPath"
+        return $foundPath
     }
+
 
     throw ($msgs.error_cannot_find_tool -f $toolName)
 }
