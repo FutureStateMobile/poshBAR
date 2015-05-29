@@ -22,6 +22,7 @@ Push-Location $psScriptRoot
 . .\Approve-Permissions.ps1
 . .\Assert-PSVersion.ps1
 . .\Chutzpah.ps1
+. .\ClickOnce.ps1
 . .\Ecliptic.ps1
 . .\EntityFramework.ps1
 . .\Expand-NugetPackage.ps1
@@ -42,7 +43,7 @@ Push-Location $psScriptRoot
 . .\nUnit.ps1
 . .\Set-IISAuthentication.ps1
 . .\Set-IISCustomHeader.ps1
-. .\Set-PowershellScriptSigning.ps1
+. .\Invoke-PowershellScriptSigning.ps1
 . .\SiteAdministration.ps1
 . .\Specflow.ps1
 . .\SqlHelpers.ps1
@@ -109,6 +110,7 @@ Export-ModuleMember `
           'Invoke-MSBuild',
           'Invoke-Nunit',
           'Invoke-NUnitWithCoverage'
+          'Invoke-SignAppliationManifest',
           'Invoke-SpecFlow',
           'Invoke-SqlFile',
           'Invoke-SqlStatement',
@@ -123,14 +125,13 @@ Export-ModuleMember `
           'New-AppPool',
           'New-NugetPackage',
           'New-Site',
-          #'New-WarningsFromMSBuildLogs', 
           'Remove-Application',
           'Remove-AppPool',
           'Remove-Site',
           'RequiredWindowsFeatures',
           'Set-IISAuthentication',
           'Set-IISCustomHeader',
-          'Set-PowershellScriptSigning',
+          'Invoke-PowershellScriptSigning',
           'Set-WebConfigurationPropertyExtended',
           'Start-Application',
           'Start-AppPool',

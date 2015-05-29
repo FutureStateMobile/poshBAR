@@ -24,20 +24,5 @@ function Invoke-SignAppliationManifest {
    $ErrorActionPreference = "Stop"
    Find-ToolPath 'mage'
 
-   $params = @(
-    "-Sign $manifestPath",
-    "-CertFile $pfxPath",
-    "-Password ClickOnceExample"
-   )
-
-   exec {mage.exe $params }
-
+   exec { mage.exe -sign ""$manifestPath"" -certfile ""$pfxPath"" -password ""$pfxPassword"" }
 }
-
-
-
-$manifestPath = 'build\ClickOnceExample-Release\Application Files\1.1.0.6125\ClickOnceExample.exe.manifest'
-$pfxPath = 'src\Robolize.ClickOnceExample\ClickOnceExample.pfx'
-$password = 'for you to pass'
-
-Invoke-SignAppliationManifest $manifestPath $pfxPath $password

@@ -20,7 +20,7 @@ function Update-Progress($name, $action){
     Write-Progress -Activity "Rendering $action for $name" -CurrentOperation "Completed $progress of $totalCommands." -PercentComplete $(($progress/$totalCommands)*100)
 }
 $i = 0
-$commandsHelp = (Get-Command -module $moduleName) | get-help -full 
+$commandsHelp = (Get-Command -module $moduleName) | get-help -full | ? {! ($_.Name -like "*ps1*")}
 
 foreach ($h in $commandsHelp){
     $cmdHelp = (Get-Command $h.Name)

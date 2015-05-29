@@ -20,7 +20,7 @@
     .NOTES
         Nothing yet...
 #>
-function Set-PowershellScriptSigning{
+function Invoke-PowershellScriptSigning{
     [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string[]] $scripts,
@@ -37,4 +37,4 @@ function Set-PowershellScriptSigning{
     }
 }
 
-Set-Alias sign Set-PowershellScriptSigning
+Set-Alias sign Invoke-PowershellScriptSigning
