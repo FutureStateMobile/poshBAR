@@ -7,7 +7,8 @@ Describe 'Find-ToolPath' {
         $scriptsLocation = $(Resolve-Path "$here\..\src\poshBAR").Path
        
         # execute
-        $execute = {$result = Find-ToolPath $toolName} 
+        $execute = {Find-ToolPath $toolName} 
+        $result = & $execute
         
         # assert
         It 'Will not thow for a valid tool.' {
@@ -26,16 +27,16 @@ Describe 'Find-ToolPath' {
     Context 'Handle Mocked tool on PATH' { 
         # Setup 
         $orig = $env:PATH
-        $mockToolName = 'mock'
+        $toolName = 'mock'
         $mockToolPath = 'C:\Temp\Mock'
         $env:PATH += ";$mockToolPath"
              
         # execute
-        $execute = Find-ToolPath $mockToolName  
+        $result = Find-ToolPath $toolName  
        
        # assert         
         It 'Will find a mock tool on the path and not throw.' {
-            $execute | should be $mockToolPath
+            $result | should be $mockToolPath
         }
         
         # tear down
