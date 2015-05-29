@@ -24,17 +24,22 @@ Describe 'Find-ToolPath' {
 
     }
     
-    Context 'Handle Mocked tool on PATH' {  
+    Context 'Handle Mocked tool on PATH' { 
+        # Setup 
         $orig = $env:PATH
         $mockToolName = 'mock'
         $env:PATH += ';C:\Temp\Mock'
-                
+             
+        # execute
+        $mockResult = Find-ToolPath $mockToolName  
+       
+       # assert         
         It 'Will find a mock tool on the path and not throw.' {
-            $mockResult = Find-ToolPath $mockToolName
             $mockResult | should be 'C:\Temp\Mock'
         }
         
-         $env:PATH = $orig
+        # tear down
+        $env:PATH = $orig
     }
     
     Context 'Handle an invalid tool.' {
