@@ -21,7 +21,6 @@ Describe 'Find-ToolPath' {
         It 'Will have a valid path on the result.' {
             $result | should be $scriptsLocation
         }
-
     }
     
     Context 'Handle Mocked tool on PATH' { 
@@ -31,11 +30,11 @@ Describe 'Find-ToolPath' {
         $env:PATH += ';C:\Temp\Mock'
              
         # execute
-        $mockResult = Find-ToolPath $mockToolName  
+        $execute = Find-ToolPath $mockToolName  
        
        # assert         
         It 'Will find a mock tool on the path and not throw.' {
-            $mockResult | should be 'C:\Temp\Mock'
+            $execute | should be 'C:\Temp\Mock'
         }
         
         # tear down
