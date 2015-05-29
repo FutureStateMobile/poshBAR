@@ -63,7 +63,7 @@ Task Package -depends SetupPaths, UpdateVersion, MakeBuildDir, RunPesterTests, G
     exec { NuGet.exe Pack $this.devopsNugetPackage -Version "$version.$buildNumber" -OutputDirectory $this.buildPublishDir -NoPackageAnalysis } "Failed to package the Devops Scripts."
 }
 
-Task RunPesterTests {
+Task RunPesterTests -depends MakeBuildDir -alias tests {
     $results = Invoke-Pester -relative_path $this.testDir -PassThru  -OutputFile "$($this.resultsDir)\pester.xml" -OutputFormat NUnitXml
     if($results.FailedCount -gt 0) {
         throw "$($results.FailedCount) Tests Failed."

@@ -29,8 +29,15 @@ function Find-ToolPath {
 
     Write-Verbose "Current Directory is '$here'"
     Write-Verbose "Parent Directory is '$upOne'"
-
-    if($env:PATH -like "*$toolName*" ) { return $toolName }
+    
+    # try to find it in the existing path.
+    $paths = $env:PATH.Split(';',[StringSplitOptions]::RemoveEmptyEntries)
+    Write-Verbose "Looking for '$toolName' on the `$env:PATH"
+    if($env:PATH -like "*$toolName*" ) { 
+        $foundPath = $paths | ? { $_ -like "*$toolName*" } | select -First 1
+        Write-Verbose "Found '$toolName' in '$foundPath'"
+        return $foundPath
+    }
 
     # try to find it in the packages path
     $packagePath = "$upOne\packages\$toolName.*\tools"

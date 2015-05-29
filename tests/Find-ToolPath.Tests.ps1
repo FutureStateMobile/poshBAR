@@ -1,14 +1,14 @@
 $ErrorActionPreference = 'Stop'
-    
+$here = Split-Path $script:MyInvocation.MyCommand.Path
 Describe 'Find-ToolPath' { 
     Context 'Handle a valid tool.'{
         # setup
         $toolName = 'mage'
-        
-        
+        $scriptsLocation = $(Resolve-Path "$here\..\src\poshBAR").Path
+       
         # execute
-        $execute = {$result = Find-ToolPath $toolName} 
-            
+        $execute = {$goodResult = Find-ToolPath $toolName} 
+        
         # assert
         It 'Will not thow for a valid tool.' {
             $execute | should not throw
@@ -19,7 +19,16 @@ Describe 'Find-ToolPath' {
         }
         
         It 'Will have a valid path on the result.' {
-            $result | should not be ''
+            $goodResult | should be $scriptsLocation
+        }
+        
+        It 'Will find a mock tool on the path and not throw.' {
+            $orig = $env:PATH
+            $mockToolName = 'mock'
+            $env:PATH += ';C:\Temp\Mock'
+            $mockResult = Find-ToolPath $mockToolName
+            $mockResult | should be 'C:\Temp\Mock'
+            $env:PATH = $orig
         }
     }
     
@@ -28,7 +37,7 @@ Describe 'Find-ToolPath' {
         $toolName = 'Foo'
             
         # execute
-        $execute = {$result = Find-ToolPath $toolName}
+        $execute = {$badResult = Find-ToolPath $toolName}
 
         # assert
         It 'Will throw on an invalid tool.' {
@@ -40,7 +49,7 @@ Describe 'Find-ToolPath' {
         }
         
         It 'Will have an empty string on the result.' {
-            $result | should be $null
+            $badResult | should be $null
         }
     }
 }
