@@ -20,11 +20,11 @@ Describe 'Invoke-PowershellScriptSigning' {
         $execute = {Invoke-PowershellScriptSigning $scripts $pfxPathInfo $password}
 
         # assert
-        It 'Will not throw an exception.'  {
+        It 'Will not throw an exception.' -skip {
            $execute | should not throw
         }
         
-        It 'Will call Mock of poshBAR\Get-PfxCertificate'   {
+        It 'Will call Mock of poshBAR\Get-PfxCertificate' -skip  {
             Assert-MockCalled Get-PfxCertificate -moduleName poshBAR
         }
     }
