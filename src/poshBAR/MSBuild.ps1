@@ -76,14 +76,16 @@ function Invoke-MSBuild {
 
     $logFileParam = "logfile=$logPath\MSBuild\" + $(if($namespace){"Raw.$namespace.txt" } else { 'msbuild.txt' })
     
+    $culture = New-Object System.Globalization.CultureInfo("en-US")
+    $culturedVSVersion = $VisualStudioVersion.ToString('0.0', $culture)
     $params = @(
         "/target:$target", 
         "/verbosity:$verbosity",
         "/logger:FileLogger,Microsoft.Build.Engine;$logFileParam",
         "/property:OutDir=$outDir", 
-        "/property:visualStudioVersion=$("{0:N1}" -f $visualStudioVersion)",
-        "/property:ToolsVersion=$("{0:N1}" -f $toolsVersion)",
-        "/property:warnOnArchitectureMismatch=$warnOnArchitectureMismatch",
+        "/property:VisualStudioVersion=$culturedVSVersion",
+        "/property:ToolsVersion=$("{0:N1}" -f $dotNetVersion)",
+        "/property:ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=$ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch",
         "/maxcpucount:$maxCpuCount") 
  
     Write-Host "Invoking: `nmsbuild.exe $projectFile $params `n"
