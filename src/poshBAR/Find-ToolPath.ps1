@@ -24,11 +24,10 @@ function Find-ToolPath {
         [parameter(Mandatory=$true,position=0)] [string] [alias('name')] $toolName
     )
 
-    $here = Split-Path $script:MyInvocation.MyCommand.Path
+    $here = Resolve-Path './'
     $upOne = Resolve-Path "$here\.."
 
     Write-Verbose "Current Directory is '$here'"
-    Write-Verbose "Parent Directory is '$upOne'"
     
     # try to find it in the existing path.
     $paths = $env:PATH.Split(';',[StringSplitOptions]::RemoveEmptyEntries)
@@ -40,10 +39,11 @@ function Find-ToolPath {
     }
 
     # try to find it in the packages path
-    $packagePath = "$upOne\packages\$toolName.*\tools"
+    $packagePath = "$here\..\packages\$toolName.*\tools"
     Write-Verbose "Looking for '$toolName' in '$packagePath'"
     if(Test-Path $packagePath) {
         $foundPath = (Resolve-Path $packagePath).Path
+        Write-Verbose "Found '$toolName' in '$foundPath'"
         $env:PATH += ";$foundPath"
         return $foundPath
     }
@@ -62,8 +62,8 @@ function Find-ToolPath {
     }
 
     # Heavy Weight, search entire directly tree from '$upOne' to search
-    $itm = Get-ChildItem -Path $here -Recurse | ? {$_ -like "*$toolName*" -and $_.Extension -eq '.exe'} | select -First 1
-    Write-Verbose "Looking for '$toolName' recursively from '$here'"
+    $itm = Get-ChildItem -Path $upOne -Recurse | ? {$_ -like "*$toolName*" -and $_.Extension -eq '.exe'} | select -First 1
+    Write-Verbose "Looking for '$toolName' recursively from '$upOne'"
     if($itm){
         Write-Verbose "Found '$toolName' in '$($itm.DirectoryName)'"
         $foundPath = $($itm.DirectoryName)
