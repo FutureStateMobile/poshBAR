@@ -16,6 +16,7 @@ Push-Location $psScriptRoot
 . .\Add-LoopbackFix.ps1
 . .\Assert-That.ps1
 . .\Assert-PSVersion.ps1
+. .\Certificates.ps1
 . .\Find-ToolPath.ps1
 . .\ApplicationAdministration.ps1
 . .\AppPoolAdministration.ps1
@@ -58,6 +59,7 @@ Push-Location $psScriptRoot
 . .\xUnit.ps1
 
 Pop-Location
+
 
 Export-ModuleMember `
     -Alias @(
@@ -148,7 +150,8 @@ Export-ModuleMember `
           'Update-JsonConfigValues',
           'Update-Site',
           'Update-XmlConfigValues',
-          'Use-Object'
+          'Use-Object',
+          'Get-PfxCertificate'
           )
 
 # Messages

@@ -14,7 +14,6 @@ $script:this = @{
 
 # Dogfood
 Import-Module "$($this.srcDir)\poshBAR" -force
-Import-Module "$($this.packagesDir)\pester.*\tools\pester.psm1"
 
 Task default -depends Package
 
@@ -64,6 +63,7 @@ Task Package -depends SetupPaths, UpdateVersion, MakeBuildDir, RunPesterTests, G
 }
 
 Task RunPesterTests -depends MakeBuildDir -alias tests {
+    Import-Module "$($this.packagesDir)\pester.*\tools\pester.psm1" -force  
     $results = Invoke-Pester -relative_path $this.testDir -PassThru  -OutputFile "$($this.resultsDir)\pester.xml" -OutputFormat NUnitXml
     if($results.FailedCount -gt 0) {
         throw "$($results.FailedCount) Tests Failed."

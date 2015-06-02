@@ -30,18 +30,23 @@ function Invoke-PowershellScriptSigning{
     [CmdletBinding(DefaultParameterSetName='store')]
     param(
         [parameter(Mandatory=$true, position=0, ParameterSetName='store')] [string[]] 
-        [parameter(Mandatory=$true, position=0, ParameterSetName='path')] [string[]] 
-        $scripts,
+        [parameter(Mandatory=$true, position=0, ParameterSetName='path')] [string[]] $scripts,
 
         [parameter(Mandatory=$false, position=1, ParameterSetName='store')] [string] $certStorePath = 'LocalMachine\My',
-        [parameter(Mandatory=$false, position=1, ParameterSetName='path')] [Management.Automation.PathInfo] $pfxFilePath
+        [parameter(Mandatory=$false, position=1, ParameterSetName='path')] [Management.Automation.PathInfo] $pfxFilePath,
+
+        [parameter(Mandatory=$false, position=2, ParameterSetName='path')] [string] $password
     )
-
     switch($PsCmdlet.ParameterSetName){
-        'store' {$cert = @(Get-ChildItem cert:$certStorePath -codesign)[0]; break }
-        'path' {$cert = Get-PfxCertificate $pfxFilePath}
+        'store' {
+            $cert = @(Get-ChildItem cert:$certStorePath -codesign)[0] # grabs the first code signing cert out of the cert store.
+            break 
+        }
+        'path' {
+           $cert = Get-PfxCertificate $pfxFilePath $password # note: poshBAR has overridden this function to enable the password field.
+            break
+        }
     }
-
     $scripts | ? {$_.EndsWith(".ps1") -or $_.EndsWith(".psm1")} | % {
         # just make sure the file encoding is UTF8
         [System.Io.File]::ReadAllText($_) | Out-File -FilePath $_ utf8 -force
