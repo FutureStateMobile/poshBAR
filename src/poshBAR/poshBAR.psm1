@@ -63,6 +63,8 @@ Push-Location $psScriptRoot
 . .\XmlConfig.ps1
 . .\WindowsFeatures.ps1
 . .\xUnit.ps1
+. .\Oracle.ps1
+. .\TokenReplacement.ps1
 
 Pop-Location
 
@@ -157,7 +159,10 @@ Export-ModuleMember `
           'Update-Site',
           'Update-XmlConfigValues',
           'Use-Object',
-          'Get-PfxCertificate'
+          'Get-PfxCertificate',
+          'Invoke-OracleCommand',
+          'Invoke-OracleFile',
+          'Invoke-BlockWithTokenReplacedFile'
           )
 
 # Messages
