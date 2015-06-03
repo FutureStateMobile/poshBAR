@@ -3,6 +3,12 @@ if (Get-Module 'poshBAR') { return }
 $global:poshBAR = @{
     'version' = $version
 }
+
+$currentThread = [System.Threading.Thread]::CurrentThread
+$culture = [System.Globalization.CultureInfo]::InvariantCulture
+$currentThread.CurrentCulture = $culture
+$currentThread.CurrentUICulture = $culture
+
 Write-Host "`nposhBAR version $version `nCopyright ($([char]0x00A9)) Future State Mobile Inc. & Contributors`n"
 
 Remove-Item alias:new -ea SilentlyContinue
