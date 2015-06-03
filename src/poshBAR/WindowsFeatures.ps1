@@ -22,10 +22,11 @@ function Install-WindowsFeatures{
     
     Assert($features.Count -ne 0) ($msgs.error_must_supply_a_feature)
     $features | % {
-        $key = $_.Replace('?','')
-        $feature = (Get-WindowsFeatures).GetEnumerator() | ? {$_[$key]}
+        $key = $_.Replace('?','')    
+        $state = (Get-WindowsFeatures)[$key]
+        $feature = @{$key = $state}
         
-        if(!$feature){
+        if(!$state){
             Write-Warning "$key is not a valid feature for this version of Windows."
         } else {    
             $value = $feature[$key]    
@@ -57,18 +58,19 @@ function Install-WindowsFeatures{
         The lookup is done using DISM.exe
 #>
 function Get-WindowsFeatures {
-    if(!(Test-Path "$env:TEMP\WindowsFeatures.txt")){
+    
+    if(!$global:poshBAR.WindowsFeatures){
+        $global:poshBAR.WindowsFeatures = @{}
+        
         $allFeatures = DISM.exe /ONLINE /Get-Features /FORMAT:List | Where-Object { $_.StartsWith("Feature Name") -OR $_.StartsWith("State") } 
         
         for($i = 0; $i -lt $allFeatures.length; $i=$i+2) {
             $feature = $allFeatures[$i].split(":")[1].trim()
             $state = $allFeatures[$i+1].split(":")[1].trim()
-
-            Add-Content "$env:TEMP\WindowsFeatures.txt" "$feature=$state"
+            $global:poshBAR.WindowsFeatures.Add($feature, $state)
         }
     }
-
-    return Get-Content "$env:TEMP\WindowsFeatures.txt" | ConvertFrom-StringData
+    return $global:poshBAR.WindowsFeatures
 }
 
 #
