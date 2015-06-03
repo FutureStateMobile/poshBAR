@@ -12,9 +12,7 @@
         Block to execute with token replaced file. The block must accept the token replaced file path as the first parameter.
         
     .EXAMPLE
-        Invoke-BlockWithTokenReplacedFile "somePath\someFile.txt" @{ 'token1Key' = 'token1Value'; 'token2Key' = 'token2Value' } {
-            param($tokenReplacedFile) DoSomethingWithFile $tokenReplacedFile
-        }
+        Invoke-BlockWithTokenReplacedFile "somePath\someFile.txt" @{ 'token1Key' = 'token1Value'; 'token2Key' = 'token2Value' } { param($tokenReplacedFile) DoSomethingWithFile $tokenReplacedFile }
         
     .NOTES
         The file is token replaced and the contents stored in a file called "someFile.txt_tokenreplaced" (for example). This file is path is what is passed to the block. The file is automatically removed after the block is executed.
