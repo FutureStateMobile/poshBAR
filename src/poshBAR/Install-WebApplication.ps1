@@ -46,7 +46,13 @@ function Install-WebApplication() {
         [parameter(Mandatory=$true,position=2)] [ValidatePattern('^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})(\.[0-9]*?)?')] [string] [alias('v')] $version
     )
     $moduleDir = Split-Path $script:MyInvocation.MyCommand.Path
-    $baseDir = Resolve-Path "$moduleDir\..\.."
+    # todo: figure out why running 'deploy' vs 'deploy.ps1' causes this bug.
+    $baseDir = if($moduleDir.EndsWith('poshBAR')){
+        Resolve-Path "$moduleDir\..\.."
+    } else {
+        Resolve-Path $moduleDir
+    }
+    
 
     if ( ($websiteSettings.appPath.length -eq 0) -or ($websiteSettings.appPath -eq "/") -or ($websiteSettings.appPath -eq "\") ) {
         $siteFilePath = "$($websiteSettings.physicalPathRoot)\$($websiteSettings.siteName)\$($websiteSettings.physicalFolderPrefix)-$version"

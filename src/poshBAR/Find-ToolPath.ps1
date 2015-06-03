@@ -62,7 +62,7 @@ function Find-ToolPath {
     }
 
     # Heavy Weight, search entire directly tree from '$upOne' to search
-    $itm = Get-ChildItem -Path $upOne -Recurse | ? {$_ -like "*$toolName*" -and $_.Extension -eq '.exe'} | select -First 1
+    $itm = Get-ChildItem -Path $upOne -Recurse -ErrorAction SilentlyContinue | ? {$_ -like "*$toolName*" -and $_.Extension -eq '.exe'} | select -First 1
     Write-Verbose "Looking for '$toolName' recursively from '$upOne'"
     if($itm){
         Write-Verbose "Found '$toolName' in '$($itm.DirectoryName)'"
