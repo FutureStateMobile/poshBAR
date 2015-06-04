@@ -33,11 +33,11 @@ function Install-WindowsFeatures{
             Write-Host ($msgs.msg_enabling_windows_feature -f $key) -NoNewline
             if($value -ne "enabled"){
                 try{
-                    Exec{Dism /online /Enable-Feature /FeatureName:$($key) /NoRestart /Quiet} 
+                    Exec{Dism /online /Enable-Feature /FeatureName:$($key) /NoRestart /Quiet /English} 
                     Write-Host "`tDone" -f Green
                 }catch{
                     # Trying again with the All keyword because probably a dependency is missing.
-                    Exec{Dism /online /Enable-Feature /FeatureName:$($key) /NoRestart /Quiet /All} 
+                    Exec{Dism /online /Enable-Feature /FeatureName:$($key) /NoRestart /Quiet /All /English} 
                     Write-Host "`tDone (with dependencies)" -f Green
                 }
             } else {
@@ -62,7 +62,7 @@ function Get-WindowsFeatures {
     if(!$global:poshBAR.WindowsFeatures){
         $global:poshBAR.WindowsFeatures = @{}
         
-        $allFeatures = DISM.exe /ONLINE /Get-Features /FORMAT:List | Where-Object { $_.StartsWith("Feature Name") -OR $_.StartsWith("State") } 
+        $allFeatures = DISM.exe /ONLINE /Get-Features /FORMAT:List /English | Where-Object { $_.StartsWith("Feature Name") -OR $_.StartsWith("State") } 
         
         for($i = 0; $i -lt $allFeatures.length; $i=$i+2) {
             $feature = $allFeatures[$i].split(":")[1].trim()
