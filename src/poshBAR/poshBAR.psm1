@@ -29,7 +29,6 @@ Push-Location $psScriptRoot
 . .\Approve-Permissions.ps1
 . .\Assert-PSVersion.ps1
 . .\Chutzpah.ps1
-. .\ClickOnce.ps1
 . .\Ecliptic.ps1
 . .\EntityFramework.ps1
 . .\Expand-NugetPackage.ps1
@@ -95,6 +94,7 @@ Export-ModuleMember `
           'Get-AppPools',
           'Get-DatabaseConnection',
           'Get-EnvironmentSettings',
+          'Get-PfxCertificate',
           'Get-Site',
           'Get-Sites',
           'Get-TestFileName',
@@ -120,7 +120,6 @@ Export-ModuleMember `
           'Invoke-MSBuild',
           'Invoke-Nunit',
           'Invoke-NUnitWithCoverage'
-          'Invoke-SignAppliationManifest',
           'Invoke-SpecFlow',
           'Invoke-SqlFile',
           'Invoke-SqlStatement',
@@ -133,7 +132,12 @@ Export-ModuleMember `
           'Lock-Object',
           'New-Application',
           'New-AppPool',
+          'New-Certificate',
+          'New-CertificateSigningRequest',
           'New-NugetPackage',
+          'New-PfxCertificate',
+          'New-PrivateKey',
+          'New-PrivateKeyAndCertificateSigningRequest',
           'New-Site',
           'Remove-Application',
           'Remove-AppPool',
@@ -159,7 +163,6 @@ Export-ModuleMember `
           'Update-Site',
           'Update-XmlConfigValues',
           'Use-Object',
-          'Get-PfxCertificate',
           'Invoke-OracleCommand',
           'Invoke-OracleFile',
           'Invoke-BlockWithTokenReplacedFile'
