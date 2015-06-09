@@ -37,6 +37,7 @@ function Invoke-PowershellScriptSigning{
 
         [parameter(Mandatory=$false, position=2, ParameterSetName='path')] [string] $password
     )
+    
     switch($PsCmdlet.ParameterSetName){
         'store' {
             $cert = @(Get-ChildItem cert:$certStorePath -codesign)[0] # grabs the first code signing cert out of the cert store.
@@ -47,7 +48,9 @@ function Invoke-PowershellScriptSigning{
             break
         }
     }
+    
     $scripts | ? {$_.EndsWith(".ps1") -or $_.EndsWith(".psm1")} | % {
+
         # just make sure the file encoding is UTF8
         [System.Io.File]::ReadAllText($_) | Out-File -FilePath $_ utf8 -force
 

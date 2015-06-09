@@ -1,21 +1,19 @@
 $ErrorActionPreference = 'Stop'
 
 Describe 'Invoke-PowershellScriptSigning' { 
-    
-    Mock Set-AuthenticodeSignature {exit 0} 
-    Mock -moduleName poshBAR Get-PfxCertificate {} 
-        
+            
     Context 'Should execute against pfx path' {
         # setup
-        $scripts = @("$env:TEMP\script.ps1")
-        $pfxPath = "$env:TEMP\cert.pfx"
+        $scripts = @("$(New-Item "TestDrive:\Script.ps1" -ItemType File -Force )")
+        $pfxPath = New-Item 'TestDrive:\cert.pfx' -ItemType File -Force
         $password = 'foo'
         
-        Set-Content $pfxPath -value 'foo'
-        $scripts | % {Set-Content $_ -value 'bar' }
+        # todo: figure out how to get this working.
+        Mock Set-AuthenticodeSignature {} 
+        Mock -moduleName poshBAR Get-PfxCertificate {} 
         
         $pfxPathInfo = (Resolve-Path $pfxPath)
-        
+
         # execute
         $execute = {Invoke-PowershellScriptSigning $scripts $pfxPathInfo $password}
 
@@ -24,6 +22,7 @@ Describe 'Invoke-PowershellScriptSigning' {
            $execute | should not throw
         }
         
+        # todo: this is skipped because the method is never invoked.
         It 'Will call Mock of poshBAR\Get-PfxCertificate' -skip  {
             Assert-MockCalled Get-PfxCertificate -moduleName poshBAR
         }
