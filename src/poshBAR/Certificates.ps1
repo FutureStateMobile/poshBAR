@@ -56,7 +56,6 @@ function Get-PfxCertificate {
         [Parameter(Position=2, ParameterSetName='ByLiteralPath')] [string] 
         [ValidateSet('DefaultKeySet','Exportable','MachineKeySet','PersistKeySet','UserKeySet','UserProtected')] $x509KeyStorageFlag = 'DefaultKeySet'
     )
-
     if($PsCmdlet.ParameterSetName -eq 'ByPath'){
         $literalPath = Resolve-Path $filePath 
     }
@@ -356,6 +355,7 @@ function New-PfxCertificate {
         [alias('pwd')][string] $password
     )
 
+Write-Warning 'Ive been hit'
     if($PsCmdlet.ParameterSetName -eq 'b') {
         # Recursive call using the hashtable
         New-PfxCertificate  @{

@@ -46,6 +46,10 @@ Describe 'Certificates' {
         It 'Will have the expected name returned' {
             $result.subject | should be $subject
         }
+        
+        It 'Will have a .key file on the path' {
+            (Test-Path "$out\$($name).key") | should be $true
+        }
     }
 
     Context 'Create all 4 Certificates in a Chain using the combined method (New-PrivateKeyAndCertificateSigningRequest)' {
@@ -56,8 +60,7 @@ Describe 'Certificates' {
         $out = New-Item 'TestDrive:\testDir2' -ItemType Directory -Force
         
         # execute
-        $execute = {New-PrivateKeyAndCertificateSigningRequest $name $password $subject $out | New-Certificate | New-PfxCertificate -password $password}
-        $result = .$execute
+        $result = New-PrivateKeyAndCertificateSigningRequest $name $password $subject $out | New-Certificate | New-PfxCertificate -password $password
         
         # assert
         
