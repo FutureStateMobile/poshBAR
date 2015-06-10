@@ -15,6 +15,38 @@ Describe 'Certificates' {
     AfterAll {
         $env:PATH = $pth
     }
+    
+    Context 'Private Key' {
+        # setup
+        $name = 'pk-cert'
+        $password = (ConvertTo-SecureString 'somePassword' -AsPlainText -Force)
+        $subject = '/CN=test-pk'
+        $out = New-Item 'TestDrive:\testDir1' -ItemType Directory -Force
+        
+        # execute
+        $result = New-PrivateKey $name $password $subject $out
+        
+        # assert
+        It 'Will not return null' {
+            $result | should not BeNullOrEmpty
+        }
+        
+        It 'Will have the expected path returned' {
+            $result.path | should be $out.FullName
+        }
+        
+        It 'Will have the expected key name returned' {
+            $result.key | should be "$($name).key"
+        }
+        
+        It 'Will have the expected crt name returned'{
+            $result.name | should be "$name"
+        }
+        
+        It 'Will have the expected name returned' {
+            $result.subject | should be $subject
+        }
+    }
 
     Context 'Create all 4 Certificates in a Chain using the combined method (New-PrivateKeyAndCertificateSigningRequest)' {
         # setup
