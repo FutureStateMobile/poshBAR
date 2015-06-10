@@ -1,17 +1,6 @@
 $ErrorActionPreference = 'Stop'
 $here = Split-Path $script:MyInvocation.MyCommand.Path
 
-function Resolve-Error ($ErrorRecord=$Error[0])
-{
-   $ErrorRecord | Format-List * -Force
-   $ErrorRecord.InvocationInfo |Format-List *
-   $Exception = $ErrorRecord.Exception
-   for ($i = 0; $Exception; $i++, ($Exception = $Exception.InnerException))
-   {   "$i" * 80
-       $Exception |Format-List * -Force
-   }
-}
-
 Describe 'Certificates' { 
     
     BeforeAll {
@@ -29,13 +18,13 @@ Describe 'Certificates' {
     Context "Doesn't effing break" {
         $out = New-Item 'TestDrive:\testDir0' -ItemType Directory -Force
         
-        $execute = {Exec { openssl /?}}
+        $execute = {openssl.exe /?}
         
         try {
             & $execute
             $result = 'passed'
         } catch {
-            $result = Resolve-Error
+            $result = $_
         }
         
         It "Should be passed" {
