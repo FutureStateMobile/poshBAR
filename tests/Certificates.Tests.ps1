@@ -18,9 +18,9 @@ Describe 'Certificates' {
     Context "Doesn't effing break" {
         $out = New-Item 'TestDrive:\testDir0' -ItemType Directory -Force
         
-        push-location $out
+
         openssl.exe genrsa -passout pass:password -out somefile.key 2048 -subj '/CN=test-junk' -noverify
-        pop-location
+
     }
     
     
