@@ -1,11 +1,20 @@
 $ErrorActionPreference = 'Stop'
 $here = Split-Path $script:MyInvocation.MyCommand.Path
-if(! ($env:PATH.Contains('openssl'))){
-    $pathToOpenSSL = Resolve-Path "$here\..\Tools\OpenSSL"
-    $env:PATH += ";$pathToOpenSSL"
-}
+
 
 Describe 'Certificates' { 
+    
+    BeforeAll {
+        $original = $env:PATH
+        if(! ($env:PATH.Contains('openssl'))){
+            $pathToOpenSSL = Resolve-Path "$here\..\Tools\OpenSSL"
+            $env:PATH += ";$pathToOpenSSL"
+        }
+    }
+    
+    AfterAll {
+        $env:PATH = $original
+    }
     
     Context 'Private Key' {
         # setup
@@ -19,7 +28,7 @@ Describe 'Certificates' {
         
         # assert
         It 'Will not return null' {
-            $result | should not be $null
+            $result | should not BeNullOrEmpty
         }
         
         It 'Will have the expected path returned' {
