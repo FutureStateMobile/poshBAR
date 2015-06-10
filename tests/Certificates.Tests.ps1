@@ -1,6 +1,17 @@
 $ErrorActionPreference = 'Stop'
 $here = Split-Path $script:MyInvocation.MyCommand.Path
 
+function Resolve-Error ($ErrorRecord=$Error[0])
+{
+   $ErrorRecord | Format-List * -Force
+   $ErrorRecord.InvocationInfo |Format-List *
+   $Exception = $ErrorRecord.Exception
+   for ($i = 0; $Exception; $i++, ($Exception = $Exception.InnerException))
+   {   "$i" * 80
+       $Exception |Format-List * -Force
+   }
+}
+
 Describe 'Certificates' { 
     
     BeforeAll {
@@ -24,10 +35,10 @@ Describe 'Certificates' {
             & $execute
             $result = 'passed'
         } catch {
-            $result = $_
+            $result = Resolve-Error
         }
         
-        It "Will not throw" {
+        It "Should be passed" {
             $result | should be 'passed'
         }
 
