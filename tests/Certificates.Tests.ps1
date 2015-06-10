@@ -19,7 +19,7 @@ Describe 'Certificates' {
         $out = New-Item 'TestDrive:\testDir0' -ItemType Directory -Force
         
 
-        openssl.exe genrsa -passout pass:password -out somefile.key 2048 -subj '/CN=test-junk' -noverify
+        openssl.exe genrsa -passout pass:password -out somefile.key 2048 -subj '/CN=test-junk' -noverify -debug
 
     }
     
