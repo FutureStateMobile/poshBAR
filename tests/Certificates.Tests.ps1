@@ -15,7 +15,7 @@ Describe 'Certificates' {
         $env:PATH = $pth
     }
     
-    Context 'Doesn`'t effing break ' {
+    Context "Doesn't effing break" {
         $out = New-Item 'TestDrive:\testDir0' -ItemType Directory -Force
         
         push-location $out
