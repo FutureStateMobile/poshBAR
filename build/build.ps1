@@ -69,10 +69,10 @@ Task RunPesterTests -depends MakeBuildDir -alias tests {
     
         $pth = $env:PATH
         if(! ($env:PATH.Contains('openssl'))){
-            $pathToOpenSSL = Resolve-Path "$baseDir\Tools\OpenSSL"
+            $pathToOpenSSL = Resolve-Path "$baseDir\Tools\OpenSSL\bin"
             $env:PATH += ";$pathToOpenSSL"
         }
-        Exec{openssl.exe -debug}
+        Exec{openssl req -out CSR.csr -new -newkey rsa:2048 -nodes -keyout privateKey.key -debug}
         $env:PATH = $pth
     
     Import-Module "$($this.packagesDir)\pester.*\tools\pester.psm1" -force  -Global
