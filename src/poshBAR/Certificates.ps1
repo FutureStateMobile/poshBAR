@@ -297,7 +297,7 @@ function New-Certificate {
 
     $env:RANDFILE = $RANDFILE = "$outpath\.rnd"
     $crt = "$($certData.name).crt"
-
+    Write-Warning $env:PATH
     Push-Location $certData.path
     Exec { openssl.exe x509 -req -days 365 -in $certData.csr -signkey $certData.key -out $crt  -text -inform DER } 
     Pop-Location
