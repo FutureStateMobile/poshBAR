@@ -1,7 +1,10 @@
 if(Test-Path Function:\Get-PfxCertificate){
     Move Function:\Get-PfxCertificate Function:\Get-PfxCertificateOriginal
 }
-
+if(!$env:OPENSSL_CONF){
+    $here = Split-Path $script:MyInvocation.MyCommand.Path
+    $env:OPENSSL_CONF = "$here\openssl.cfg"
+}
 <#
     .SYNOPSIS
         Extends the default Get-PfxCertificate function to add 'password' support.
