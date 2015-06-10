@@ -18,10 +18,8 @@ Describe 'Certificates' {
     Context "Doesn't effing break" {
         $out = New-Item 'TestDrive:\testDir0' -ItemType Directory -Force
         
-        $execute = {openssl.exe /?}
-        
-        try {
-            & $execute
+        try { 
+            openssl.exe /?
             $result = 'passed'
         } catch {
             $result = $_
