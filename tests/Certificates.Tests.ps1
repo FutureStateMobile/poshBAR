@@ -9,7 +9,7 @@ Describe 'Certificates' {
             $pathToOpenSSL = Resolve-Path "$here\..\Tools\OpenSSL"
             $env:PATH += ";$pathToOpenSSL"
         }
-        openssl /?
+        . "$pathToOpenSSL\openssl.exe /?"
     }
     
     AfterAll {
