@@ -72,7 +72,7 @@ Task RunPesterTests -depends MakeBuildDir -alias tests {
             $pathToOpenSSL = Resolve-Path "$baseDir\Tools\OpenSSL"
             $env:PATH += ";$pathToOpenSSL"
         }
-        Exec{openssl.exe /?}
+        Exec{openssl.exe -debug}
         $env:PATH = $pth
     
     Import-Module "$($this.packagesDir)\pester.*\tools\pester.psm1" -force  -Global
