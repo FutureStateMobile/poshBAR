@@ -51,7 +51,7 @@ function Invoke-ExternalCommand
 
             if ($lastexitcode -ne 0) {
                 $e = if($errorMessage){$errorMessage} else {($error[0].Exception | out-string)} 
-                $error[0] | ft -autosize | out-file 'E:\TeamCity\BuildAgent\work\b3637a2c145817d9\build-artifacts\error.txt'
+                $error[0] | out-file 'E:\TeamCity\BuildAgent\work\b3637a2c145817d9\build-artifacts\error.txt'
                 throw $e
             } else {
                 $completed = $true
