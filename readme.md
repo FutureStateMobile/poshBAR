@@ -10,7 +10,7 @@ Install via [NuGet](https://www.nuget.org/packages/poshBAR)
 
 ###Wiki
 
- - For more information, please see our [GitHub Wiki](wiki)
+ - For more information, please see our [GitHub Wiki](../../wiki)
 
 
 ###API Documentation
