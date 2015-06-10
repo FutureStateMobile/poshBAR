@@ -19,7 +19,7 @@ Describe 'Certificates' {
         $out = New-Item 'TestDrive:\testDir0' -ItemType Directory -Force
         
         It "Will not throw" {
-            openssl.exe /? | should not throw
+            Exec {openssl.exe /?} | should not throw
         }
 
     }
