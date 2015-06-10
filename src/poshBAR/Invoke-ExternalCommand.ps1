@@ -51,6 +51,7 @@ function Invoke-ExternalCommand
 
             if ($lastexitcode -ne 0) {
                 $e = if($errorMessage){$errorMessage} else {($error[0].Exception | out-string)} 
+                $error[0] | ft -autosize
                 throw $e
             } else {
                 $completed = $true
@@ -58,7 +59,7 @@ function Invoke-ExternalCommand
         } catch {
             if ($retrycount -ge $retry) {
                 Write-Verbose ("Command [{0}] failed after {1} retries." -f $command, $retrycount)
-                throw $_
+                throw $_.Exception
             } else {
                 Write-Verbose ("Command [{0}] failed. Retrying in {1}ms" -f $command, $msDelay)
                 Write-Verbose $_
