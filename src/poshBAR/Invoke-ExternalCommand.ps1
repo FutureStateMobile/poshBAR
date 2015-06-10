@@ -50,7 +50,7 @@ function Invoke-ExternalCommand
             & $command
 
             if ($lastexitcode -ne 0) {
-                $e = if($errorMessage){$errorMessage} else {($error[0] | out-string)} 
+                $e = if($errorMessage){$errorMessage} else {($error[0].Exception | out-string)} 
                 throw $e
             } else {
                 $completed = $true
