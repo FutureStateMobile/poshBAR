@@ -19,7 +19,7 @@ Describe 'Certificates' {
         $out = New-Item 'TestDrive:\testDir0' -ItemType Directory -Force
         
         try { 
-            openssl.exe /?
+            Exec{openssl.exe /?}
             $result = 'passed'
         } catch {
             $result = $_
