@@ -69,7 +69,7 @@ Task RunPesterTests -depends MakeBuildDir -alias tests {
     
         $pth = $env:PATH
         if(! ($env:PATH.Contains('openssl'))){
-            $pathToOpenSSL = Resolve-Path "$here\..\Tools\OpenSSL"
+            $pathToOpenSSL = Resolve-Path "$baseDir\Tools\OpenSSL"
             $env:PATH += ";$pathToOpenSSL"
         }
         Exec{openssl.exe /?}
