@@ -159,6 +159,7 @@ function New-PrivateKey {
         [Parameter(Mandatory=$true,position=2)][alias('cn')][ValidateScript({$_.Contains('CN=') -and $_.StartsWith('/')})][string]$subject, 
         [Parameter(Mandatory=$true,position=3)][alias('out')][string]$outPath
     )
+    Write-Warning $env:PATH
     
     $env:RANDFILE = $RANDFILE = "$outpath\.rnd"
 
@@ -297,7 +298,7 @@ function New-Certificate {
 
     $env:RANDFILE = $RANDFILE = "$outpath\.rnd"
     $crt = "$($certData.name).crt"
-    Write-Warning $env:PATH
+    
     Push-Location $certData.path
     Exec { openssl.exe x509 -req -days 365 -in $certData.csr -signkey $certData.key -out $crt  -text -inform DER } 
     Pop-Location
