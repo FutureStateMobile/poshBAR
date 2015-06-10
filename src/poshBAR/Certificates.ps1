@@ -3,7 +3,7 @@ if(Test-Path Function:\Get-PfxCertificate){
 }
 if(!$env:OPENSSL_CONF){
     $here = Split-Path $script:MyInvocation.MyCommand.Path
-    $env:OPENSSL_CONF = "$here\openssl.cfg"
+    $env:OPENSSL_CONF = Resolve-Path "$here\openssl.cfg"
 }
 <#
     .SYNOPSIS
@@ -115,7 +115,7 @@ function New-PrivateKeyAndCertificateSigningRequest{
     $csr = "$name.csr"
 
     Push-Location $outPath
-    Exec { openssl.exe req -nodes -newkey rsa:2048 -keyout $key -out $csr -subj $subject } 
+    Exec { openssl.exe req -nodes -newkey rsa:2048 -keyout $key -out $csr -subj $subject | out-null } 
     Pop-Location
     
     Write-Output @{
@@ -168,7 +168,7 @@ function New-PrivateKey {
     $key = "$name.key"
 
     Push-Location $outPath
-    Exec {openssl.exe genrsa -passout pass:$password -out $key 2048 -subj $subject -noverify } 
+    Exec {openssl.exe genrsa -passout pass:$password -out $key 2048 -subj $subject -noverify  | out-null} 
     Pop-Location
     
     Write-Output @{
@@ -238,7 +238,7 @@ function New-CertificateSigningRequest {
     $csr = "$($certData.name).csr"
     
     Push-Location $certData.path
-    Exec { openssl.exe req -new -key $certData.key -out $csr -subj $certData.subject } 
+    Exec { openssl.exe req -new -key $certData.key -out $csr -subj $certData.subject  | out-null} 
     Pop-Location
     
     $certData.Add('csr',$csr)
@@ -302,7 +302,7 @@ function New-Certificate {
     $crt = "$($certData.name).crt"
     
     Push-Location $certData.path
-    Exec { openssl.exe x509 -req -days 365 -in $certData.csr -signkey $certData.key -out $crt  -text -inform DER } 
+    Exec { openssl.exe x509 -req -days 365 -in $certData.csr -signkey $certData.key -out $crt  -text -inform DER | out-null } 
     Pop-Location
 
     $certData.Add('crt', $crt)
@@ -374,7 +374,7 @@ function New-PfxCertificate {
     $pfx = "$($certData.name).pfx"
 
     Push-Location $certData.path
-    Exec { openssl.exe pkcs12 -export -inkey $certData.key -in $certData.crt -out $pfx -name $certData.name  -passout pass:$password} 
+    Exec { openssl.exe pkcs12 -export -inkey $certData.key -in $certData.crt -out $pfx -name $certData.name  -passout pass:$password | out-null} 
     Pop-Location
     
     $certData.Add('pfx', $pfx)
