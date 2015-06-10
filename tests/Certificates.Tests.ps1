@@ -5,7 +5,7 @@ $here = Split-Path $script:MyInvocation.MyCommand.Path
 Describe 'Certificates' { 
     
     BeforeAll {
-        $original = $env:PATH
+        $pth = $env:PATH
         if(! ($env:PATH.Contains('openssl'))){
             $pathToOpenSSL = Resolve-Path "$here\..\Tools\OpenSSL"
             $env:PATH += ";$pathToOpenSSL"
@@ -13,7 +13,7 @@ Describe 'Certificates' {
     }
     
     AfterAll {
-        $env:PATH = $original
+        $env:PATH = $pth
     }
     
     Context 'Private Key' {

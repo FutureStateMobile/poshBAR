@@ -5,7 +5,7 @@ $script:this = @{
     resultsDir = "$baseDir\build-artifacts\results"
     buildPublishDir = "$baseDir\build-artifacts\publish"
     packagesDir = "$baseDir\Packages"
-    workingDir = "$baseDir\build-artifacts\Working\poshBAR"
+    workingDir = "$baseDir\build-artifacts\Working"
     srcDir = "$baseDir\src\poshBAR"
     devopsNugetPackage = "$baseDir\nuspec\poshBAR.nuspec"
     devopsSummary = "Powershell Build `$amp; Release"
@@ -28,13 +28,14 @@ Task MakeBuildDir {
     rm -r $this.buildDir -force -ea SilentlyContinue
     New-Item -ItemType Directory -Force -Path $this.buildPublishDir
     New-Item -ItemType Directory -Force -Path $this.workingDir
+    New-Item -ItemType Directory -Force -Path "$($this.workingDir)\poshBar"
     New-Item -ItemType Directory -Force -Path $this.resultsDir
 }
 
 Task UpdateVersion -depends MakeBuildDir {
-    copy "$($this.srcDir)\*" $this.workingDir
+    copy "$($this.srcDir)\*" "$($this.workingDir)\poshBar"
 
-    Push-Location $this.workingDir
+    Push-Location "$($this.workingDir)\poshBar"
 
     $pattern = '^\$version = "(\d.\d.\d)" .*'
     $output = "`$version = '$version.$buildNumber' # contains the current version of poshBAR"
@@ -63,11 +64,16 @@ Task Package -depends SetupPaths, UpdateVersion, MakeBuildDir, RunPesterTests, G
 }
 
 Task RunPesterTests -depends MakeBuildDir -alias tests {
+    $tmp = $env:TEMP
+    $env:TEMP = $this.workingDir
+        
     Import-Module "$($this.packagesDir)\pester.*\tools\pester.psm1" -force  -Global
     $results = Invoke-Pester -relative_path $this.testDir -PassThru  -OutputFile "$($this.resultsDir)\pester.xml" -OutputFormat NUnitXml
     if($results.FailedCount -gt 0) {
         throw "$($results.FailedCount) Tests Failed."
     }
+    
+    $env:TEMP = $tmp
 }
 
 FormatTaskName {
