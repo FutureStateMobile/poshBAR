@@ -371,7 +371,6 @@ function New-PfxCertificate {
     $pfx = "$($certData.name).pfx"
 
     Push-Location $certData.path
-    Write-Warning $env:PATH
     Exec { openssl pkcs12 -export -inkey $certData.key -in $certData.crt -out $pfx -name $certData.name  -passout pass:$password} 
     Pop-Location
     

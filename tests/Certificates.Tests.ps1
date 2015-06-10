@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 $here = Split-Path $script:MyInvocation.MyCommand.Path
-
+openssl /?
 
 Describe 'Certificates' { 
     
