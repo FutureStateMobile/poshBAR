@@ -1,6 +1,5 @@
 $ErrorActionPreference = 'Stop'
 $here = Split-Path $script:MyInvocation.MyCommand.Path
-openssl /?
 
 Describe 'Certificates' { 
     
@@ -10,6 +9,7 @@ Describe 'Certificates' {
             $pathToOpenSSL = Resolve-Path "$here\..\Tools\OpenSSL"
             $env:PATH += ";$pathToOpenSSL"
         }
+        openssl /?
     }
     
     AfterAll {
