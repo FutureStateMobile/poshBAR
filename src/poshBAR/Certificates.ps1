@@ -112,7 +112,7 @@ function New-PrivateKeyAndCertificateSigningRequest{
     $csr = "$name.csr"
 
     Push-Location $outPath
-    Exec { openssl req -nodes -newkey rsa:2048 -keyout $key -out $csr -subj $subject | out-null}
+    Exec { openssl req -nodes -newkey rsa:2048 -keyout $key -out $csr -subj $subject }
     Pop-Location
     
     Write-Output @{
@@ -165,7 +165,7 @@ function New-PrivateKey {
     $key = "$name.key"
 
     Push-Location $outPath
-    Exec {openssl genrsa -passout pass:$password -out $key 2048 -subj $subject -noverify -quiet | out-null}
+    Exec {openssl genrsa -passout pass:$password -out $key 2048 -subj $subject -noverify -quiet }
     Pop-Location
     
     Write-Output @{
@@ -235,7 +235,7 @@ function New-CertificateSigningRequest {
     $csr = "$($certData.name).csr"
     
     Push-Location $certData.path
-    Exec { openssl req -new -key $certData.key -out $csr -subj $certData.subject | out-null }
+    Exec { openssl req -new -key $certData.key -out $csr -subj $certData.subject  }
     Pop-Location
     
     $certData.Add('csr',$csr)
@@ -299,7 +299,7 @@ function New-Certificate {
     $crt = "$($certData.name).crt"
 
     Push-Location $certData.path
-    Exec { openssl x509 -req -days 365 -in $certData.csr -signkey $certData.key -out $crt  -text -inform DER | out-null  }
+    Exec { openssl x509 -req -days 365 -in $certData.csr -signkey $certData.key -out $crt  -text -inform DER   }
     Pop-Location
 
     $certData.Add('crt', $crt)
@@ -371,7 +371,7 @@ function New-PfxCertificate {
     $pfx = "$($certData.name).pfx"
 
     Push-Location $certData.path
-    Exec { openssl pkcs12 -export -inkey $certData.key -in $certData.crt -out $pfx -name $certData.name  -passout pass:$password | out-null}
+    Exec { openssl pkcs12 -export -inkey $certData.key -in $certData.crt -out $pfx -name $certData.name  -passout pass:$password }
     Pop-Location
     
     $certData.Add('pfx', $pfx)
