@@ -14,24 +14,7 @@ Describe 'Certificates' {
     AfterAll {
         $env:PATH = $pth
     }
-    
-    Context "Doesn't effing break" {
-        $out = New-Item 'TestDrive:\testDir0' -ItemType Directory -Force
-        
-        try { 
-            Exec{openssl.exe /?}
-            $result = 'passed'
-        } catch {
-            $result = $_
-        }
-        
-        It "Should be passed" {
-            $result | should be 'passed'
-        }
-
-    }
-    
-    
+   
     Context 'Private Key' {
         # setup
         $name = 'pk-cert'
