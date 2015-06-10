@@ -56,6 +56,7 @@ function Get-PfxCertificate {
         [Parameter(Position=2, ParameterSetName='ByLiteralPath')] [string] 
         [ValidateSet('DefaultKeySet','Exportable','MachineKeySet','PersistKeySet','UserKeySet','UserProtected')] $x509KeyStorageFlag = 'DefaultKeySet'
     )
+
     if($PsCmdlet.ParameterSetName -eq 'ByPath'){
         $literalPath = Resolve-Path $filePath 
     }
@@ -111,7 +112,7 @@ function New-PrivateKeyAndCertificateSigningRequest{
     $csr = "$name.csr"
 
     Push-Location $outPath
-    openssl req -nodes -newkey rsa:2048 -keyout $key -out $csr -subj $subject 
+    Exec { openssl req -nodes -newkey rsa:2048 -keyout $key -out $csr -subj $subject } 'An error occurred while executing openssl'
     Pop-Location
     
     Write-Output @{
@@ -164,7 +165,7 @@ function New-PrivateKey {
     $key = "$name.key"
 
     Push-Location $outPath
-    openssl genrsa -passout pass:$password -out $key 2048 -subj $subject -noverify -quiet 
+    Exec {openssl genrsa -passout pass:$password -out $key 2048 -subj $subject -noverify } 'An error occurred while executing openssl'
     Pop-Location
     
     Write-Output @{
@@ -234,7 +235,7 @@ function New-CertificateSigningRequest {
     $csr = "$($certData.name).csr"
     
     Push-Location $certData.path
-    openssl req -new -key $certData.key -out $csr -subj $certData.subject  
+    Exec { openssl req -new -key $certData.key -out $csr -subj $certData.subject } 'An error occurred while executing openssl'
     Pop-Location
     
     $certData.Add('csr',$csr)
@@ -298,7 +299,7 @@ function New-Certificate {
     $crt = "$($certData.name).crt"
 
     Push-Location $certData.path
-    openssl x509 -req -days 365 -in $certData.csr -signkey $certData.key -out $crt  -text -inform DER   
+    Exec { openssl x509 -req -days 365 -in $certData.csr -signkey $certData.key -out $crt  -text -inform DER } 'An error occurred while executing openssl'
     Pop-Location
 
     $certData.Add('crt', $crt)
@@ -368,9 +369,9 @@ function New-PfxCertificate {
     $env:RANDFILE = $RANDFILE = "$outpath\.rnd"
 
     $pfx = "$($certData.name).pfx"
-        Write-Warning $certData.path 
+
     Push-Location $certData.path
-    openssl pkcs12 -export -inkey $certData.key -in $certData.crt -out $pfx -name $certData.name  -passout pass:$password 
+    Exec { openssl pkcs12 -export -inkey $certData.key -in $certData.crt -out $pfx -name $certData.name  -passout pass:$password} 'An error occurred while executing openssl'
     Pop-Location
     
     $certData.Add('pfx', $pfx)
