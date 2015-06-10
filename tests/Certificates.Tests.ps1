@@ -18,8 +18,9 @@ Describe 'Certificates' {
     Context "Doesn't effing break" {
         $out = New-Item 'TestDrive:\testDir0' -ItemType Directory -Force
         
-
-        openssl.exe genrsa -passout pass:password -out somefile.key 2048 -subj '/CN=test-junk' -noverify -debug
+        It "Will not throw" {
+            openssl.exe /? | should not throw
+        }
 
     }
     
