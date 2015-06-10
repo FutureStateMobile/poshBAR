@@ -355,7 +355,6 @@ function New-PfxCertificate {
         [alias('pwd')][string] $password
     )
 
-Write-Warning 'Ive been hit'
     if($PsCmdlet.ParameterSetName -eq 'b') {
         # Recursive call using the hashtable
         New-PfxCertificate  @{
@@ -369,7 +368,7 @@ Write-Warning 'Ive been hit'
     $env:RANDFILE = $RANDFILE = "$outpath\.rnd"
 
     $pfx = "$($certData.name).pfx"
-
+        Write-Warning $certData.path 
     Push-Location $certData.path
     openssl pkcs12 -export -inkey $certData.key -in $certData.crt -out $pfx -name $certData.name  -passout pass:$password 
     Pop-Location
