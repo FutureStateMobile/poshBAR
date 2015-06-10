@@ -76,11 +76,11 @@ function Get-PfxCertificate {
         Generates a new Private Key (.key) and a Certificate Signing Request (.csr)
 
     .DESCRIPTION
-        Uses OpenSSL to Generate a new Private Key and a Certificate Signing Request. 
+        Uses openssl.exe to Generate a new Private Key and a Certificate Signing Request. 
         The two files that will be created will be [name].key and [name].csr
 
     .NOTES
-        Please ensure OpenSSL.exe is available on your $env:PATH
+        Please ensure openssl.exe is available on your $env:PATH
 
     .PARAMETER name
         The name associated with your new certificate
@@ -112,7 +112,7 @@ function New-PrivateKeyAndCertificateSigningRequest{
     $csr = "$name.csr"
 
     Push-Location $outPath
-    Exec { openssl req -nodes -newkey rsa:2048 -keyout $key -out $csr -subj $subject } 
+    Exec { openssl.exe req -nodes -newkey rsa:2048 -keyout $key -out $csr -subj $subject } 
     Pop-Location
     
     Write-Output @{
@@ -130,11 +130,11 @@ function New-PrivateKeyAndCertificateSigningRequest{
         Generates a new Private Key (.key)
 
     .DESCRIPTION
-        Uses OpenSSL to Generate a new Private Key . 
+        Uses openssl.exe to Generate a new Private Key . 
         The newly created file will be [name].key
 
     .NOTES
-        Please ensure OpenSSL.exe is available on your $env:PATH
+        Please ensure openssl.exe is available on your $env:PATH
 
     .PARAMETER name
         The name associated with your new certificate
@@ -165,7 +165,7 @@ function New-PrivateKey {
     $key = "$name.key"
 
     Push-Location $outPath
-    Exec {openssl genrsa -passout pass:$password -out $key 2048 -subj $subject -noverify } 
+    Exec {openssl.exe genrsa -passout pass:$password -out $key 2048 -subj $subject -noverify } 
     Pop-Location
     
     Write-Output @{
@@ -183,11 +183,11 @@ function New-PrivateKey {
         Generates a new Certificate Signing Request (.csr)
 
     .DESCRIPTION
-        Uses OpenSSL to Generate a new Certificate Signing Request. 
+        Uses openssl.exe to Generate a new Certificate Signing Request. 
         The newly created file will be [name].csr
 
     .NOTES
-        Please ensure OpenSSL.exe is available on your $env:PATH
+        Please ensure openssl.exe is available on your $env:PATH
 
     .PARAMETER certData
         The hashtable containing all of the required data (useful when piping calls).
@@ -235,7 +235,7 @@ function New-CertificateSigningRequest {
     $csr = "$($certData.name).csr"
     
     Push-Location $certData.path
-    Exec { openssl req -new -key $certData.key -out $csr -subj $certData.subject } 
+    Exec { openssl.exe req -new -key $certData.key -out $csr -subj $certData.subject } 
     Pop-Location
     
     $certData.Add('csr',$csr)
@@ -248,11 +248,11 @@ function New-CertificateSigningRequest {
         Generates a new Certificate (.crt)
 
     .DESCRIPTION
-        Uses OpenSSL to Generate a new Certificate. 
+        Uses openssl.exe to Generate a new Certificate. 
         The newly created file will be [name].crt
 
     .NOTES
-        Please ensure OpenSSL.exe is available on your $env:PATH
+        Please ensure openssl.exe is available on your $env:PATH
 
     .PARAMETER certData
         The hashtable containing all of the required data (useful when piping calls).
@@ -299,7 +299,7 @@ function New-Certificate {
     $crt = "$($certData.name).crt"
 
     Push-Location $certData.path
-    Exec { openssl x509 -req -days 365 -in $certData.csr -signkey $certData.key -out $crt  -text -inform DER } 
+    Exec { openssl.exe x509 -req -days 365 -in $certData.csr -signkey $certData.key -out $crt  -text -inform DER } 
     Pop-Location
 
     $certData.Add('crt', $crt)
@@ -312,11 +312,11 @@ function New-Certificate {
         Generates a new Certificate containing both the public and private keys (.pfx)
 
     .DESCRIPTION
-        Uses OpenSSL to Generate a new Public/Private Key pair. 
+        Uses openssl.exe to Generate a new Public/Private Key pair. 
         The newly created file will be [name].pfx
 
     .NOTES
-        Please ensure OpenSSL.exe is available on your $env:PATH
+        Please ensure openssl.exe is available on your $env:PATH
 
     .PARAMETER certData
         The hashtable containing all of the required data (useful when piping calls).
@@ -371,7 +371,7 @@ function New-PfxCertificate {
     $pfx = "$($certData.name).pfx"
 
     Push-Location $certData.path
-    Exec { openssl pkcs12 -export -inkey $certData.key -in $certData.crt -out $pfx -name $certData.name  -passout pass:$password} 
+    Exec { openssl.exe pkcs12 -export -inkey $certData.key -in $certData.crt -out $pfx -name $certData.name  -passout pass:$password} 
     Pop-Location
     
     $certData.Add('pfx', $pfx)
