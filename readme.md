@@ -26,7 +26,7 @@ Clone the repository
   - Detailed API documentation can be found in [GitHub Pages](https://futurestatemobile.github.io/poshBAR/)
   - Or you can build the documentation yourself
   
-     > .\build.ps1 docs
+    > .\build.ps1 docs
 
 ###Dependencies###
   
