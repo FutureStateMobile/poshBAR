@@ -114,9 +114,13 @@ function New-PrivateKeyAndCertificateSigningRequest{
     $key = "$name.key"
     $csr = "$name.csr"
 
-    Push-Location $outPath
-    Exec { openssl.exe req -nodes -newkey rsa:2048 -keyout $key -out $csr -subj $subject | out-null } 
-    Pop-Location
+    try{
+        Push-Location $outPath
+        Exec { openssl.exe req -nodes -newkey rsa:2048 -keyout $key -out $csr -subj $subject | out-null } 
+    } finally {
+        Pop-Location
+        Remove-Item "$outpath\.rnd" -Force -ErrorAction SilentlyContinue
+    }
     
     Write-Output @{
         'path' = $outPath
@@ -125,7 +129,6 @@ function New-PrivateKeyAndCertificateSigningRequest{
         'name' = $name
         'subject' = $subject
     }
-    Remove-Item "$outpath\.rnd" -Force -ErrorAction SilentlyContinue
 }
 
 <#
@@ -167,9 +170,13 @@ function New-PrivateKey {
 
     $key = "$name.key"
 
-    Push-Location $outPath
-    Exec {openssl.exe genrsa -passout pass:$password -out $key 2048 -subj $subject -noverify  | out-null} 
-    Pop-Location
+    try {
+        Push-Location $outPath
+        Exec {openssl.exe genrsa -passout pass:$password -out $key 2048 -subj $subject -noverify  | out-null} 
+    } finally {
+        Pop-Location
+        Remove-Item "$outpath\.rnd" -Force -ErrorAction SilentlyContinue
+    }
     
     Write-Output @{
         'path' = $outPath
@@ -177,7 +184,6 @@ function New-PrivateKey {
         'name' = $name
         'subject' = $subject
     }
-    Remove-Item "$outpath\.rnd" -Force -ErrorAction SilentlyContinue
 }
 
 
@@ -237,13 +243,16 @@ function New-CertificateSigningRequest {
 
     $csr = "$($certData.name).csr"
     
-    Push-Location $certData.path
-    Exec { openssl.exe req -new -key $certData.key -out $csr -subj $certData.subject  | out-null} 
-    Pop-Location
+    try{
+        Push-Location $certData.path
+        Exec { openssl.exe req -new -key $certData.key -out $csr -subj $certData.subject  | out-null} 
+    } finally {
+        Pop-Location
+        Remove-Item "$outpath\.rnd" -Force -ErrorAction SilentlyContinue
+    }
     
     $certData.Add('csr',$csr)
     Write-Output $certData
-    Remove-Item "$outpath\.rnd" -Force -ErrorAction SilentlyContinue
 }
 
 <#
@@ -301,13 +310,16 @@ function New-Certificate {
     $env:RANDFILE = $RANDFILE = "$outpath\.rnd"
     $crt = "$($certData.name).crt"
     
-    Push-Location $certData.path
-    Exec { openssl.exe x509 -req -days 365 -in $certData.csr -signkey $certData.key -out $crt  -text -inform DER | out-null } 
-    Pop-Location
+    try{
+        Push-Location $certData.path
+        Exec { openssl.exe x509 -req -days 365 -in $certData.csr -signkey $certData.key -out $crt  -text -inform DER | out-null } 
+    } finally {
+        Pop-Location
+        Remove-Item "$outpath\.rnd" -Force -ErrorAction SilentlyContinue
+    }
 
     $certData.Add('crt', $crt)
     Write-output $certData
-    Remove-Item "$outpath\.rnd" -Force -ErrorAction SilentlyContinue
 }
 
 <#
@@ -373,11 +385,44 @@ function New-PfxCertificate {
 
     $pfx = "$($certData.name).pfx"
 
-    Push-Location $certData.path
-    Exec { openssl.exe pkcs12 -export -inkey $certData.key -in $certData.crt -out $pfx -name $certData.name  -passout pass:$password | out-null} 
-    Pop-Location
+    try{
+        Push-Location $certData.path
+        $key = if(Test-Path $certData.key -erroraction silentlycontinue){ $certData.key } else { GenerateCertFromString $certData.name $certData.key 'key' }
+        $crt = if(Test-Path $certData.crt -erroraction silentlycontinue){ $certData.crt } else { GenerateCertFromString $certData.name $certData.crt 'crt' }
     
+        Exec { openssl.exe pkcs12 -export -inkey $key -in $crt -out $pfx -name $certData.name  -passout pass:$password | out-null} 
+    } finally {
+        Pop-Location
+        Clear-TemporaryCertificates
+        Remove-Item "$outpath\.rnd" -Force -ErrorAction SilentlyContinue
+    }
+    
+    $certData.key = $key
+    $certData.crt = $crt
     $certData.Add('pfx', $pfx)
     Write-output $certData
-    Remove-Item "$outpath\.rnd" -Force -ErrorAction SilentlyContinue
+}
+
+# Private Functions
+
+function GenerateCertFromString($name, $value, $extension) {
+    if(!($script:TempCerts)){
+        $script:TempCerts = @()
+    }
+    
+    $file = "$env:TEMP\$name.$extension"
+    $script:TempCerts += $file
+    $encoding = [System.Text.Encoding]::GetEncoding('windows-1252')
+    [System.IO.File]::WriteAllText($file, $value, $encoding) | out-null
+    
+    return $file
+}
+
+function Clear-TemporaryCertificates {
+    if($script:TempCerts) {
+        $script:TempCerts | % {
+            Remove-Item $_ -Force -erroraction SilentlyContinue
+        }
+        $script:TempCerts.Clear()
+    }
 }
