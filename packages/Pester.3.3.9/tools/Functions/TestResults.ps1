@@ -351,7 +351,6 @@ function Write-NUnitTestCaseAttributes($TestResult, [System.Xml.XmlWriter] $XmlW
     }
 
     $XmlWriter.WriteAttributeString('name', $testName)
-    $XmlWriter.WriteAttributeString('executed', 'True')
     $XmlWriter.WriteAttributeString('time', (Convert-TimeSpan $TestResult.Time))
     $XmlWriter.WriteAttributeString('asserts', '0')
     $XmlWriter.WriteAttributeString('success', $TestResult.Passed)
@@ -361,21 +360,25 @@ function Write-NUnitTestCaseAttributes($TestResult, [System.Xml.XmlWriter] $XmlW
         Passed
         {
             $XmlWriter.WriteAttributeString('result', 'Success')
+            $XmlWriter.WriteAttributeString('executed', 'True')
             break
         }
         Skipped
         {
             $XmlWriter.WriteAttributeString('result', 'Ignored')
+            $XmlWriter.WriteAttributeString('executed', 'False')
             break
         }
         Pending
         {
             $XmlWriter.WriteAttributeString('result', 'Inconclusive')
+            $XmlWriter.WriteAttributeString('executed', 'True')
             break
         }
         Failed
         {
             $XmlWriter.WriteAttributeString('result', 'Failure')
+            $XmlWriter.WriteAttributeString('executed', 'True')
             $XmlWriter.WriteStartElement('failure')
             $xmlWriter.WriteElementString('message', $TestResult.FailureMessage)
             $XmlWriter.WriteElementString('stack-trace', $TestResult.StackTrace)
