@@ -15,11 +15,11 @@ Describe 'ClickOnce' {
         $execute = {Invoke-SignAppliationManifest $manifestPath $pfxPath $pfxPassword}
 
         # assert
-        It 'Will not throw an exception.' -skip {
+        It 'Will not throw an exception.' -ignore {
            $execute | should not throw
         }
         
-        It 'Will call Mock of poshBAR\Invoke-ExternalCommand' -skip {
+        It 'Will call Mock of poshBAR\Invoke-ExternalCommand' -ignore {
             Assert-MockCalled Invoke-ExternalCommand -moduleName poshBAR
         }
     }

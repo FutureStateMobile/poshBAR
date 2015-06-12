@@ -100,8 +100,8 @@ function Write-NUnitTestResultAttributes($PesterState, [System.Xml.XmlWriter] $X
     $XmlWriter.WriteAttributeString('failures', $PesterState.FailedCount)
     $XmlWriter.WriteAttributeString('not-run', '0')
     $XmlWriter.WriteAttributeString('inconclusive', $PesterState.PendingCount)
-    $XmlWriter.WriteAttributeString('ignored', '0')
-    $XmlWriter.WriteAttributeString('skipped', $PesterState.SkippedCount)
+    $XmlWriter.WriteAttributeString('ignored', $PesterState.SkippedCount)
+    $XmlWriter.WriteAttributeString('skipped', '0')
     $XmlWriter.WriteAttributeString('invalid', '0')
     $date = Get-Date
     $XmlWriter.WriteAttributeString('date', (Get-Date -Date $date -Format 'yyyy-MM-dd'))
@@ -365,7 +365,7 @@ function Write-NUnitTestCaseAttributes($TestResult, [System.Xml.XmlWriter] $XmlW
         }
         Skipped
         {
-            $XmlWriter.WriteAttributeString('result', 'Skipped')
+            $XmlWriter.WriteAttributeString('result', 'Ignored')
             break
         }
         Pending
@@ -407,7 +407,7 @@ function Get-ParentResult ($InputObject)
     #I am not sure about the result precedence, and can't find any good source
     #TODO: Confirm this is the correct order of precedence
     if ($inputObject.FailedCount  -gt 0) { return 'Failure' }
-    if ($InputObject.SkippedCount -gt 0) { return 'Skipped' }
+    if ($InputObject.SkippedCount -gt 0) { return 'Ignored' }
     if ($InputObject.PendingCount -gt 0) { return 'Inconclusive' }
     return 'Success'
 }
@@ -417,7 +417,7 @@ function Get-GroupResult ($InputObject)
     #I am not sure about the result precedence, and can't find any good source
     #TODO: Confirm this is the correct order of precedence
     if ($InputObject |  Where {$_.Result -eq 'Failed'}) { return 'Failure' }
-    if ($InputObject |  Where {$_.Result -eq 'Skipped'}) { return 'Skipped' }
+    if ($InputObject |  Where {$_.Result -eq 'Skipped'}) { return 'Ignored' }
     if ($InputObject |  Where {$_.Result -eq 'Pending'}) { return 'Inconclusive' }
     return 'Success'
 }
