@@ -7,6 +7,10 @@
     .EXAMPLE
         Invoke-MSBuild $buildOutputDir $solutionFile
         Standard build against the defaults
+        
+    .EXAMPLE
+        Invoke-MSBuild $buildOutputDir $solutionFile -customParameters @('/property:SomeProperty=value')
+        Standard build with additional parameters.
 
     .EXAMPLE
         Invoke-MSBuild $buildOutputDir $solutionFile -target 'clean' -logPath 'c:\logs' -namespace 'My.App.Namespace' -visualStudioVersion 11.0 -toolsVersion 4.0 -maxCpuCount 8 -verbosity 'normal' -warnOnArchitectureMismatch $true 
@@ -39,6 +43,9 @@
     .PARAMETER warnOnArchitectureMismatch
         Show warnings for architecture missmatch (x86 and x64) [MSB3270]
         
+    .PARAMETER customParameters
+        Additional msbuild parameters in array  format. 
+        
     .PARAMETER verbosity
         Sets the MSBuild verbosity
         - [q]uiet
@@ -65,7 +72,8 @@ function Invoke-MSBuild {
         [Parameter(Mandatory=$false)] [string] [alias('tv')]$toolsVersion = 4.0,
         [Parameter(Mandatory=$false)] [int] [alias('m')]$maxCpuCount = 1,
         [Parameter(Mandatory=$false)] [string] [alias('v','loglevel')] [ValidateSet('q', 'quiet', 'm', 'minimal', 'n', 'normal','d', 'detailed','diag', 'diagnostic')] $verbosity = 'minimal',
-        [Parameter(Mandatory=$false)] [bool] $warnOnArchitectureMismatch = $false
+        [Parameter(Mandatory=$false)] [bool] $warnOnArchitectureMismatch = $false,
+        [Parameter(Mandatory=$false)] [string[]] $customParameters
     )
     # make sure the output directory has a trailing slash
     $outDir = if(!$outDir.EndsWith('\')){"$outDir\"}
@@ -87,6 +95,8 @@ function Invoke-MSBuild {
         "/property:ToolsVersion=$("{0:N1}" -f $dotNetVersion)",
         "/property:ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=$ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch",
         "/maxcpucount:$maxCpuCount") 
+ 
+    if($customParameters){ $params += $customParameters }
  
     Write-Host "Invoking: `nmsbuild.exe $projectFile $params `n"
     try {
