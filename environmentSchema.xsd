@@ -1,103 +1,106 @@
-<?xml version="1.0" encoding="utf-16"?>
-<xsd:schema attributeFormDefault="unqualified" 
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+            xmlns:tns="https://futurestatemobile.github.io/poshBAR/" 
+            attributeFormDefault="qualified" 
             elementFormDefault="qualified" 
             version="1.0" 
-            targetNamespace="http://schemas.datacontract.org/2004/07/Foo" 
-            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns:tns="http://schemas.datacontract.org/2004/07/Foo">
+            targetNamespace="https://futurestatemobile.github.io/poshBAR/">
 
-  <!-- Website -->
-<xsd:complexType name="Website">
-  <xsd:sequence>
-    <xsd:sequence>
-      <xsd:element name="physicalPathRoot" type="xsd:string" />
-      <xsd:element name="physicalFolderPrefix" type="xsd:string" />
-      <xsd:element name="bindings">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="protocol" type="xsd:string" />
-            <xsd:element name="port" type="xsd:int" />
-            <xsd:element name="hostName" type="xsd:string" />
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="siteName" type="xsd:string" />
-      <xsd:element name="appPath" type="xsd:string" />
-      <xsd:element name="iisAuthenticationTypes" type="xsd:string" />
-      <xsd:element name="systemWeb">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="authentication">
-              <xsd:complexType>
-                <xsd:sequence>
-                  <xsd:element name="mode" type="xsd:string" />
-                  <xsd:element name="timeout" type="xsd:int" />
-                </xsd:sequence>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="authorization">
-              <xsd:complexType>
-                <xsd:sequence>
-                  <xsd:element name="allowedUsers" type="xsd:string" />
-                </xsd:sequence>
-              </xsd:complexType>
-            </xsd:element>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="appPool">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="name" type="xsd:string" />
-            <xsd:element name="identityType" type="xsd:string" />
-            <xsd:element name="userName" type="xsd:string" />
-            <xsd:element name="password" type="xsd:string" />
-            <xsd:element name="maxWorkerProcesses" type="xsd:int" />
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="mail">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="Server" type="xsd:string" />
-            <xsd:element name="NotificationEmailFrom" type="xsd:string" />
-            <xsd:element name="NotificationEmailTo" type="xsd:string" />
-            <xsd:element name="NotificationEnabled" type="xsd:boolean" />
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-    </xsd:sequence>
-  </xsd:sequence>
-</xsd:complexType>
-  <!-- Database  -->
-  <xsd:complexType name="Database">
+   <!-- Website -->
+   <xsd:complexType name="Website">
       <xsd:sequence>
-        <xsd:element name="connectionString" type="xsd:string" />
-    </xsd:sequence>
-  </xsd:complexType>
-  <xsd:element name="Database" nillable="true" type="tns:Database"/>
-
-  <!-- do not alter below this point-->
-  <xsd:complexType name="ArrayOfDatabase">
-    <xsd:sequence>
-      <xsd:element minOccurs="0" maxOccurs="unbounded" name="Database" nillable="true" type="tns:Database"/>
-    </xsd:sequence>
-  </xsd:complexType>
-
-  <xsd:complexType name="ArrayOfWebsite">
-    <xsd:sequence>
-      <xsd:element minOccurs="0" maxOccurs="unbounded" name="Website" nillable="true" type="tns:Website"/>
-    </xsd:sequence>
-  </xsd:complexType>
-
-  <xsd:element name="environmentSettings">
-    <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element name="debug" type="xsd:boolean" />
-        <xsd:element name="environment" type="xsd:string" />
-        <xsd:element name="ArrayOfWebsite" nillable="true" type="tns:ArrayOfWebsite"/>
-        <xsd:element name="ArrayOfDatabase" nillable="true" type="tns:ArrayOfDatabase"/>
+         <xsd:sequence>
+            <xsd:element name="physicalPathRoot" type="xsd:string" />
+            <xsd:element name="physicalFolderPrefix" type="xsd:string" />
+            <xsd:element name="bindings">
+               <xsd:complexType>
+                  <xsd:sequence>
+                     <xsd:element name="protocol" type="xsd:string" />
+                     <xsd:element name="port" type="xsd:int" />
+                     <xsd:element name="hostName" type="xsd:string" />
+                  </xsd:sequence>
+               </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="siteName" type="xsd:string" />
+            <xsd:element name="appPath" type="xsd:string" />
+            <xsd:element name="iisAuthenticationTypes" type="xsd:string" />
+            <xsd:element name="systemWeb">
+               <xsd:complexType>
+                  <xsd:sequence>
+                     <xsd:element name="authentication">
+                        <xsd:complexType>
+                           <xsd:sequence>
+                              <xsd:element name="mode" type="xsd:string" />
+                              <xsd:element name="timeout" type="xsd:int" />
+                           </xsd:sequence>
+                        </xsd:complexType>
+                     </xsd:element>
+                     <xsd:element name="authorization">
+                        <xsd:complexType>
+                           <xsd:sequence>
+                              <xsd:element name="allowedUsers" type="xsd:string" />
+                           </xsd:sequence>
+                        </xsd:complexType>
+                     </xsd:element>
+                  </xsd:sequence>
+               </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="appPool">
+               <xsd:complexType>
+                  <xsd:sequence>
+                     <xsd:element name="name" type="xsd:string" />
+                     <xsd:element name="identityType" type="xsd:string" />
+                     <xsd:element name="userName" type="xsd:string" />
+                     <xsd:element name="password" type="xsd:string" />
+                     <xsd:element name="maxWorkerProcesses" type="xsd:int" />
+                  </xsd:sequence>
+               </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="mail">
+               <xsd:complexType>
+                  <xsd:sequence>
+                     <xsd:element name="Server" type="xsd:string" />
+                     <xsd:element name="NotificationEmailFrom" type="xsd:string" />
+                     <xsd:element name="NotificationEmailTo" type="xsd:string" />
+                     <xsd:element name="NotificationEnabled" type="xsd:boolean" />
+                  </xsd:sequence>
+               </xsd:complexType>
+            </xsd:element>
+         </xsd:sequence>
       </xsd:sequence>
-    </xsd:complexType>
-  </xsd:element>
+   </xsd:complexType>
+   <xsd:element name="Website" nillable="true" type="tns:Website" />
+
+   <!-- Database  -->
+   <xsd:complexType name="Database">
+      <xsd:sequence>
+         <xsd:element name="connectionString" type="xsd:string" />
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="Database" nillable="true" type="tns:Database" />
+
+
+   <!-- do not alter below this point-->
+   <xsd:complexType name="databases">
+      <xsd:sequence>
+         <xsd:element minOccurs="0" maxOccurs="unbounded" name="Database" nillable="true" type="tns:Database" />
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="webSites">
+      <xsd:sequence>
+         <xsd:element minOccurs="0" maxOccurs="unbounded" name="Website" nillable="true" type="tns:Website" />
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <!-- Final Block -->
+   <xsd:element name="environmentSettings">
+      <xsd:complexType>
+         <xsd:sequence>
+            <xsd:element name="debug" type="xsd:boolean" />
+            <xsd:element name="environment" type="xsd:string" />
+            <xsd:element name="webSites" nillable="true" type="tns:webSites" />
+            <xsd:element name="databases" nillable="true" type="tns:databases" />
+         </xsd:sequence>
+      </xsd:complexType>
+   </xsd:element>
 </xsd:schema>
