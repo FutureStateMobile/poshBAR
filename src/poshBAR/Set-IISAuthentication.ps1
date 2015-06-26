@@ -78,29 +78,7 @@ function Set-WebConfigurationPropertyExtended {
     # Setting ErrorAction to Stop is important. This ensures any errors that occur in the command are 
     # treated as terminating errors, and will be caught by the catch block.
     $ErrorAction = "Stop"
-    
-    $retrycount = 0
-    $completed = $false
-
-    while (-not $completed) {
-        try {
-            Set-WebConfigurationProperty -filter $filter -name $name -value $value -PSPath $PSPath -location $location
-
-            if ($lastexitcode -ne 0) {
-                throw
-            } else {
-                $completed = $true
-            }
-        } catch {
-            if ($retrycount -ge $retry) {
-                Write-Verbose ("Set-WebConfigurationProperty failed after {1} retries." -f $retrycount)
-                throw ($_)
-            } else {
-                Write-Verbose ("Set-WebConfigurationProperty failed. Retrying...")
-                $retrycount++
-            }
-        }
-    }
+    Exec { Set-WebConfigurationProperty -filter $filter -name $name -value $value -PSPath $PSPath -location $location } -retry:$retry
 }
 
 if(!("AuthType" -as [Type])){

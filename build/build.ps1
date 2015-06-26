@@ -37,13 +37,13 @@ Task UpdateVersion -depends MakeBuildDir {
 
     Push-Location "$($this.workingDir)\poshBar"
 
-    $pattern = '^\$version = "(\d.\d.\d)" .*'
+    $pattern = '^\$version = [''|"](\d.\d.\d.\d)[''|"] .*'
     $output = "`$version = '$version.$buildNumber' # contains the current version of poshBAR"
     ls -r -filter poshBAR.psm1 | % {
         $filename = $_.Directory.ToString() + '\' + $_.Name
-        (cat $filename) | % {
+        (Get-Content $filename) | % {
             % {$_ -replace $pattern, $output }
-        } | sc "$filename.temp"
+        } | Out-File "$filename.temp"
 
         rm $filename -force
         ren "$filename.temp" $filename
