@@ -17,9 +17,7 @@ Set-Alias new New-Object
 Push-Location $psScriptRoot
 
 # Set Overrides
-. .\OctopusDeploy\Set-OctopusDeployOverrides.ps1 $poshBAR
-
-Write-Output $poshBAR
+#. .\OctopusDeploy\Set-OctopusDeployOverrides.ps1 $poshBAR
 
 # Import Modules
 . .\Add-HostsFileEntry.ps1
