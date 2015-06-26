@@ -4,8 +4,9 @@ Describe 'Install-WindowsFeatures' {
     
     Context 'Should enable a windows feature.' {
         # setup
-        $windowsFeatures = @('TFTP')
+        $windowsFeatures = @('Fake-WindowsFeature')
         Mock -moduleName poshBAR Invoke-ExternalCommand {}
+        Mock -moduleName poshBAR Get-WindowsFeatures {return @{'Fake-WindowsFeature' = 'disabled' }}
         
         # execute
         $execute = {Install-WindowsFeatures $windowsFeatures}
@@ -15,13 +16,18 @@ Describe 'Install-WindowsFeatures' {
             . $execute
             Assert-MockCalled Invoke-ExternalCommand -moduleName poshBAR -Exactly 1
         }
+        
+        It 'Will execute the Get-WindowsFeatures cmdlet' {
+            Assert-MockCalled Get-WindowsFeatures -moduleName poshBar
+        }
     }
     
     Context 'Should prevent enabling feature.' {
         # setup
         $poshBAR.DisableWindowsFeaturesAdministration = $true
-        $windowsFeatures = @('TFTP')
+        $windowsFeatures = @('Fake-WindowsFeature')
         Mock -moduleName poshBAR Invoke-ExternalCommand {}
+        Mock -moduleName poshBAR Get-WindowsFeatures {return @{'Fake-WindowsFeature' = 'disabled' }}
         
         # execute
         $execute = {Install-WindowsFeatures $windowsFeatures}
@@ -30,6 +36,10 @@ Describe 'Install-WindowsFeatures' {
         It 'Will not execute the DISM command.' {
             . $execute
             Assert-MockCalled Invoke-ExternalCommand -moduleName poshBAR -Exactly 0
+        }
+        
+        It 'Will execute the Get-WindowsFeatures cmdlet' {
+            Assert-MockCalled Get-WindowsFeatures -moduleName poshBar
         }
     }
             

@@ -74,6 +74,7 @@ function Get-WindowsFeatures {
         for($i = 0; $i -lt $allFeatures.length; $i=$i+2) {
             $feature = $allFeatures[$i].split(":")[1].trim()
             $state = $allFeatures[$i+1].split(":")[1].trim()
+            
             $global:poshBAR.WindowsFeatures.Add($feature, $state)
         }
     }
