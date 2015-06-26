@@ -4,7 +4,7 @@ Describe 'Install-WindowsFeatures' {
     
     Context 'Should enable a windows feature.' {
         # setup
-        $windowsFeatures = @('IIS-WebServer')
+        $windowsFeatures = @('TFTP')
         Mock -moduleName poshBAR Invoke-ExternalCommand {}
         
         # execute
@@ -14,6 +14,22 @@ Describe 'Install-WindowsFeatures' {
         It 'Will execute the DISM command.' {
             . $execute
             Assert-MockCalled Invoke-ExternalCommand -moduleName poshBAR -Exactly 1
+        }
+    }
+    
+    Context 'Should prevent enabling feature.' {
+        # setup
+        $poshBAR.DisableWindowsFeaturesAdministration = $true
+        $windowsFeatures = @('TFTP')
+        Mock -moduleName poshBAR Invoke-ExternalCommand {}
+        
+        # execute
+        $execute = {Install-WindowsFeatures $windowsFeatures}
+        
+        # assert
+        It 'Will not execute the DISM command.' {
+            . $execute
+            Assert-MockCalled Invoke-ExternalCommand -moduleName poshBAR -Exactly 0
         }
     }
             
@@ -27,22 +43,6 @@ Describe 'Install-WindowsFeatures' {
         # assert
         It 'Will not throw an exception on optional feature'   {
             $execute | Should Not Throw
-        }
-    }
-    
-    Context 'Should prevent enabling feature.' {
-        # setup
-        $poshBAR.DisableWindowsFeaturesAdministration = $true
-        $windowsFeatures = @('IIS-WebServer')
-        Mock -moduleName poshBAR Invoke-ExternalCommand {}
-        
-        # execute
-        $execute = {Install-WindowsFeatures $windowsFeatures}
-        
-        # assert
-        It 'Will not execute the DISM command.' {
-            . $execute
-            Assert-MockCalled Invoke-ExternalCommand -moduleName poshBAR -Exactly 0
         }
     }
 }
