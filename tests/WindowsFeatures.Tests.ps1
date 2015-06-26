@@ -4,7 +4,7 @@ Describe 'Install-WindowsFeatures' {
     
     Context 'Should enable a windows feature.' {
         # setup
-        $windowsFeatures = @('RasRip')
+        $windowsFeatures = @('IIS-WebServer')
         Mock -moduleName poshBAR Invoke-ExternalCommand {}
         
         # execute
@@ -33,7 +33,7 @@ Describe 'Install-WindowsFeatures' {
     Context 'Should prevent enabling feature.' {
         # setup
         $poshBAR.DisableWindowsFeaturesAdministration = $true
-        $windowsFeatures = @('RasRip')
+        $windowsFeatures = @('IIS-WebServer')
         Mock -moduleName poshBAR Invoke-ExternalCommand {}
         
         # execute
