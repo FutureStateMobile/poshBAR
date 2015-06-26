@@ -1,6 +1,4 @@
-param(
-    [hashtable] $poshBAR
-)
+param( [hashtable] $poshBAR )
 
 if ( $OctopusParameters ) { 
     $poshBAR.DisableWindowsFeaturesAdministration = $OctopusParameters["poshBAR.DisableWindowsFeaturesAdministration"]

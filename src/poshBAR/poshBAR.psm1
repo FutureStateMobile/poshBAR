@@ -19,6 +19,8 @@ Push-Location $psScriptRoot
 # Set Overrides
 . .\OctopusDeploy\Set-OctopusDeployOverrides.ps1 $poshBAR
 
+Write-Output $poshBAR
+
 # Import Modules
 . .\Add-HostsFileEntry.ps1
 . .\Add-IISHttpVerb.ps1
