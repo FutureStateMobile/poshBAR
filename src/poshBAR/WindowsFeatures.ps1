@@ -31,6 +31,13 @@ function Install-WindowsFeatures{
         } else {    
             $value = $feature[$key]    
             Write-Host ($msgs.msg_enabling_windows_feature -f $key) -NoNewline
+
+            if($poshBAR.DisableWindowsFeaturesAdministration){
+                Write-Host 
+                Write-Warning "Enabling $key is not permitted because 'DisableWindowsFeaturesAdministration' has been set to 'true'."
+                break
+            }
+
             if($value -ne "enabled"){
                 try{
                     Exec{Dism /online /Enable-Feature /FeatureName:$($key) /NoRestart /Quiet /English} 
