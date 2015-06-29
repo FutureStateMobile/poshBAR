@@ -17,7 +17,7 @@ Set-Alias new New-Object
 Push-Location $psScriptRoot
 
 # Set Overrides
-#. .\OctopusDeploy\Set-OctopusDeployOverrides.ps1 $poshBAR
+. .\OctopusDeploy\Set-OctopusDeployOverrides.ps1 $poshBAR
 
 # Import Modules
 . .\Add-HostsFileEntry.ps1
@@ -188,6 +188,7 @@ convertfrom-stringdata @"
     error_specflow_generation = Error generating the specflow feature files for '{0}'.
     error_chutzpah = Error running the chutzpah javascipt tests for '{0}'.
     error_cannot_find_tool = Could not find {0}, please specify it's path to `$env:PATH
+    error_windows_features_admin_disabled = Enabling {0} is not permitted because "DisableWindowsFeaturesAdministration" has been set to "true".
     wrn_full_permission = You have applied FULL permission to '{0}' for '{1}'. THIS IS DANGEROUS!
     wrn_cant_find = Could not find {0} with the name: {0}.
     msg_grant_permission = Granting {0} permissions to {1} for {2}.
@@ -217,3 +218,4 @@ convertfrom-stringdata @"
     msg_update_auth = Updating {0} for {1} to {2}
 "@
 }
+$poshBAR.msgs = $msgs # Exporting the messages so that they can be used in tests.

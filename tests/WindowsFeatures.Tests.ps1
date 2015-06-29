@@ -13,11 +13,10 @@ Describe 'Install-WindowsFeatures' {
         $windowsFeatures = @('Fake-WindowsFeature')
         
         # execute
-        $execute = {Install-WindowsFeatures $windowsFeatures}
+        Install-WindowsFeatures $windowsFeatures
         
         # assert
         It 'Will execute the DISM command.' {
-            . $execute
             Assert-MockCalled Invoke-ExternalCommand -moduleName poshBAR -Exactly 1
         }
         
@@ -26,7 +25,7 @@ Describe 'Install-WindowsFeatures' {
         }
     }
     
-    Context 'Should prevent enabling feature when DisableWindowsFeaturesAdministration is set to true.' {
+    Context 'Should prevent enabling a Windows Feature when DisableWindowsFeaturesAdministration is set to true.' {
         # setup
         $poshBAR.DisableWindowsFeaturesAdministration = $true
         $windowsFeatures = @('Fake-WindowsFeature')
@@ -36,7 +35,7 @@ Describe 'Install-WindowsFeatures' {
         
         # assert
         It 'Will throw an exception' {
-            $execute | should throw    
+            $execute | should throw $($poshBAR.msgs.error_windows_features_admin_disabled -f 'Fake-WindowsFeature')
         }
         
         It 'Will not execute the DISM command.' {

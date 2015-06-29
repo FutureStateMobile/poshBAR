@@ -17,8 +17,7 @@ if ($projectHelp.isPresent) {
     $buildNumberParts = $buildNumber.split(".")
 
     if ($buildNumberParts.length -ne 4) {
-        Write-Host "Incorrectly formatted Build Number, it must be formatted (n.n.n.n)"
-        exit 1
+        throw "Incorrectly formatted Build Number, it must be formatted (n.n.n.n)"
     }
     
     $version = "$($buildNumberParts[0]).$($buildNumberParts[1]).$($buildNumberParts[2])";

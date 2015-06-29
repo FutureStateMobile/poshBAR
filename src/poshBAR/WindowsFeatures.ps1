@@ -34,7 +34,8 @@ function Install-WindowsFeatures{
 
             if($value -ne "enabled"){
                 if($poshBAR.DisableWindowsFeaturesAdministration){
-                    throw "Enabling $key is not permitted because 'DisableWindowsFeaturesAdministration' has been set to 'true'."
+                    Write-Host # inserts a break
+                    throw ($msgs.error_windows_features_admin_disabled -f $key) 
                 }
                 
                 try{
