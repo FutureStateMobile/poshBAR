@@ -4,7 +4,6 @@ Describe 'Find-ToolPath' {
     Context 'Handle a valid tool.'{
         # setup
         $toolName = 'mage'
-        $scriptsLocation = $(Resolve-Path "$here\..\src\poshBAR").Path
        
         # execute
         $execute = {Find-ToolPath $toolName} 
@@ -17,10 +16,6 @@ Describe 'Find-ToolPath' {
         
         It 'Will execute the tool and not throw an exception.' {
            {. $toolName -h} | should not throw 
-        }
-        
-        It 'Will have a valid path on the result.' {
-            $result | should be $scriptsLocation
         }
     }
     
