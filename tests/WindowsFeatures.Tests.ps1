@@ -2,11 +2,15 @@ $ErrorActionPreference = 'Stop'
 
 Describe 'Install-WindowsFeatures' { 
     
+    BeforeAll {
+        # Setup Mocks
+        Mock -moduleName poshBAR Get-WindowsFeatures {return @{'Fake-WindowsFeature' = 'disabled' }}
+        Mock -moduleName poshBAR Invoke-ExternalCommand {}
+    }
+    
     Context 'Should enable a windows feature.' {
         # setup
         $windowsFeatures = @('Fake-WindowsFeature')
-        Mock -moduleName poshBAR Invoke-ExternalCommand {}
-        Mock -moduleName poshBAR Get-WindowsFeatures {return @{'Fake-WindowsFeature' = 'disabled' }}
         
         # execute
         $execute = {Install-WindowsFeatures $windowsFeatures}
@@ -22,19 +26,20 @@ Describe 'Install-WindowsFeatures' {
         }
     }
     
-    Context 'Should prevent enabling feature.' {
+    Context 'Should prevent enabling feature when DisableWindowsFeaturesAdministration is set to true.' {
         # setup
         $poshBAR.DisableWindowsFeaturesAdministration = $true
         $windowsFeatures = @('Fake-WindowsFeature')
-        Mock -moduleName poshBAR Invoke-ExternalCommand {}
-        Mock -moduleName poshBAR Get-WindowsFeatures {return @{'Fake-WindowsFeature' = 'disabled' }}
         
         # execute
         $execute = {Install-WindowsFeatures $windowsFeatures}
         
         # assert
+        It 'Will throw an exception' {
+            $execute | should throw    
+        }
+        
         It 'Will not execute the DISM command.' {
-            . $execute
             Assert-MockCalled Invoke-ExternalCommand -moduleName poshBAR -Exactly 0
         }
         
@@ -43,10 +48,11 @@ Describe 'Install-WindowsFeatures' {
         }
     }
             
-    Context 'Should enable a windows feature.' {
+    Context 'Should skip but not fail when attepting to enable an optional feature.' {
         # setup
-        $windowsFeatures = @('IIS-THISFEATUREDOESNTEXIST?')
-
+        $windowsFeatures = @('SomeOptionalFeature?')
+        Mock Write-Warning {} -moduleName 'Microsoft.PowerShell.Utility' 
+        
         # execute
         $execute = {Install-WindowsFeatures $windowsFeatures}
 
@@ -54,13 +60,20 @@ Describe 'Install-WindowsFeatures' {
         It 'Will not throw an exception on optional feature'   {
             $execute | Should Not Throw
         }
+                
+        It 'Will execute the Get-WindowsFeatures cmdlet' {
+            Assert-MockCalled Get-WindowsFeatures -moduleName poshBar
+        }
+        
+        It 'Will write a warning message to the console' -skip {
+            Assert-MockCalled Write-Warning -moduleName 'Microsoft.PowerShell.Utility' 
+        }
     }
     
     Context 'Should throw on invalid feature.' {
         # setup
         $poshBAR.DisableWindowsFeaturesAdministration = $true
         $windowsFeatures = @('Foo-Bar-Feature')
-        Mock -moduleName poshBAR Invoke-ExternalCommand {}
         
         # execute
         $execute = {Install-WindowsFeatures $windowsFeatures}
@@ -75,7 +88,6 @@ Describe 'Install-WindowsFeatures' {
         # setup
         $poshBAR.DisableWindowsFeaturesAdministration = $true
         $windowsFeatures = @()
-        Mock -moduleName poshBAR Invoke-ExternalCommand {}
         
         # execute
         $execute = {Install-WindowsFeatures $windowsFeatures}
@@ -89,7 +101,6 @@ Describe 'Install-WindowsFeatures' {
     Context 'Should throw on null feature array.' {
         # setup
         $poshBAR.DisableWindowsFeaturesAdministration = $true
-        Mock -moduleName poshBAR Invoke-ExternalCommand {}
         
         # execute
         $execute = {Install-WindowsFeatures}
