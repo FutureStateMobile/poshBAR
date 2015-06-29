@@ -37,13 +37,11 @@ function Add-HostsFileEntry
         [parameter(Mandatory=$false,position=1)] [ValidatePattern('\d{1,3}(\.\d{1,3}){3}')] [string] [alias('ip')] $ipAddress = "127.0.0.1",
         [parameter(Mandatory=$false,position=2)][switch] $includeLoopbackFix
 	)
-
     $ErrorActionPreference = "Stop"
     Write-Host ($msgs.msg_add_host_entry -f $hostName) -NoNewLine
 
 	$HostsLocation = "$env:windir\System32\drivers\etc\hosts"
 	$NewHostEntry = "`t$ipAddress`t$hostName"
-
 
 	if((gc $HostsLocation) -contains $NewHostEntry)
 	{
@@ -51,8 +49,13 @@ function Add-HostsFileEntry
 	}
 	else
 	{
-        Write-Host "`tDone"
-		Add-Content -Path $HostsLocation -Value $NewHostEntry
+        if($poshBAR.DisableHostFileAdministration){
+            Write-Host # just a line break
+            Write-Warning $msgs.wrn_host_file_admin_disabled
+        } else {
+    		Add-Content -Path $HostsLocation -Value $NewHostEntry
+            Write-Host "`tDone"
+        }
 	}
 
 	# Validate entry

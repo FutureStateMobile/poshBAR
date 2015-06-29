@@ -50,7 +50,7 @@ Describe 'Install-WindowsFeatures' {
     Context 'Should skip but not fail when attepting to enable an optional feature.' {
         # setup
         $windowsFeatures = @('SomeOptionalFeature?')
-        Mock Write-Warning {} -moduleName 'Microsoft.PowerShell.Utility' 
+        Mock Write-Warning {} -moduleName poshBAR
         
         # execute
         $execute = {Install-WindowsFeatures $windowsFeatures}
@@ -64,8 +64,8 @@ Describe 'Install-WindowsFeatures' {
             Assert-MockCalled Get-WindowsFeatures -moduleName poshBar
         }
         
-        It 'Will write a warning message to the console' -skip {
-            Assert-MockCalled Write-Warning -moduleName 'Microsoft.PowerShell.Utility' 
+        It 'Will write a warning message to the console' {
+            Assert-MockCalled Write-Warning -moduleName poshBAR
         }
     }
     

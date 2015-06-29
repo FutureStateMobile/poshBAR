@@ -190,6 +190,7 @@ convertfrom-stringdata @"
     error_cannot_find_tool = Could not find {0}, please specify it's path to `$env:PATH
     error_windows_features_admin_disabled = Enabling {0} is not permitted because "DisableWindowsFeaturesAdministration" has been set to "true".
     error_invalid_windows_feature = {0} is not a valid Windows Feature. Please verify against {1}
+    wrn_host_file_admin_disabled = Editing the host file is not permitted because "DisableHostFileAdministration" has beeen set to "true".
     wrn_full_permission = You have applied FULL permission to '{0}' for '{1}'. THIS IS DANGEROUS!
     wrn_cant_find = Could not find {0} with the name: {0}.
     msg_grant_permission = Granting {0} permissions to {1} for {2}.

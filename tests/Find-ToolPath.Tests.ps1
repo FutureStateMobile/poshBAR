@@ -1,6 +1,17 @@
 $ErrorActionPreference = 'Stop'
-$here = Split-Path $script:MyInvocation.MyCommand.Path
+
 Describe 'Find-ToolPath' { 
+    
+    # Setup
+    BeforeEach {
+        $originalPath = $env:PATH
+    }
+    
+    # Teardown
+    AfterEach {
+        $env:PATH = $originalPath
+    }
+    
     Context 'Handle a valid tool.'{
         # setup
         $toolName = 'mage'
@@ -21,7 +32,6 @@ Describe 'Find-ToolPath' {
     
     Context 'Handle Mocked tool on PATH' { 
         # Setup 
-        $orig = $env:PATH
         $toolName = 'mock'
         $mockToolPath = 'C:\Temp\Mock'
         $env:PATH += ";$mockToolPath"
@@ -33,9 +43,6 @@ Describe 'Find-ToolPath' {
         It 'Will find a mock tool on the path and not throw.' {
             $result | should be $mockToolPath
         }
-        
-        # tear down
-        $env:PATH = $orig
     }
     
     Context 'Handle an invalid tool.' {
