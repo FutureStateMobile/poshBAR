@@ -19,7 +19,7 @@ Describe 'Find-ToolPath' {
            {. $toolName -h} | should not throw 
         }
         
-        It 'Will have a valid path on the result.' -skip {
+        It 'Will have a valid path on the result.' {
             $result | should be $scriptsLocation
         }
     }
