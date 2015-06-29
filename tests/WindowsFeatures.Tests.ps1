@@ -4,6 +4,7 @@ Describe 'Install-WindowsFeatures' {
     
     BeforeAll {
         # Setup Mocks
+        Mock Write-Host {} -ModuleName poshBar # just prevents verbose output during tests.
         Mock -moduleName poshBAR Get-WindowsFeatures {return @{'Fake-WindowsFeature' = 'disabled' }}
         Mock -moduleName poshBAR Invoke-ExternalCommand {}
     }
