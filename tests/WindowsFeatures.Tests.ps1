@@ -79,7 +79,7 @@ Describe 'Install-WindowsFeatures' {
         
         # assert
         It 'Will throw an exception on an invalid feature.' {
-            $execute | Should Throw
+            $execute | Should Throw $($poshBAR.msgs.error_invalid_windows_feature -f 'Foo-Bar-Feature', '')
         }
     }
     

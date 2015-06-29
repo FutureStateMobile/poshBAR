@@ -89,7 +89,7 @@ function Assert-WindowsFeatures {
     $ht = $allFeatures | ? {$_[$feature]}
 
     if(-not ($ht) -and -not($_.EndsWith("?"))){
-        throw "{0} is not a member of {1}" -f $_, $($allFeatures.Keys -join ", ")
+        throw $msgs.error_invalid_windows_feature -f $_, $($allFeatures.Keys -join ", ")
         Exit 1
     }
 
