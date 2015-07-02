@@ -1,7 +1,10 @@
-$version = '1.0.0.0' # contains the current version of poshBAR
+$version = '1.0.0' # contains the current version of poshBAR
+$buildNumber = '1' # contains the current build number of poshBAR
+
 if (Get-Module 'poshBAR') { return }
 $global:poshBAR = @{
     'version' = $version
+    'buildNumber' = $buildNumber
 }
 
 $currentThread = [System.Threading.Thread]::CurrentThread
@@ -9,7 +12,11 @@ $culture = [System.Globalization.CultureInfo]::InvariantCulture
 $currentThread.CurrentCulture = $culture
 $currentThread.CurrentUICulture = $culture
 
-Write-Host "`nposhBAR version $version `nCopyright ($([char]0x00A9)) Future State Mobile Inc. & Contributors`n"
+Write-Host @"
+poshBAR version: $version
+poshBar buildNumber: $buildNumber
+Copyright ($([char]0x00A9)) Future State Mobile Inc. & Contributors
+"@
 
 Remove-Item alias:new -ea SilentlyContinue
 Set-Alias new New-Object
