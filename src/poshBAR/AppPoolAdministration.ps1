@@ -58,26 +58,25 @@ function New-AppPool{
 
     if (!$exists){
         if($poshBAR.DisableCreateIISApplicationPool) {
-            Write-Warning $msgs.wrn_apppool_creation_disabled
-        } else {
-            Write-Host "Creating AppPool: $appPoolName" -NoNewLine
-            $newAppPool = "$appcmd add APPPOOL"
-            $newAppPool += " /name:$appPoolName"
-            $newAppPool += " /processModel.identityType:$appPoolIdentityType"
-            $newAppPool += " /processModel.maxProcesses:$maxProcesses"
-            $newAppPool += " /managedPipelineMode:$managedPipelineMode"
-            $newAppPool += " /managedRuntimeVersion:$managedRuntimeVersion"
-            $newAppPool += ' /autoStart:true'
-            $newAppPool += if($alwaysRunning.IsPresent) {' /startMode:AlwaysRunning'}
-        
-            if ( $appPoolIdentityType -eq "SpecificUser" ){
-                $newAppPool += " /processModel.userName:$username"
-                $newAppPool += " /processModel.password:$password"
-            }
-    
-            Exec { Invoke-Expression  $newAppPool } -retry 10 | Out-Null
-            Write-Host "`tDone" -f Green            
+            throw $msgs.error_apppool_creation_disabled
         }
+        Write-Host "Creating AppPool: $appPoolName" -NoNewLine
+        $newAppPool = "$appcmd add APPPOOL"
+        $newAppPool += " /name:$appPoolName"
+        $newAppPool += " /processModel.identityType:$appPoolIdentityType"
+        $newAppPool += " /processModel.maxProcesses:$maxProcesses"
+        $newAppPool += " /managedPipelineMode:$managedPipelineMode"
+        $newAppPool += " /managedRuntimeVersion:$managedRuntimeVersion"
+        $newAppPool += ' /autoStart:true'
+        $newAppPool += if($alwaysRunning.IsPresent) {' /startMode:AlwaysRunning'}
+    
+        if ( $appPoolIdentityType -eq "SpecificUser" ){
+            $newAppPool += " /processModel.userName:$username"
+            $newAppPool += " /processModel.password:$password"
+        }
+
+        Exec { Invoke-Expression  $newAppPool } -retry 10 | Out-Null
+        Write-Host "`tDone" -f Green            
     }else{
         if($updateIfFound.IsPresent){
             Update-AppPool $appPoolName $appPoolIdentityType $maxProcesses $username $password $managedPipelineMode $managedRuntimeVersion    
