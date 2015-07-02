@@ -190,6 +190,9 @@ convertfrom-stringdata @"
     error_cannot_find_tool = Could not find {0}, please specify it's path to `$env:PATH
     error_windows_features_admin_disabled = Enabling {0} is not permitted because "DisableWindowsFeaturesAdministration" has been set to "true".
     error_invalid_windows_feature = {0} is not a valid Windows Feature. Please verify against {1}
+    error_aspnet_regiis_not_found = aspnet_regiis.exe was not found on this machine.
+    wrn_aspnet_regiis_not_found = An error occurred while trying to register IIS. If you're running this command on Server => 2012, please add IIS-ASPNET45 as a Windows Feature.
+    wrn_aspnet_regiis_disabled = Installing ASP.NET {0} is not permitted because "DisableASPNETRegIIS" has been set to "true".
     wrn_host_file_admin_disabled = Editing the host file is not permitted because "DisableHostFileAdministration" has beeen set to "true".
     wrn_full_permission = You have applied FULL permission to '{0}' for '{1}'. THIS IS DANGEROUS!
     wrn_cant_find = Could not find {0} with the name: {0}.
