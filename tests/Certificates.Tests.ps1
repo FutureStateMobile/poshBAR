@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 $here = Split-Path $script:MyInvocation.MyCommand.Path
 
-Describe 'Certificates' { 
+Describe 'Certificates.ps1' { 
     
     BeforeAll {
         $pth = $env:PATH
@@ -15,7 +15,7 @@ Describe 'Certificates' {
         $env:PATH = $pth
     }
    
-    Context 'Private Key' {
+    Context 'Create a new private ssl key.' {
         # setup
         $name = 'pk-cert'
         $password = (ConvertTo-SecureString 'somePassword' -AsPlainText -Force)
@@ -26,7 +26,7 @@ Describe 'Certificates' {
         $result = New-PrivateKey $name $password $subject $out
         
         # assert
-        It 'Will not return null' {
+        It 'Will not return a null result' {
             $result | should not BeNullOrEmpty
         }
         
@@ -42,7 +42,7 @@ Describe 'Certificates' {
             $result.name | should be "$name"
         }
         
-        It 'Will have the expected name returned' {
+        It 'Will have the expected crt subject returned' {
             $result.subject | should be $subject
         }
         

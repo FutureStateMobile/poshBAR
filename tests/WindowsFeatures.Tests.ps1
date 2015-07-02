@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
-Describe 'Install-WindowsFeatures' { 
+Describe 'WindowsFeatures.ps1' { 
     
     BeforeAll {
         # Setup Mocks
@@ -9,7 +9,7 @@ Describe 'Install-WindowsFeatures' {
         Mock -moduleName poshBAR Invoke-ExternalCommand {}
     }
     
-    Context 'Should enable a windows feature.' {
+    Context 'Enable a Windows Feature.' {
         # setup
         $windowsFeatures = @('Fake-WindowsFeature')
         
@@ -26,7 +26,7 @@ Describe 'Install-WindowsFeatures' {
         }
     }
     
-    Context 'Should prevent enabling a Windows Feature when DisableWindowsFeaturesAdministration is set to true.' {
+    Context 'Prevent enabling a Windows Feature when DisableWindowsFeaturesAdministration is set to true.' {
         # setup
         $poshBAR.DisableWindowsFeaturesAdministration = $true
         $windowsFeatures = @('Fake-WindowsFeature')
@@ -48,7 +48,7 @@ Describe 'Install-WindowsFeatures' {
         }
     }
             
-    Context 'Should skip but not fail when attepting to enable an optional feature.' {
+    Context 'Skip enabling an optional Windows Feature.' {
         # setup
         $windowsFeatures = @('SomeOptionalFeature?')
         Mock Write-Warning {} -moduleName poshBAR

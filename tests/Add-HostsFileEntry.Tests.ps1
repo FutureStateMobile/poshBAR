@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
-Describe 'Add-HostsFileEntry' { 
+Describe 'Add-HostsFileEntry.ps1' { 
     BeforeAll {
         Mock Write-Host {} -ModuleName poshBar # just prevents verbose output during tests.
         Mock Add-Content -ModuleName poshBAR
@@ -38,7 +38,7 @@ Describe 'Add-HostsFileEntry' {
         }
     }
     
-    Context 'Will no add a host file entry when DisableHostFileAdministration is set to true' {
+    Context 'Not add a host file entry when DisableHostFileAdministration is set to true' {
         # Setup
         $poshBAR.DisableHostFileAdministration = $true
         $hostName = 'my-temp-hostname.com'

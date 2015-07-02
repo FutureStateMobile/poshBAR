@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
-Describe 'Find-ToolPath' { 
+Describe 'Find-ToolPath.ps1' { 
     
     # Setup
     BeforeEach {
