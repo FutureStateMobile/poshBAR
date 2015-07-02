@@ -9,7 +9,7 @@ Describe 'Install Windows Features' {
         Mock -moduleName poshBAR Invoke-ExternalCommand {}
     }
     
-    Context 'Should enable a windows feature.' {
+    Context 'Will enable a windows feature.' {
         # setup
         $windowsFeatures = @('Fake-WindowsFeature')
         
@@ -26,7 +26,7 @@ Describe 'Install Windows Features' {
         }
     }
     
-    Context 'Should prevent enabling a Windows Feature when DisableWindowsFeaturesAdministration is set to true.' {
+    Context 'Will prevent enabling a Windows Feature when DisableWindowsFeaturesAdministration is set to true.' {
         # setup
         $poshBAR.DisableWindowsFeaturesAdministration = $true
         $windowsFeatures = @('Fake-WindowsFeature')
@@ -48,7 +48,7 @@ Describe 'Install Windows Features' {
         }
     }
             
-    Context 'Should skip but not fail when attepting to enable an optional feature.' {
+    Context 'Will skip but not fail when attepting to enable an optional feature.' {
         # setup
         $windowsFeatures = @('SomeOptionalFeature?')
         Mock Write-Warning {} -moduleName poshBAR
@@ -70,7 +70,7 @@ Describe 'Install Windows Features' {
         }
     }
     
-    Context 'Should throw on invalid feature.' {
+    Context 'Will throw on invalid feature.' {
         # setup
         $poshBAR.DisableWindowsFeaturesAdministration = $true
         $windowsFeatures = @('Foo-Bar-Feature')
@@ -84,7 +84,7 @@ Describe 'Install Windows Features' {
         }
     }
     
-    Context 'Should throw on empty feature array.' {
+    Context 'Will throw on empty feature array.' {
         # setup
         $poshBAR.DisableWindowsFeaturesAdministration = $true
         $windowsFeatures = @()
@@ -98,7 +98,7 @@ Describe 'Install Windows Features' {
         }
     }
     
-    Context 'Should throw on null feature array.' {
+    Context 'Will throw on null feature array.' {
         # setup
         $poshBAR.DisableWindowsFeaturesAdministration = $true
         
