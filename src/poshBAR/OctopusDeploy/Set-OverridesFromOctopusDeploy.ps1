@@ -6,9 +6,10 @@ if ( $OctopusParameters ) {
     $poshBAR.DisableHostFileAdministration = [System.Convert]::ToBoolean($OctopusParameters['poshBAR.DisableHostFileAdministration'])
     $poshBAR.DisableASPNETRegIIS = [System.Convert]::ToBoolean($OctopusParameters['poshBAR.DisableASPNETRegIIS'])
     $poshBAR.DisableLoopbackFix = [System.Convert]::ToBoolean($OctopusParameters['poshBAR.DisableLoopbackFix'])
+    $poshBAR.DisableCreateIISApplicationPool = [System.Convert]::ToBoolean($OctopusParameters['poshBAR.DisableCreateIISApplicationPool'])
     #$poshBAR.DisableCreateIISWebsite = [System.Convert]::ToBoolean($OctopusParameters['poshBAR.DisableCreateIISWebsite'])
     #$poshBAR.DisableCreateIISApplication = [System.Convert]::ToBoolean($OctopusParameters['poshBAR.DisableCreateIISApplication'])
-    #$poshBAR.DisableCreateIISApplicationPool = [System.Convert]::ToBoolean($OctopusParameters['poshBAR.DisableCreateIISApplicationPool'])
+    
     
 }
 
