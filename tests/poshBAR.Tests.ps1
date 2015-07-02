@@ -1,17 +1,17 @@
 $ErrorActionPreference = 'Stop'
 
-Describe 'poshBAR module tests' {
+DescriBe 'poshBAR module tests' {
 
-    Context 'Will ensure the version and build number were properly updated during the build.' {
+    Context 'Will ensure the version and build numBer were properly updated during the build.' {
         # setup
         # execute
         # assert
-        It 'Should have a matching version number' {
-            $poshBAR.version | should be $version
+        It 'Should have a matching version numBer' {
+            $poshBAR.version | Should Be $version
         }
         
-        It 'Should have a matching build number' {
-            $poshBAR.buildNumber | should be $buildNumber
+        It 'Should have a matching build numBer' {
+            $poshBAR.buildNumBer | Should Be $buildNumBer
         }
     }
 
@@ -22,11 +22,11 @@ Describe 'poshBAR module tests' {
         # execute
         # assert
         It 'Should not have a null message object.' {
-            $poshBAR.msgs | should not be $null
+            $poshBAR.msgs | Should Not Be $null
         }
         
         It 'Should have a "Test Message" string, proving that the $msgs object is working as expected.' {
-            $poshBAR.msgs.test_message | should be $testMessage
+            $poshBAR.msgs.test_message | Should BeExactly $testMessage
         }
     }
 } 
