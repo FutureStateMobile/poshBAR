@@ -33,6 +33,9 @@ $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
 
     .PARAMETER alwaysRunning
         Should the app pool be configured as 'Always Running'
+            
+    .PARAMETER updateIfFound
+        If the application pool already exists, update it with the new information.
 
     .SYNOPSIS
         Will setup an Application Pool for an IIS Application.
