@@ -47,7 +47,8 @@ function New-AppPool{
         [parameter(Mandatory=$false,position=4)] [string] [alias('pwd')] $password,
         [parameter(Mandatory=$false,position=5)] [string] [ValidateSet('Integrated','Classic')] $managedPipelineMode = 'Integrated',
         [parameter(Mandatory=$false,position=6)] [string] $managedRuntimeVersion = "v4.0",
-        [parameter(Mandatory=$false,position=7)] [switch] $alwaysRunning
+        [parameter(Mandatory=$false)] [switch] $alwaysRunning,
+        [parameter(Mandatory=$false)] [switch] $updateIfFound
     )
 
     $exists = Confirm-AppPoolExists $appPoolName
@@ -75,7 +76,9 @@ function New-AppPool{
             Write-Host "`tDone" -f Green            
         }
     }else{
-        Update-AppPool $appPoolName $appPoolIdentityType $maxProcesses $username $password $managedPipelineMode $managedRuntimeVersion
+        if($updateIfFound.IsPresent){
+            Update-AppPool $appPoolName $appPoolIdentityType $maxProcesses $username $password $managedPipelineMode $managedRuntimeVersion    
+        }
     }
 }    
 
@@ -198,7 +201,7 @@ function Get-AppPool( $appPoolName ){
 #>
 function Get-AppPools{
     $getAppPools = "$appcmd list APPPOOLS"
-    Invoke-Expression $getAppPools | Out-Null
+    Invoke-Expression $getAppPools
 }
 
 <#
