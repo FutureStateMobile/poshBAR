@@ -57,9 +57,8 @@ Task GenerateDocumentation -depends SetupPaths, UpdateVersion, MakeBuildDir -ali
 }
 
 Task Package -depends SetupPaths, UpdateVersion, MakeBuildDir, RunPesterTests, GenerateDocumentation {
-    Update-XmlConfigValues $this.devopsNugetPackage "//*[local-name() = 'version']" $version
-    Update-XmlConfigValues $this.devopsNugetPackage "//*[local-name() = 'summary']" "$($this.devopsSummary) v-$version"
 
+    Update-XmlConfigValues $this.devopsNugetPackage "//*[local-name() = 'summary']" "$($this.devopsSummary) v-$version"
     exec { NuGet.exe Pack $this.devopsNugetPackage -Version "$version.$buildNumber" -OutputDirectory $this.buildPublishDir -NoPackageAnalysis } "Failed to package the Devops Scripts."
 }
 

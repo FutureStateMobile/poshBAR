@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
-Describe 'Invoke-AspNetRegIIS.ps1' { 
+Describe 'Invoke ASP_NET RegIIS' { 
     BeforeAll {
         # Setup Mocks
         Mock Write-Host {} -ModuleName poshBar # just prevents verbose output during tests.
@@ -16,11 +16,11 @@ Describe 'Invoke-AspNetRegIIS.ps1' {
         Invoke-AspNetRegIIS 
         
         # assert
-        It 'Will prevent installing ASP.NET.' {
+        It 'Should prevent installing ASP.NET.' {
             Assert-MockCalled Write-Warning -moduleName poshBAR -Exactly 1
         }
         
-        It 'Will have DisableASPNETRegIIS set to true' {
+        It 'Should have DisableASPNETRegIIS set to true' {
              $poshBAR.DisableASPNETRegIIS | should be $true
         }
         
@@ -28,7 +28,7 @@ Describe 'Invoke-AspNetRegIIS.ps1' {
         $poshBAR.DisableASPNETRegIIS = $false
     }
     
-    Context 'Invoke aspnet_regiis with defaults.'{
+    Context 'Will invoke aspnet_regiis with defaults.'{
         # setup
         $4_0Path = if($ENV:PROCESSOR_ARCHITECTURE -eq 'amd64'){ "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319" } else { "$env:WINDIR\Microsoft.NET\Framework\v4.0.30319" }
         
@@ -37,20 +37,20 @@ Describe 'Invoke-AspNetRegIIS.ps1' {
         $result = . $execute        
         
         # assert
-        It 'Will use the appropriate -iur switch.' {
+        It 'Should use the appropriate -iur switch.' {
             $result.switch | should be '-iur'
         }
         
-        It 'Will use the appropriate path to aspnet_regiis.exe.' {
+        It 'Should use the appropriate path to aspnet_regiis.exe.' {
             $result.path | should be $4_0Path
         }
         
-        It 'Will invoke aspnet_regiis.exe via EXEC {} command' {
+        It 'Should invoke aspnet_regiis.exe via EXEC {} command' {
             Assert-MockCalled Invoke-ExternalCommand -moduleName poshBAR -Exactly 1
         }
     }
     
-    Context 'Invoke aspnet_regiis -i.'{
+    Context 'Will invoke aspnet_regiis -i.'{
         # setup
         
         # execute
@@ -58,16 +58,16 @@ Describe 'Invoke-AspNetRegIIS.ps1' {
         $result = . $execute        
         
         # assert
-        It 'Will use the appropriate -i switch.' {
+        It 'Should use the appropriate -i switch.' {
             $result.switch | should be '-i'
         }
         
-        It 'Will invoke aspnet_regiis.exe via EXEC {} command' {
+        It 'Should invoke aspnet_regiis.exe via EXEC {} command' {
             Assert-MockCalled Invoke-ExternalCommand -moduleName poshBAR -Exactly 1
         }
     }
     
-    Context 'Invoke aspnet_regiis -ir.'{
+    Context 'Will invoke aspnet_regiis -ir.'{
         # setup
         
         # execute
@@ -75,16 +75,16 @@ Describe 'Invoke-AspNetRegIIS.ps1' {
         $result = . $execute        
         
         # assert
-        It 'Will use the appropriate -ir switch.' {
+        It 'Should use the appropriate -ir switch.' {
             $result.switch | should be '-ir'
         }
         
-        It 'Will invoke aspnet_regiis.exe via EXEC {} command' {
+        It 'Should invoke aspnet_regiis.exe via EXEC {} command' {
             Assert-MockCalled Invoke-ExternalCommand -moduleName poshBAR -Exactly 1
         }
     }
     
-    Context 'Invoke aspnet_regiis -iur.'{
+    Context 'Will invoke aspnet_regiis -iur.'{
         # setup
         
         # execute
@@ -92,11 +92,11 @@ Describe 'Invoke-AspNetRegIIS.ps1' {
         $result = . $execute        
         
         # assert
-        It 'Will use the appropriate -iur switch.' {
+        It 'Should use the appropriate -iur switch.' {
             $result.switch | should be '-iur'
         }
         
-        It 'Will invoke aspnet_regiis.exe via EXEC {} command' {
+        It 'Should invoke aspnet_regiis.exe via EXEC {} command' {
             Assert-MockCalled Invoke-ExternalCommand -moduleName poshBAR -Exactly 1
         }
     }
@@ -110,7 +110,7 @@ Describe 'Invoke-AspNetRegIIS.ps1' {
         $result = . $execute        
         
         # assert
-        It 'Will use the appropriate path to aspnet_regiis.' {
+        It 'Should use the appropriate path to aspnet_regiis.' {
             $result.path | should be $2_0Path
         }
     }
@@ -124,7 +124,7 @@ Describe 'Invoke-AspNetRegIIS.ps1' {
         $result = . $execute        
         
         # assert
-        It 'Will use the appropriate path to aspnet_regiis.' {
+        It 'Should use the appropriate path to aspnet_regiis.' {
             $result.path | should be $3_0Path
         }
     }
@@ -138,7 +138,7 @@ Describe 'Invoke-AspNetRegIIS.ps1' {
         $result = . $execute        
         
         # assert
-        It 'Will use the appropriate path to aspnet_regiis.' {
+        It 'Should use the appropriate path to aspnet_regiis.' {
             $result.path | should be $3_5Path
         }
     }
@@ -152,7 +152,7 @@ Describe 'Invoke-AspNetRegIIS.ps1' {
         $result = . $execute        
         
         # assert
-        It 'Will use the appropriate path to aspnet_regiis.' {
+        It 'Should use the appropriate path to aspnet_regiis.' {
             $result.path | should be $4_0Path
         }
     }
@@ -165,7 +165,7 @@ Describe 'Invoke-AspNetRegIIS.ps1' {
         $execute = { Invoke-AspNetRegIIS }
         
         # assert
-        It 'Will throw $msgs.error_aspnet_regiis_not_found exception.' {
+        It 'Should throw $msgs.error_aspnet_regiis_not_found exception.' {
             $execute | should throw $poshBAR.msgs.error_aspnet_regiis_not_found
         }
     }

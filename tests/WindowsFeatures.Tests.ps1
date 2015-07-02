@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
-Describe 'Install-WindowsFeatures' { 
+Describe 'Install Windows Features' { 
     
     BeforeAll {
         # Setup Mocks
@@ -17,11 +17,11 @@ Describe 'Install-WindowsFeatures' {
         Install-WindowsFeatures $windowsFeatures
         
         # assert
-        It 'Will execute the DISM command.' {
+        It 'Should execute the DISM command.' {
             Assert-MockCalled Invoke-ExternalCommand -moduleName poshBAR -Exactly 1
         }
         
-        It 'Will execute the Get-WindowsFeatures cmdlet' {
+        It 'Should execute the Get-WindowsFeatures cmdlet' {
             Assert-MockCalled Get-WindowsFeatures -moduleName poshBar
         }
     }
@@ -35,15 +35,15 @@ Describe 'Install-WindowsFeatures' {
         $execute = {Install-WindowsFeatures $windowsFeatures}
         
         # assert
-        It 'Will throw an exception' {
+        It 'Should throw an exception' {
             $execute | should throw $($poshBAR.msgs.error_windows_features_admin_disabled -f 'Fake-WindowsFeature')
         }
         
-        It 'Will not execute the DISM command.' {
+        It 'Should not execute the DISM command.' {
             Assert-MockCalled Invoke-ExternalCommand -moduleName poshBAR -Exactly 0
         }
         
-        It 'Will execute the Get-WindowsFeatures cmdlet' {
+        It 'Should execute the Get-WindowsFeatures cmdlet' {
             Assert-MockCalled Get-WindowsFeatures -moduleName poshBar
         }
     }
@@ -57,15 +57,15 @@ Describe 'Install-WindowsFeatures' {
         $execute = {Install-WindowsFeatures $windowsFeatures}
 
         # assert
-        It 'Will not throw an exception on optional feature'   {
+        It 'Should not throw an exception on optional feature'   {
             $execute | Should Not Throw
         }
                 
-        It 'Will execute the Get-WindowsFeatures cmdlet' {
+        It 'Should execute the Get-WindowsFeatures cmdlet' {
             Assert-MockCalled Get-WindowsFeatures -moduleName poshBar
         }
         
-        It 'Will write a warning message to the console' {
+        It 'Should write a warning message to the console' {
             Assert-MockCalled Write-Warning -moduleName poshBAR
         }
     }
@@ -79,7 +79,7 @@ Describe 'Install-WindowsFeatures' {
         $execute = {Install-WindowsFeatures $windowsFeatures}
         
         # assert
-        It 'Will throw an exception on an invalid feature.' {
+        It 'Should throw an exception on an invalid feature.' {
             $execute | Should Throw $($poshBAR.msgs.error_invalid_windows_feature -f 'Foo-Bar-Feature', '')
         }
     }
@@ -93,7 +93,7 @@ Describe 'Install-WindowsFeatures' {
         $execute = {Install-WindowsFeatures $windowsFeatures}
         
         # assert
-        It 'Will throw an exception on an empty array.' {
+        It 'Should throw an exception on an empty array.' {
             $execute | Should Throw
         }
     }
@@ -106,7 +106,7 @@ Describe 'Install-WindowsFeatures' {
         $execute = {Install-WindowsFeatures}
         
         # assert
-        It 'Will throw an exception on an null array.' {
+        It 'Should throw an exception on an null array.' {
             $execute | Should Throw
         }
     }
