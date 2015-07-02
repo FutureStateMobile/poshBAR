@@ -182,6 +182,7 @@ Export-ModuleMember `
 # Messages
 DATA msgs {
 convertfrom-stringdata @"
+    test_message = This is a test.
     error_duplicate_step_name = Step {0} has already been defined.
     error_must_supply_a_feature = You must supply at least one Windows Feature.
     error_feature_set_invalid = The argument `"{0}`" does not belong to the set `"{1}`".
