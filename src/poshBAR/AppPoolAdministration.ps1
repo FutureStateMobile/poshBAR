@@ -33,6 +33,9 @@ $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
 
     .PARAMETER alwaysRunning
         Should the app pool be configured as 'Always Running'
+            
+    .PARAMETER updateIfFound
+        If the application pool already exists, update it with the new information.
 
     .SYNOPSIS
         Will setup an Application Pool for an IIS Application.
@@ -47,12 +50,16 @@ function New-AppPool{
         [parameter(Mandatory=$false,position=4)] [string] [alias('pwd')] $password,
         [parameter(Mandatory=$false,position=5)] [string] [ValidateSet('Integrated','Classic')] $managedPipelineMode = 'Integrated',
         [parameter(Mandatory=$false,position=6)] [string] $managedRuntimeVersion = "v4.0",
-        [parameter(Mandatory=$false,position=7)] [switch] $alwaysRunning
+        [parameter(Mandatory=$false)] [switch] $alwaysRunning,
+        [parameter(Mandatory=$false)] [switch] $updateIfFound
     )
 
     $exists = Confirm-AppPoolExists $appPoolName
 
     if (!$exists){
+        if($poshBAR.DisableCreateIISApplicationPool) {
+            throw $msgs.error_apppool_creation_disabled
+        }
         Write-Host "Creating AppPool: $appPoolName" -NoNewLine
         $newAppPool = "$appcmd add APPPOOL"
         $newAppPool += " /name:$appPoolName"
@@ -69,9 +76,14 @@ function New-AppPool{
         }
 
         Exec { Invoke-Expression  $newAppPool } -retry 10 | Out-Null
-        Write-Host "`tDone" -f Green
+        Write-Host "`tDone" -f Green            
     }else{
-        Update-AppPool $appPoolName $appPoolIdentityType $maxProcesses $username $password $managedPipelineMode $managedRuntimeVersion
+        Write-Host "`tApp Pool already exists..." -f Cyan
+        if ($updateIfFound.isPresent) {
+            Update-AppPool $appPoolName $appPoolIdentityType $maxProcesses $username $password $managedPipelineMode $managedRuntimeVersion
+        } else {
+            Write-Host ($msgs.msg_not_updating -f "Application Pool")
+        }
     }
 }    
 
@@ -194,7 +206,7 @@ function Get-AppPool( $appPoolName ){
 #>
 function Get-AppPools{
     $getAppPools = "$appcmd list APPPOOLS"
-    Invoke-Expression $getAppPools | Out-Null
+    Invoke-Expression $getAppPools
 }
 
 <#

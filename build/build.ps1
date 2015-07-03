@@ -9,7 +9,7 @@ $script:this = @{
     srcDir = "$baseDir\src\poshBAR"
     devopsNugetPackage = "$baseDir\nuspec\poshBAR.nuspec"
     devopsSummary = "Powershell Build `$amp; Release"
-    testDir = "$baseDir\tests"
+    testDir = "$baseDir\src\tests"
 }
 
 # Dogfood
@@ -33,16 +33,20 @@ Task MakeBuildDir {
 }
 
 Task UpdateVersion -depends MakeBuildDir {
-    copy "$($this.srcDir)\*" "$($this.workingDir)\poshBar"
+    copy "$($this.srcDir)\*" "$($this.workingDir)\poshBar" -recurse
 
     Push-Location "$($this.workingDir)\poshBar"
 
-    $pattern = '^\$version = [''|"](\d.\d.\d.\d)[''|"] .*'
-    $output = "`$version = '$version.$buildNumber' # contains the current version of poshBAR"
+    $versionPattern = '^\$version = [''|"](\d.\d.\d)[''|"] .*'
+    $buildNumberPattern = '^\$buildNumber = [''|"](\d)[''|"] .*'
+    $versionOutput = "`$version = '$version' # contains the current version of poshBAR"
+    $buildNumberOutput = "`$buildNumber = '$buildNumber' # contains the current build number of poshBAR"
+    
     ls -r -filter poshBAR.psm1 | % {
         $filename = $_.Directory.ToString() + '\' + $_.Name
         (Get-Content $filename) | % {
-            % {$_ -replace $pattern, $output }
+            % {$_ -replace $versionPattern, $versionOutput } |
+            % {$_ -replace $buildNumberPattern, $buildNumberOutput }
         } | Out-File "$filename.temp"
 
         rm $filename -force
@@ -57,18 +61,21 @@ Task GenerateDocumentation -depends SetupPaths, UpdateVersion, MakeBuildDir -ali
 }
 
 Task Package -depends SetupPaths, UpdateVersion, MakeBuildDir, RunPesterTests, GenerateDocumentation {
-    Update-XmlConfigValues $this.devopsNugetPackage "//*[local-name() = 'version']" $version
-    Update-XmlConfigValues $this.devopsNugetPackage "//*[local-name() = 'summary']" "$($this.devopsSummary) v-$version"
 
+    Update-XmlConfigValues $this.devopsNugetPackage "//*[local-name() = 'summary']" "$($this.devopsSummary) v-$version"
     exec { NuGet.exe Pack $this.devopsNugetPackage -Version "$version.$buildNumber" -OutputDirectory $this.buildPublishDir -NoPackageAnalysis } "Failed to package the Devops Scripts."
 }
 
-Task RunPesterTests -depends MakeBuildDir -alias tests {
+Task RunPesterTests -depends UpdateVersion, MakeBuildDir -alias tests {
     $tmp = $env:TEMP
     $env:TEMP = $this.workingDir
     
+    # re-import poshBAR after changes.
+    Remove-Module poshBAR -force
+    Import-Module "$($this.workingDir)\poshBar" -force
+    
     Import-Module "$($this.packagesDir)\pester.*\tools\pester.psm1" -force  -Global
-    $results = Invoke-Pester -relative_path $this.testDir -PassThru  -OutputFile "$($this.resultsDir)\pester.xml" -OutputFormat NUnitXml
+    $results = Invoke-Pester -relative_path $this.testDir -PassThru -OutputFile "$($this.resultsDir)\pester.xml" -OutputFormat NUnitXml
     if($results.FailedCount -gt 0) {
         throw "$($results.FailedCount) Tests Failed."
     }

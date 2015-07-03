@@ -29,58 +29,72 @@ function Invoke-AspNetRegIIS {
         [parameter(Mandatory=$false, ParameterSetName='-ir')] [switch] $ir,
         [parameter(Mandatory=$false, ParameterSetName='-iur')] [switch] $iur,
         
-        [parameter(Mandatory=$false, ParameterSetName='-i')] [ValidateSet(1.0,1.1,2.0,3.0,3.5,4.0,4.5)] [double] 
-        [parameter(Mandatory=$false, ParameterSetName='-ir')] [ValidateSet(1.0,1.1,2.0,3.0,3.5,4.0,4.5)] [double] 
-        [parameter(Mandatory=$false, ParameterSetName='-iur')] [ValidateSet(1.0,1.1,2.0,3.0,3.5,4.0,4.5)] [double] 
+        [parameter(Mandatory=$false, ParameterSetName='-i')] [ValidateSet(2.0,3.0,3.5,4.0,4.5)] [double] 
+        [parameter(Mandatory=$false, ParameterSetName='-ir')] [ValidateSet(2.0,3.0,3.5,4.0,4.5)] [double] 
+        [parameter(Mandatory=$false, ParameterSetName='-iur')] [ValidateSet(2.0,3.0,3.5,4.0,4.5)] [double] 
         $framework = 4.0
     )
+    
     $ErrorActionPreference = "Stop"
     Write-Host "Ensuring ASP.NET version $framework is registered in IIS."
 
-    # all possible locations for aspnet_regiis.exe
-    $v1   = "$env:WINDIR\.NET\Framework\v1.0.3705"               # .NET Framework version 1
-    $v1_1 = "$env:WINDIR\Microsoft.NET\Framework\v1.1.4322"      # .NET Framework version 1.1
+    $path = Get-PathToAspNetRegIIS $framework
+    
+    if(-not (Test-Path "$path\aspnet_regiis.exe")){
+        Write-Host '' # just inputs a carriage return if an error occurs
+        throw $msgs.error_aspnet_regiis_not_found
+    }
+    
+    if( $poshBAR.DisableASPNETRegIIS ) {
+        Write-Host '' # just inputs a carriage return if an error occurs
+        Write-Warning $($msgs.wrn_aspnet_regiis_disabled -f $framework)
+    } else {
+        try{
+            Write-Host "Executing: '$path\aspnet_regiis.exe $($PsCmdlet.ParameterSetName)'." -NoNewline
+            Exec {. "$path\aspnet_regiis.exe $($PsCmdlet.ParameterSetName)"} $msgs.wrn_aspnet_regiis_not_found
+            Write-Host "`tDone" -f Green
+        } catch {
+            Write-Host '' # just inputs a carriage return if an error occurs
+            Write-Warning $_ # We don't want to fail deployment if this command fails. Just write out the warning.
+            Write-Host 'The deployment will continue...'
+        }
+    }
+    
+    Write-Output @{
+        'path' = $path
+        'switch' = $($PsCmdlet.ParameterSetName)
+    }
+}
+Set-Alias aspnet_regiis Invoke-AspNetRegIIS
+
+
+function Get-PathToAspNetRegIIS($framework){
+    
+    # all possible locations for aspnet_regiis.exe excluding v1 and v1.1
     $v2_32 = "$env:WINDIR\Microsoft.NET\Framework\v2.0.50727"    # .NET Framework version 2.0, version 3.0, and version 3.5 (32-bit systems)
     $v2_64 = "$env:WINDIR\Microsoft.NET\Framework64\v2.0.50727"  # .NET Framework version 2.0, version 3.0, and version 3.5 (64-bit systems)
     $v4_32 = "$env:WINDIR\Microsoft.NET\Framework\v4.0.30319"    # .NET Framework version 4 (32-bit systems)
     $v4_64 = "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319"  # .NET Framework version 4 (64-bit systems)
 
-
     if($ENV:PROCESSOR_ARCHITECTURE -eq 'amd64'){
         switch($framework){
-            1.0 { $path = $v1;break}
-            1.1 { $path = $v1_1;break}
-            2.0 { $path = $v2_64;break}
-            3.0 { $path = $v2_64;break}
-            3.5 { $path = $v2_64;break}
-            4.0 { $path = $v4_64;break}
-            4.5 { $path = $v4_64;break}
+            1.0 { return $v1}
+            1.1 { return $v1_1}
+            2.0 { return $v2_64}
+            3.0 { return $v2_64}
+            3.5 { return $v2_64}
+            4.0 { return $v4_64}
+            4.5 { return $v4_64}
         }
     } else {
         switch($framework){
-            1.0 { $path = $v1;break}
-            1.1 { $path = $v1_1;break}
-            2.0 { $path = $v2_32;break}
-            3.0 { $path = $v2_32;break}
-            3.5 { $path = $v2_32;break}
-            4.0 { $path = $v4_32;break}
-            4.5 { $path = $v4_32;break}
+            1.0 { return $v1}
+            1.1 { return $v1_1}
+            2.0 { return $v2_32}
+            3.0 { return $v2_32}
+            3.5 { return $v2_32}
+            4.0 { return $v4_32}
+            4.5 { return $v4_32}
         }
     }
-         
-    if(-not (Test-Path "$path\aspnet_regiis.exe")){
-        Write-Host '' # just inputs a carriage return if an error occurs
-        throw 'aspnet_regiis.exe was not found on this machine.'
-    }
-
-    try{
-        Write-Host "Executing: '$path\aspnet_regiis.exe $($PsCmdlet.ParameterSetName)'." -NoNewline
-        Exec {. "$path\aspnet_regiis.exe $argument"} "An error occurred while trying to register IIS. If you're running this command on Server => 2012, please add IIS-ASPNET45 as a Windows Feature."
-        Write-Host "`tDone" -f Green
-    } catch {
-        Write-Host '' # just inputs a carriage return if an error occurs
-        Write-Warning $_
-        Write-Host 'The deployment will continue...'
-    }
 }
-Set-Alias aspnet_regiis Invoke-AspNetRegIIS

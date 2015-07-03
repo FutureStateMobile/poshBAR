@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
-Describe 'Find-ToolPath' { 
+Describe 'Find Tool Path' { 
     
     # Setup
     BeforeEach {
@@ -12,7 +12,7 @@ Describe 'Find-ToolPath' {
         $env:PATH = $originalPath
     }
     
-    Context 'Handle a valid tool.'{
+    Context 'Will handle a valid tool.'{
         # setup
         $toolName = 'mage'
        
@@ -21,16 +21,16 @@ Describe 'Find-ToolPath' {
         $result = & $execute
         
         # assert
-        It 'Will not thow for a valid tool.' {
+        It 'Should not thow for a valid tool.' {
             $execute | should not throw
         }
         
-        It 'Will execute the tool and not throw an exception.' {
+        It 'Should execute the tool and not throw an exception.' {
            {. $toolName -h} | should not throw 
         }
     }
     
-    Context 'Handle Mocked tool on PATH' { 
+    Context 'Will handle Mocked tool on PATH' { 
         # Setup 
         $toolName = 'mock'
         $mockToolPath = 'C:\Temp\Mock'
@@ -40,12 +40,12 @@ Describe 'Find-ToolPath' {
         $result = Find-ToolPath $toolName  
        
        # assert         
-        It 'Will find a mock tool on the path and not throw.' {
+        It 'Should find a mock tool on the path and not throw.' {
             $result | should be $mockToolPath
         }
     }
     
-    Context 'Handle an invalid tool.' {
+    Context 'Will handle an invalid tool.' {
         # setup
         $toolName = 'Foo'
             
@@ -53,15 +53,15 @@ Describe 'Find-ToolPath' {
         $execute = {$badResult = Find-ToolPath $toolName}
 
         # assert
-        It 'Will throw on an invalid tool.' {
+        It 'Should throw on an invalid tool.' {
             $execute | should throw
         }
 
-        It 'Will throw an exception when attempting to execute an invalid tool.' {
+        It 'Should throw an exception when attempting to execute an invalid tool.' {
             {. $toolName -h} | should throw 
         }
         
-        It 'Will have an empty string on the result.' {
+        It 'Should have an empty string on the result.' {
             $badResult | should be $null
         }
     }
