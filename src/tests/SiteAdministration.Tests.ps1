@@ -91,7 +91,7 @@ Describe 'Site Administration Tests' {
 		$execute = { New-Site $siteName $sitePath $bindings $appPoolName -UpdateIfFound:$updateIfFound }
 		
 		# assert
-		It 'Should not throw an exception when creating a new website' {
+		It 'Should throw an exception when creating a new website' {
 			$execute | Should Throw $poshBAR.msgs.error_website_creation_disabled
 		}
 		

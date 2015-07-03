@@ -8,7 +8,7 @@ if ( $OctopusParameters ) {
     $poshBAR.DisableLoopbackFix = [System.Convert]::ToBoolean($OctopusParameters['poshBAR.DisableLoopbackFix'])
     $poshBAR.DisableCreateIISApplicationPool = [System.Convert]::ToBoolean($OctopusParameters['poshBAR.DisableCreateIISApplicationPool'])
     $poshBAR.DisableCreateIISWebsite = [System.Convert]::ToBoolean($OctopusParameters['poshBAR.DisableCreateIISWebsite'])
-    #$poshBAR.DisableCreateIISApplication = [System.Convert]::ToBoolean($OctopusParameters['poshBAR.DisableCreateIISApplication'])
+    $poshBAR.DisableCreateIISApplication = [System.Convert]::ToBoolean($OctopusParameters['poshBAR.DisableCreateIISApplication'])
     
     
 }
