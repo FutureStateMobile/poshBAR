@@ -6,7 +6,7 @@ Describe 'SSL Certificates' {
     BeforeAll {
         $pth = $env:PATH
         if(! ($env:PATH.Contains('openssl'))){
-            $pathToOpenSSL = Resolve-Path "$here\..\Tools\OpenSSL\bin"
+            $pathToOpenSSL = Resolve-Path "$here\..\..\Tools\OpenSSL\bin"
             $env:PATH += ";$pathToOpenSSL"
         }
     }

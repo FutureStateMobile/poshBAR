@@ -9,7 +9,7 @@ $script:this = @{
     srcDir = "$baseDir\src\poshBAR"
     devopsNugetPackage = "$baseDir\nuspec\poshBAR.nuspec"
     devopsSummary = "Powershell Build `$amp; Release"
-    testDir = "$baseDir\tests"
+    testDir = "$baseDir\src\tests"
 }
 
 # Dogfood
