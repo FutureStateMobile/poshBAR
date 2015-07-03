@@ -78,8 +78,11 @@ function New-AppPool{
         Exec { Invoke-Expression  $newAppPool } -retry 10 | Out-Null
         Write-Host "`tDone" -f Green            
     }else{
-        if($updateIfFound.IsPresent){
-            Update-AppPool $appPoolName $appPoolIdentityType $maxProcesses $username $password $managedPipelineMode $managedRuntimeVersion    
+        Write-Host "`tApp Pool already exists..." -f Cyan
+        if ($updateIfFound.isPresent) {
+            Update-AppPool $appPoolName $appPoolIdentityType $maxProcesses $username $password $managedPipelineMode $managedRuntimeVersion
+        } else {
+            Write-Host ($msgs.msg_not_updating -f "Application Pool")
         }
     }
 }    
