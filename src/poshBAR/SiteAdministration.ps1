@@ -39,6 +39,10 @@ function New-Site{
     $exists = Confirm-SiteExists $siteName
     
     if (!$exists) {
+        if($poshBAR.DisableCreateIISWebsite) {
+            throw $msgs.error_website_creation_disabled
+        }
+        
         $bindingString = @()
         $bindings | % { $bindingString += "$($_.protocol)/*:$($_.port):$($_.hostName)" }
         Exec { Invoke-Expression  "$appcmd add site /name:$siteName /physicalPath:$sitePath /bindings:$($bindingString -join ",")"} -retry 10 | Out-Null

@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
-DescriBe 'poshBAR module tests' {
+Describe 'poshBAR module tests' {
 
     Context 'Will ensure the version and build numBer were properly updated during the build.' {
         # setup

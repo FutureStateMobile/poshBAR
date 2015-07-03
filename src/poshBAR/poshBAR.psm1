@@ -196,14 +196,15 @@ convertfrom-stringdata @"
     error_specflow_generation = Error generating the specflow feature files for '{0}'.
     error_chutzpah = Error running the chutzpah javascipt tests for '{0}'.
     error_cannot_find_tool = Could not find {0}, please specify it's path to `$env:PATH
-    error_windows_features_admin_disabled = Enabling {0} is not permitted because "DisableWindowsFeaturesAdministration" has been set to "true".
+    error_windows_features_admin_disabled = Enabling {0} is not permitted because "DisableWindowsFeaturesAdministration" has been set to "true" for this environment.
     error_invalid_windows_feature = {0} is not a valid Windows Feature. Please verify against {1}
     error_aspnet_regiis_not_found = aspnet_regiis.exe was not found on this machine.
-    error_apppool_creation_disabled = Creating an application pool is not permitted because "DisableCreateIISApplicationPool" has been set to "true".
+    error_apppool_creation_disabled = Creating an application pool is not permitted because "DisableCreateIISApplicationPool" has been set to "true" for this environment.
+    error_website_creation_disabled = Creating a website is not permitted because "DisableCreateIISWebsite" has been set to "true" for this environment.
     wrn_aspnet_regiis_not_found = An error occurred while trying to register IIS. If you're running this command on Server => 2012, please add IIS-ASPNET45 as a Windows Feature.
     wrn_aspnet_regiis_disabled = Installing ASP.NET {0} is not permitted because "DisableASPNETRegIIS" has been set to "true".
-    wrn_host_file_admin_disabled = Editing the host file is not permitted because "DisableHostFileAdministration" has beeen set to "true".
-    wrn_loopback_fix_disabled = Adding a loopback fix to the registry is not permitted because "DisableLoopbackFix" has been set to "true".
+    wrn_host_file_admin_disabled = Editing the host file is not permitted because "DisableHostFileAdministration" has beeen set to "true" for this environment.
+    wrn_loopback_fix_disabled = Adding a loopback fix to the registry is not permitted because "DisableLoopbackFix" has been set to "true" for this environment.
     wrn_full_permission = You have applied FULL permission to '{0}' for '{1}'. THIS IS DANGEROUS!
     wrn_cant_find = Could not find {0} with the name: {0}.
     msg_grant_permission = Granting {0} permissions to {1} for {2}.
