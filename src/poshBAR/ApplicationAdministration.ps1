@@ -43,6 +43,10 @@ function New-Application
     $exists = Confirm-ApplicationExists $siteName $appName
     
     if (!$exists) {
+        if($poshBAR.DisableCreateIISApplication) {
+            throw $msgs.error_webapplication_creation_disabled
+        }
+        
         Exec { Invoke-Expression  "$appcmd add App /site.name:$siteName /path:/$appName /physicalPath:$appPath" } -retry 10 | Out-Null
         Exec { Invoke-Expression  "$appcmd set App /app.name:$siteName/$appName /applicationPool:$appPoolName"} -retry 10 | Out-Null
         Write-Host "`tDone" -f Green

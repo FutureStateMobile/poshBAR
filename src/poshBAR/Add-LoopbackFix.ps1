@@ -29,22 +29,26 @@ function Add-LoopbackFix
 
     Write-Host ($msgs.msg_add_loopback_fix -f $siteHostName) -NoNewLine
 
-    $str = Get-ItemProperty -Name "BackConnectionHostNames" -path 'HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0' -erroraction silentlycontinue
-  
-    if ($str) { 
-        if($($str.BackConnectionHostNames) -like "*$siteHostName*")
-        {
-            Write-Host "`tAlready in place" -f Cyan
-        } else{
-            $str.BackConnectionHostNames += "`n$siteHostName"
-            Set-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" -Name "BackConnectionHostNames" -Value $str.BackConnectionHostNames 
+    if($poshBAR.DisableLoopbackFix) {
+        Write-Warning $msgs.wrn_loopback_fix_disabled
+    } else {
+        $str = Get-ItemProperty -Name "BackConnectionHostNames" -path 'HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0' -erroraction silentlycontinue
+      
+        if ($str) { 
+            if($($str.BackConnectionHostNames) -like "*$siteHostName*")
+            {
+                Write-Host "`tAlready in place" -f Cyan
+            } else{
+                $str.BackConnectionHostNames += "`n$siteHostName"
+                Set-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" -Name "BackConnectionHostNames" -Value $str.BackConnectionHostNames 
+                Write-Host "`tDone" -f Green
+            }
+        } else {
+            New-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" -Name "BackConnectionHostNames" -Value $siteHostName -PropertyType "MultiString" 
             Write-Host "`tDone" -f Green
         }
-    } else {
-        New-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" -Name "BackConnectionHostNames" -Value $siteHostName -PropertyType "MultiString" 
-        Write-Host "`tDone" -f Green
+    
+        Write-Host ($msgs.msg_loopback_note -f $siteHostName) -f DarkGray
     }
-
-    Write-Host ($msgs.msg_loopback_note -f $siteHostName) -f DarkGray
 }
 Set-Alias loopbackFix Add-LoopbackFix
