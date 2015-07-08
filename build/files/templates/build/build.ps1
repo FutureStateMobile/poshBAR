@@ -54,11 +54,11 @@ task Compile[solution] -depends Init {
                -visualStudioVersion $this.visualStudioVersion
 }
 
-task Test[project] -depends CompileSolution {
+task Test[project] -depends Compile[project] {
     Invoke-NUnit $this.[project].testAssemblyFile $this.artifactsDir.resultsDir $this.[project].unitTestNamespace
 }
 
-task Package[project] -depends CompileSolution {
+task Package[project] -depends Compile[project] {
     Update-XmlConfigValues $this.[project].nuspecFile "//*[local-name() = 'version']" $this.version
     Update-XmlConfigValues $this.[project].nuspecFile "//*[local-name() = 'summary']" "$($this.[project].namespace) $($this.informationalVersion)"
 
@@ -66,7 +66,7 @@ task Package[project] -depends CompileSolution {
 }
 
 # the init task simply finishes setting everything up.
-task Init -depends MakeBuildDir SetupPaths {
+task Init -depends MakeBuildDir, SetupPaths {
     $this.version = $version
     $this.environment = $buildEnvironment
     $this.buildNumber = $buildNumber
@@ -89,7 +89,7 @@ task MakeBuildDir {
 
 task SetupPaths {
     # used to add a custom tool to your $env:PATH if it's not in a standard location.
-    # $poshBAR.Paths['someToolPath'] = "$here\tools\someTool"
+    # $envPATH += ";$rootDir\tools\someTool"
 }
 
 <#

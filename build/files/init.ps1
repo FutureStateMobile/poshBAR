@@ -1,8 +1,11 @@
 param($installPath, $toolsPath, $package, $project)
 
 $rootDir = Resolve-Path "$installPath\..\.."
-$solution = Get-ChildItem  "$path\*.sln" | select BaseName -First 1 | %{ $_.BaseName}
+$solution = Get-ChildItem  "$rootDir\*.sln" | select BaseName -First 1 | %{ $_.BaseName}
+$project = if(-not $project) {$solution} else {$project}
 
+Write-Host "project: $project"
+Write-Host "solution: $solution"
 $tokenValues = @{
     '\[project\]' = $project
     '\[solution\]' = $solution
@@ -32,20 +35,20 @@ Get-Childitem "$toolsPath\templates" -recurse | % {
         if(-not (Test-Path $copyPath)) {
             # create the templated directory
             New-Item -path $copyPath -itemtype Directory
-
-            # and ALSO copy the contents over
-            if(-not (Test-Path "$copyPath\$($_.Name)")){
-                Write-Host "Copying $($_.Name) to $copyPath" -f Cyan
-                Copy-Item $_.FullName $copyPath
-                
-                # token replace [project] with the $project name.
-                $fileToTokenReplace = Join-Path $copyPath $_.Name
-                $fileContents = Get-Content $fileToTokenReplace
-                foreach ($token in $tokenValues.GetEnumerator()) {        
-                    $fileContents = $fileContents -replace $token.Name, $token.Value
-                }
-                Set-Content -Path $fileToTokenReplace -Value $fileContents  
+        }
+        
+        # and ALSO copy the contents over
+        if(-not (Test-Path "$copyPath\$($_.Name)")){
+            Write-Host "Copying $($_.Name) to $copyPath" -f Cyan
+            Copy-Item $_.FullName $copyPath
+            
+            # token replace [project] with the $project name.
+            $fileToTokenReplace = Join-Path $copyPath $_.Name
+            $fileContents = Get-Content $fileToTokenReplace
+            foreach ($token in $tokenValues.GetEnumerator()) {        
+                $fileContents = $fileContents -replace $token.Name, $token.Value
             }
+            Set-Content -Path $fileToTokenReplace -Value $fileContents  
         }
     }
  }

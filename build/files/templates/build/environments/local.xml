@@ -2,20 +2,20 @@
     <debug>true</debug>
     <environment>local</environment>
     <webSites>
-        <MYWEBSITE>
+        <[project]>
             <physicalPathRoot>c:\inetpub</physicalPathRoot>
-            <physicalFolderPrefix>MY-WEBSITE</physicalFolderPrefix>
+            <physicalFolderPrefix>[project]</physicalFolderPrefix>
             <bindings>
                 <protocol>http</protocol>
                 <port>80</port>
-                <hostName>local.MY-WEBSITE.com</hostName>
+                <hostName>local.[project].com</hostName>
             </bindings>
             <bindings>
                 <protocol>https</protocol>
                 <port>443</port>
-                <hostName>local.MY-WEBSITE.com</hostName>
+                <hostName>local.[project].com</hostName>
             </bindings>
-            <siteName>local.MY-WEBSITE.com</siteName>
+            <siteName>local.[project].com</siteName>
             <appPath>/</appPath>
             <!-- valid IIS Security Authentication types are: [anonymousAuthentication, basicAuthentication, clientCertificateMappingAuthentication, 
                                                                digestAuthentication, iisClientCertificateMappingAuthentication, windowsAuthentication]-->
@@ -32,7 +32,7 @@
                 </authorization>
             </systemWeb>
             <appPool>
-                <name>TransCanada.CLS.App</name>
+                <name>[project]</name>
                 <!-- valid identityTypes are: [LocalSystem, LocalService, NetworkService, SpecificUser, ApplicationPoolIdentity] -->
                 <identityType>NetworkService</identityType>
                 <!-- Set this value to the User the Service will run under in the format DOMAIN\username -->
@@ -42,12 +42,12 @@
                 <password></password>
                 <maxWorkerProcesses>1</maxWorkerProcesses>
             </appPool>
-        </MYWEBSITE>
+        </[project]>
     </webSites>
 
     <databases>
-        <MYDATABASE>
-            <connectionString>Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;</connectionString>
-        </MYDATABASE>
+        <[project]>
+            <connectionString>Server=myServerAddress;Database=[project];Trusted_Connection=True;</connectionString>
+        </[project]>
     </databases>
 </environmentSettings>
