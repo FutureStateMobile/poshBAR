@@ -15,7 +15,7 @@ $script:this = @{
 # Dogfood
 Import-Module "$($this.srcDir)\poshBAR" -force -Global
 
-Task default -depends Package
+Task default -depends RunPesterTests, Package
 
 Task SetupPaths {
     Write-Host "Adding some of our tools to the Path so we can run them easier"
