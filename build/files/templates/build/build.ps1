@@ -6,7 +6,7 @@
 #region Variable Block
     $rootDir  = resolve-path ".\.."
     $script:this = @{
-        project = 'myProject'
+        project = '[project]'
         rootDir = Resolve-Path "$rootDir"
         path = Resolve-Path "$rootDir\build"
         modulesDir = "$rootDir\build\modules"
@@ -22,23 +22,15 @@
         }
         packagesDir = "$rootDir\packages"
         nuspecDir = "$rootDir\nuspec"
-        solutionFile = "$rootDir\[MY-APP].sln"
-        rootNamespace = '[My.App]'
-        myFirstApp = @{
-                namespace = "[My.First.App]"
-                solution = "$rootDir\src\[my.first.app]\[MY-FIRST-APP].csproj"
-                projectDir = "$rootDir\src\[my.first.app]"
-                testAssemblyFile = "$rootDir\build-artifacts\output\[My.First.App].Tests.dll"
-                unitTestNamespace = '[My.First.App].Tests.Unit'
-                nuspecFile = "$rootDir\nuspec\[My.First.App].nuspec"
-            }
-        mySecondApp = @{
-                namespace = "[My.Second.App]"
-                solution = "$baseDir\src\[my.second.app]\[MY-SECOND-APP].csproj"
-                projectDir = "$rootDir\src\[my.second.app]"
-                testAssemblyFile = "$rootDir\build-artifacts\output\[My.Second.App].Tests.dll"
-                unitTestNamespace = '[My.Second.App].Tests.Unit'
-                nuspecFile = "$rootDir\nuspec\[My.Second.App].nuspec"
+        solutionFile = "$rootDir\[solution].sln"
+        rootNamespace = '[solution]'
+        [project] = @{
+                namespace = "[project]"
+                solution = "$rootDir\src\[project]\[project].csproj"
+                projectDir = "$rootDir\src\[project]"
+                testAssemblyFile = "$rootDir\build-artifacts\output\[project].Tests.dll"
+                unitTestNamespace = '[project].Tests.Unit'
+                nuspecFile = "$rootDir\nuspec\[project].nuspec"
             }
     }
 #endregion VariableBlock
@@ -46,35 +38,31 @@ Import-Module "$($this.packagesDir)\poshBAR.*\tools\modules\poshBAR" -force
 # Import any other custom module you might need.
 
 #default task (required by psake)
-task default -depends TestFirstApp, TestSecondApp, PackageFirstApp, PackageSecondApp
+task default -depends compile, test, package
+task compile -depends Compile[solution]
+task test -depends Test[project]
+task package -depends Package[project]
 
 
-task CompileSolution -depends Init {
-    Update-AssemblyVersions $this.version $this.buildNumber $this.informationalVersion $this.myFirstApp.projectDir
-    Update-AssemblyVersions $this.version $this.buildNumber $this.informationalVersion $this.mySecondApp.projectDir
-    Invoke-MSBuild $this.artifactsDir.outputDir $this.solutionFile $this.artifactsDir.logsDir $this.rootNamespace $this.visualStudioVersion 
+task Compile[solution] -depends Init {
+    Update-AssemblyVersions $this.version $this.buildNumber $this.informationalVersion $this.[project].projectDir
+    Update-AssemblyVersions $this.version $this.buildNumber $this.informationalVersion $this.[project].projectDir
+    Invoke-MSBuild $this.artifactsDir.outputDir `
+               $this.solutionFile `
+               -logPath $this.artifactsDir.logsDir `
+               -namespace $this.rootNamespace `
+               -visualStudioVersion $this.visualStudioVersion
 }
 
-task TestFirstApp -depends CompileSolution {
-    Invoke-NUnit $this.myFirstApp.testAssemblyFile $this.artifactsDir.resultsDir $this.myFirstApp.unitTestNamespace
+task Test[project] -depends CompileSolution {
+    Invoke-NUnit $this.[project].testAssemblyFile $this.artifactsDir.resultsDir $this.[project].unitTestNamespace
 }
 
-task TestFirstApp -depends CompileSolution {
-    Invoke-NUnit $this.mySecondApp.testAssemblyFile $this.artifactsDir.resultsDir $this.mySecondApp.unitTestNamespace
-}
+task Package[project] -depends CompileSolution {
+    Update-XmlConfigValues $this.[project].nuspecFile "//*[local-name() = 'version']" $this.version
+    Update-XmlConfigValues $this.[project].nuspecFile "//*[local-name() = 'summary']" "$($this.[project].namespace) $($this.informationalVersion)"
 
-task PackageFirstApp -depends CompileSolution {
-    Update-XmlConfigValues $this.myFirstApp.nuspecFile "//*[local-name() = 'version']" $this.version
-    Update-XmlConfigValues $this.myFirstApp.nuspecFile "//*[local-name() = 'summary']" "$($this.myFirstApp.namespace) $($this.informationalVersion)"
-
-    New-NugetPackage $this.myFirstApp.nuspecFile "$($this.version).$($this.buildNumber)" $this.artifactsDir.publishDir
-}
-
-task PackageSecondApp -depends CompileSolution {
-    Update-XmlConfigValues $this.mySecondApp.nuspecFile "//*[local-name() = 'version']" $this.version
-    Update-XmlConfigValues $this.mySecondApp.nuspecFile "//*[local-name() = 'summary']" "$($this.mySecondApp.namespace) $($this.informationalVersion)"
-
-    New-NugetPackage $this.mySecondApp.nuspecFile "$($this.version).$($this.buildNumber)" $this.artifactsDir.publishDir
+    New-NugetPackage $this.[project].nuspecFile "$($this.version).$($this.buildNumber)" $this.artifactsDir.publishDir
 }
 
 # the init task simply finishes setting everything up.
@@ -101,7 +89,7 @@ task MakeBuildDir {
 
 task SetupPaths {
     # used to add a custom tool to your $env:PATH if it's not in a standard location.
-    $poshBAR.Paths['someToolPath'] = "$here\tools\someTool"
+    # $poshBAR.Paths['someToolPath'] = "$here\tools\someTool"
 }
 
 <#
