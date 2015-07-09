@@ -47,6 +47,7 @@ Push-Location $psScriptRoot
 . .\Format-TaskNameToHost.ps1
 . .\Get-EnvironmentSettings.ps1
 . .\Grunt.ps1
+. .\HealthCheck.ps1
 . .\Helpers.ps1
 . .\Install-WebApplication.ps1
 . .\Invoke-AspNetRegIIS.ps1
@@ -137,6 +138,7 @@ Export-ModuleMember `
           'Invoke-ToBase64', 
           'Invoke-UrlDecode', 
           'Invoke-UrlEncode', 
+          'Invoke-WebHealthCheck',
           'Invoke-XmlDocumentTransform',
           'Invoke-XUnit',
           'Invoke-XUnitWithCoverage',
@@ -202,12 +204,14 @@ convertfrom-stringdata @"
     error_apppool_creation_disabled = Creating an application pool is not permitted because "DisableCreateIISApplicationPool" has been set to "true" for this environment.
     error_website_creation_disabled = Creating a website is not permitted because "DisableCreateIISWebsite" has been set to "true" for this environment.
     error_webapplication_creation_disabled = Creating a web application is not permitted because "DisableCreateIISApplication" has been set to "true" for this environment.
+    error_healthchecks_failed = {0} of {1} Health Check[s] Failed.
     wrn_aspnet_regiis_not_found = An error occurred while trying to register IIS. If you're running this command on Server => 2012, please add IIS-ASPNET45 as a Windows Feature.
     wrn_aspnet_regiis_disabled = Installing ASP.NET {0} is not permitted because "DisableASPNETRegIIS" has been set to "true".
     wrn_host_file_admin_disabled = Editing the host file is not permitted because "DisableHostFileAdministration" has beeen set to "true" for this environment.
     wrn_loopback_fix_disabled = Adding a loopback fix to the registry is not permitted because "DisableLoopbackFix" has been set to "true" for this environment.
     wrn_full_permission = You have applied FULL permission to '{0}' for '{1}'. THIS IS DANGEROUS!
     wrn_cant_find = Could not find {0} with the name: {0}.
+    msg_healthchecks_passed = {0} Health Check[s] Passed for {1}.
     msg_grant_permission = Granting {0} permissions to {1} for {2}.
     msg_enabling_windows_feature = Enabling Windows Feature: `"{0}`".
     msg_wasnt_found = `"{0}`" wasn't found.
@@ -220,7 +224,7 @@ convertfrom-stringdata @"
     msg_custom_header = Setting custom header '{0}' on site '{1}' to value '{2}'.
     msg_web_app_success = Successfully deployed Web Application '{0}'.
     msg_copying_content = Copying {0} content to {1}.
-    msg_use_machine_environment = Using config for machine {0} instead of the {1} environment.
+    msg_use_machine_environment = Transforming config file {0}.xml with {1}.xml (xdt transform).
     msg_octopus_overrides = Checking for Octopus Overrides for environment '{0}'.
     msg_teamcity_importdata = ##teamcity[importData type='{0}' tool='{1}' path='{2}']
     msg_teamcity_buildstatus = ##teamcity[buildStatus text='{0}']
