@@ -30,9 +30,10 @@ function Invoke-WebHealthCheck {
     return
     }
     
-    $script:totalRequests = $verbs.Count
-	$script:failedCount = 0
-    $script:statuses = @()
+    $totalRequests = $verbs.Count
+	$failedCount = 0
+    $statusCodes = @()
+    
     foreach($verb in $verbs) {
          try {
              $customHeadersParam = if($customHeaders) {$customHeaders}
@@ -47,7 +48,8 @@ function Invoke-WebHealthCheck {
                                               
 		     $code =  [int][system.net.httpstatuscode]::$($response.StatusCode)
              $statusCode = "$($code) $($response.StatusCode)."
-		     Write-Host $statusCode -f Green;
+		     
+             Write-Host $statusCode -f Green;
              $statusCodes += $statusCode
          } catch {
              Write-Host $_ -f Red

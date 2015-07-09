@@ -32,8 +32,8 @@ Describe 'Web Health Checks' {
     
     Context 'Will create an actual HTTP GET request and expect a 200 OK.' {
         # setup
-        $uri = 'http://get.httpstatus.io/200'
-        $request = @{ uri = $uri; verbs = 'GET'}
+        $uri = 'http://httpstat.us/200'
+        $request = @{ uri = $uri; verbs = 'GET','PUT','POST','DELETE'}
         
         # execute
         $result = Invoke-WebHealthCheck $request 
@@ -45,16 +45,18 @@ Describe 'Web Health Checks' {
             $result.postData | Should Be '{}'
             $result.contentType | Should Be "application/json"
             $result.customHeaders | Should BeNullOrEmpty 
-            $result.totalRequests | Should Be 1
+            $result.totalRequests | Should Be 4
             $result.statusCodes | Should Be '200 OK.'
             $result.status | Should Be 'passed'
         }
     }
     
-    Context 'Will create an actual HTTP GET request and expect a 404 Not Found.' {
+    Context 'Will create an actual HTTP GET request and expect a 301 Moved Permanently.' {
         # setup
-        $uri = 'http://get.httpstatus.io/404'
-        $request = @{ uri = $uri; verbs = 'GET'}
+        $uri = 'http://httpstat.us/301'
+        $expectedStatusCode = '301 MovedPermanently.'
+        $expectedStatus = 'passed'
+        $request = @{ uri = $uri; verbs = 'GET','PUT','POST','DELETE'}
         
         # execute
         $execute = { Invoke-WebHealthCheck $request } 
@@ -66,9 +68,55 @@ Describe 'Web Health Checks' {
             $result.postData | Should Be '{}'
             $result.contentType | Should Be "application/json"
             $result.customHeaders | Should BeNullOrEmpty 
-            $result.totalRequests | Should Be 1
-            $result.statusCodes | Should Be '404 Not Found.'
-            $result.status | Should Be 'failed'
+            $result.totalRequests | Should Be 4
+            $result.statusCodes | Should Be $expectedStatusCode
+            $result.status | Should Be $expectedStatus
+        }
+    }
+    
+    Context 'Will create an actual HTTP GET request and expect a 404 Not Found.' {
+        # setup
+        $uri = 'http://httpstat.us/404'
+        $expectedStatusCode = '404 Not Found.'
+        $expectedStatus = 'failed'
+        $request = @{ uri = $uri; verbs = 'GET','PUT','POST','DELETE'}
+        
+        # execute
+        $execute = { Invoke-WebHealthCheck $request } 
+        $result = . $execute
+        # assert
+        It 'Should return a hashtable of appropriate data.' {
+            $result.uri | Should Be $uri
+            $result.verbs | Should Be $request.verbs 
+            $result.postData | Should Be '{}'
+            $result.contentType | Should Be "application/json"
+            $result.customHeaders | Should BeNullOrEmpty 
+            $result.totalRequests | Should Be 4
+            $result.statusCodes | Should Be $expectedStatusCode
+            $result.status | Should Be $expectedStatus
+        }
+    }
+    
+    Context 'Will create an actual HTTP GET request and expect a 500 Internal Server Error.' {
+        # setup
+        $uri = 'http://httpstat.us/500'
+        $expectedStatusCode = '500 Internal Server Error.'
+        $expectedStatus = 'failed'
+        $request = @{ uri = $uri; verbs = 'GET','PUT','POST','DELETE'}
+        
+        # execute
+        $execute = { Invoke-WebHealthCheck $request } 
+        $result = . $execute
+        # assert
+        It 'Should return a hashtable of appropriate data.' {
+            $result.uri | Should Be $uri
+            $result.verbs | Should Be $request.verbs 
+            $result.postData | Should Be '{}'
+            $result.contentType | Should Be "application/json"
+            $result.customHeaders | Should BeNullOrEmpty 
+            $result.totalRequests | Should Be 4
+            $result.statusCodes | Should Be $expectedStatusCode
+            $result.status | Should Be $expectedStatus
         }
     }
 } 
