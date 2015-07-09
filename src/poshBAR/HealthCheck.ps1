@@ -79,6 +79,7 @@ function Invoke-WebHealthCheck {
         totalRequests = $totalRequests
         statusCodes = $statusCodes
         status = if($failedCount -eq 0) {'passed'} else {'failed'}
+        timeout = $timeout
     }
 }
 

@@ -26,7 +26,7 @@ Describe 'Web Health Checks' {
         
         # assert
         It 'Should execute the CustomWebRequest cmdlet 2 times.' {
-            Assert-MockCalled CustomWebRequest -ModuleName poshBAR -exactly 2 # should be called 2 times because there are 2 separate verbs.
+            Assert-MockCalled CustomWebRequest -ModuleName poshBAR -exactly $request.verbs.Count
         }
         
         It 'Should return a hashtable of appropriate data' {
