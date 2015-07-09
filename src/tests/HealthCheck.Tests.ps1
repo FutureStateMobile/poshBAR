@@ -9,7 +9,16 @@ Describe 'Web Health Checks' {
     Context 'Will create a Mock Http Web Request' {
         # setup
         Mock CustomWebRequest {} -ModuleName poshBAR
-        $request = @{uri = 'http://foo'; verbs = 'GET', 'PUT';}
+        $request = @{
+            uri = 'http://foo'
+            verbs = 'GET', 'PUT', 'POST', 'DELETE'
+            postData = "{'foo': 'bar'}"
+            contentType = 'txt/javascript'
+            timeout = 5
+            customHeaders = @{
+                'someKey' = 'someVal'
+            }
+        }
         
         # execute
         $execute = { Invoke-WebHealthCheck $request }
@@ -23,10 +32,11 @@ Describe 'Web Health Checks' {
         It 'Should return a hashtable of appropriate data' {
             $result.uri | Should Be $request.uri
             $result.verbs | Should Be $request.verbs 
-            $result.postData | Should Be '{}'
-            $result.contentType | Should Be "application/json"
-            $result.customHeaders | Should BeNullOrEmpty 
-            $result.totalRequests | Should Be 2
+            $result.postData | Should Be $request.postData
+            $result.contentType | Should Be $request.contentType
+            $result.timeout | Should Be $request.timeout
+            $result.customHeaders | Should Be $request.customHeaders 
+            $result.totalRequests | Should Be $request.verbs.Count
         }
     }
     
