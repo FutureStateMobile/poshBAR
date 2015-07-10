@@ -12,7 +12,6 @@ Describe 'Web Health Checks' {
             return @{
                 Code = '200'
                 Message = 'OK'
-                Color = 'Green'
                 Success = $true
             }
         } -ModuleName poshBAR
@@ -27,7 +26,7 @@ Describe 'Web Health Checks' {
                 'someKey' = 'someVal'
             }
         }
-        $expectedStatusCode = '200'
+        $expectedStatusCode = '200 OK'
         $expectedSuccess = $true
         
         # execute
@@ -40,9 +39,8 @@ Describe 'Web Health Checks' {
         }
         
         It 'Should return a hashtable of appropriate data.' {
-            $result.totalRequests | Should Be 4
-            $result.failedRequests | Should Be 0
-            $result.statusCodes | Should Be $expectedStatusCode
+            $result.Count | Should Be 4
+            $result.status | Should Be $expectedStatusCode
             $result.success | Should Be $expectedSuccess
         }
     }
@@ -51,7 +49,7 @@ Describe 'Web Health Checks' {
         # setup
         $uri = 'http://httpstat.us/200'
         $request = @{ uri = $uri; verbs = 'GET','PUT','POST','DELETE'}
-        $expectedStatusCode = '200'
+        $expectedStatusCode = '200 OK'
         $expectedSuccess = $true
         
         # execute
@@ -59,9 +57,8 @@ Describe 'Web Health Checks' {
         
         # assert
         It 'Should return a hashtable of appropriate data.' {
-            $result.totalRequests | Should Be 4
-            $result.failedRequests | Should Be 0
-            $result.statusCodes | Should Be $expectedStatusCode
+            $result.Count | Should Be 4
+            $result.status | Should Be $expectedStatusCode
             $result.success | Should Be $expectedSuccess
         }
     }
@@ -69,7 +66,7 @@ Describe 'Web Health Checks' {
     Context 'Will create an actual HTTP GET request and expect a 301 Moved Permanently.' {
         # setup
         $uri = 'http://httpstat.us/301'
-        $expectedStatusCode = '301'
+        $expectedStatusCode = '301 MovedPermanently'
         $expectedSuccess = $true
         $request = @{ uri = $uri; verbs = 'GET','PUT','POST','DELETE'}
         
@@ -78,9 +75,8 @@ Describe 'Web Health Checks' {
         $result = . $execute
         # assert
         It 'Should return a hashtable of appropriate data.' {
-            $result.totalRequests | Should Be 4
-            $result.failedRequests | Should Be 0
-            $result.statusCodes | Should Be $expectedStatusCode
+            $result.Count | Should Be 4
+            $result.status | Should Be $expectedStatusCode
             $result.success | Should Be $expectedSuccess
         }
     }
@@ -89,7 +85,7 @@ Describe 'Web Health Checks' {
         # setup
         $uri = 'http://httpstat.us/404'
         $request = @{ uri = $uri; verbs = 'GET','PUT','POST','DELETE'}
-        $expectedStatusCode = '404'
+        $expectedStatusCode = '404 Not Found'
         $expectedSuccess = $false
         
         # execute
@@ -98,9 +94,8 @@ Describe 'Web Health Checks' {
         
         # assert
         It 'Should return a hashtable of appropriate data.' {
-            $result.totalRequests | Should Be 4
-            $result.failedRequests | Should Be 4
-            $result.statusCodes | Should Be $expectedStatusCode
+            $result.Count | Should Be 4
+            $result.status | Should Be $expectedStatusCode
             $result.success | Should Be $expectedSuccess
         }
     }
@@ -109,7 +104,7 @@ Describe 'Web Health Checks' {
         # setup
         $uri = 'http://httpstat.us/500'
         $request = @{ uri = $uri; verbs = 'GET','PUT','POST','DELETE'}
-        $expectedStatusCode = '500'
+        $expectedStatusCode = '500 Internal Server Error'
         $expectedSuccess = $false
         
         # execute
@@ -118,9 +113,8 @@ Describe 'Web Health Checks' {
         
         # assert
         It 'Should return a hashtable of appropriate data.' {
-            $result.totalRequests | Should Be 4
-            $result.failedRequests | Should Be 4
-            $result.statusCodes | Should Be $expectedStatusCode
+            $result.Count | Should Be 4
+            $result.status | Should Be $expectedStatusCode
             $result.success | Should Be $expectedSuccess
         }
     }
@@ -128,17 +122,16 @@ Describe 'Web Health Checks' {
     Context 'Will ensure the first example runs as expected.' {
         # setup
         $example = { Invoke-WebHealthCheck 'http://google.com' 'GET' }
-        $expectedStatusCode = '302'
+        $expectedStatusCode = '302 Redirect'
         $expectedSuccess = $true
         
         # execute
-        $result = . $example
+        [array]$result = . $example
         
         # assert
         It 'Should return a hashtable of appropriate data.' {
-            $result.totalRequests | Should Be 1
-            $result.failedRequests | Should Be 0
-            $result.statusCodes | Should Be $expectedStatusCode
+            $result.Count | Should Be 1
+            $result.status | Should Be $expectedStatusCode
             $result.success | Should Be $expectedSuccess
         }
     }
@@ -146,17 +139,16 @@ Describe 'Web Health Checks' {
     Context 'Will ensure the second example runs as expected.' {
         # setup
         $example = { Invoke-WebHealthCheck @{uri = 'https://google.com'; verbs = 'GET'} }
-        $expectedStatusCode = '302'
+        $expectedStatusCode = '302 Redirect'
         $expectedSuccess = $true
         
         # execute
-        $result = . $example
+        [array]$result = . $example
         
         # assert
         It 'Should return a hashtable of appropriate data.' {
-            $result.totalRequests | Should Be 1
-            $result.failedRequests | Should Be 0
-            $result.statusCodes | Should Be $expectedStatusCode
+            $result.Count | Should Be 1
+            $result.status | Should Be $expectedStatusCode
             $result.success | Should Be $expectedSuccess
         }
     }
