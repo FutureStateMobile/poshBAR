@@ -67,10 +67,9 @@ function Invoke-WebHealthCheck {
         return
     }
     
-    $table = @()
+    $results = @()
     $totalRequests = $verbs.Count
 	$failedCount = 0
-    $statusCodes = @()
     
     foreach($verb in $verbs) {
          $customHeadersParam = if($customHeaders) {$customHeaders}
@@ -83,34 +82,13 @@ function Invoke-WebHealthCheck {
                                       -credentials $credentialsParam `
                                       -postData $postData
                                           
-        $table +=  @{uri = $uri; status = ('{0} {1}' -f $status.Code, $status.Message); verb = $verb}
-        $statusCodes += $status.Code
+        $results +=  @{uri = $uri; status = ('{0} {1}' -f $status.Code, $status.Message); verb = $verb; success = $status.Success}
         if(!$status.Success){
             $failedCount++
         }
     }
-    
-    $table.ForEach({[PSCustomObject]$_}) | Format-Table -AutoSize -Expand Both
-    
-    <#
-    # powershell V2
-    $(foreach ($ht in $table) {
-        new-object PSObject -Property $ht
-    }) | Format-Table -AutoSize
-    #>
-    
-    if($failedCount -gt 0) {
-        Write-Host  ($msgs.error_healthchecks_failed -f $failedCount, $totalRequests) -f Red 
-    } else {
-        Write-Host ($msgs.msg_healthchecks_passed -f $totalRequests, $uri) -f Green   
-    }
-    
-    Write-Output @{
-        success = if($failedCount -eq 0) {$true} else {$false}
-        failedRequests = $failedCount
-        totalRequests = $totalRequests
-        statusCodes = $statusCodes
-    }
+  
+    Write-Output $results.ForEach({[PSCustomObject]$_}) 
 }
 
 <#
@@ -154,7 +132,6 @@ function CustomWebRequest ($uri, $headers, $method, $contentType, $timeout, [Sys
            $status = @{
                Code = $code
                Message = $response.StatusCode
-               Color = 'Green'
                Success = $true
            }
         } catch [System.Net.WebException] {
@@ -168,7 +145,6 @@ function CustomWebRequest ($uri, $headers, $method, $contentType, $timeout, [Sys
            $status = @{
                Code = $statusString[0]
                Message = $statusString[1]
-               Color = 'Red'
                Success = $false
            }
 
