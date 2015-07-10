@@ -27,7 +27,7 @@ function Invoke-WebHealthCheck {
                               -timeout $timeoutParam `
                               -customHeaders $customHeadersParam `
                               -credentials $credentials 
-    return
+        return
     }
     
     $totalRequests = $verbs.Count
@@ -35,31 +35,22 @@ function Invoke-WebHealthCheck {
     $statusCodes = @()
     
     foreach($verb in $verbs) {
-         try {
-             $customHeadersParam = if($customHeaders) {$customHeaders}
-             $credentialsParam = if($credentials) {$credentials}
-             $response = CustomWebRequest -uri $uri `
-                                          -headers $customHeadersParam `
-                                          -Method $verb `
-                                          -contentType $contentType `
-                                          -timeout $timeout `
-                                          -credentials $credentialsParam `
-                                          -postData $postData
-                                              
-		     $code =  [int][system.net.httpstatuscode]::$($response.StatusCode)
-             $statusCode = "$($code) $($response.StatusCode)."
-		     
-             Write-Host $statusCode -f Green;
-             $statusCodes += $statusCode
-         } catch {
-             Write-Host $_ -f Red
-             $statusCodes += $_
+         $customHeadersParam = if($customHeaders) {$customHeaders}
+         $credentialsParam = if($credentials) {$credentials}
+         $status = CustomWebRequest -uri $uri `
+                                      -headers $customHeadersParam `
+                                      -Method $verb `
+                                      -contentType $contentType `
+                                      -timeout $timeout `
+                                      -credentials $credentialsParam `
+                                      -postData $postData
+                                          
+
+	     
+         Write-Host ('{0} {1}.' -f $status.Code, $status.Message) -f $status.Color
+         $statusCodes += $status.Code
+         if(!$status.Success){
              $failedCount++
-         } finally {
-             if($response) {
-                 $response.Close()
-                 $response.Dispose()
-             }
          }
     }
     
@@ -70,16 +61,10 @@ function Invoke-WebHealthCheck {
     }
     
     Write-Output @{
-        uri = $uri
-        verbs = $verbs
-        customHeaders = $customHeaders
-        contentType = $contentType
-        postData = $postData
+        success = if($failedCount -eq 0) {$true} else {$false}
         failedRequests = $failedCount
         totalRequests = $totalRequests
         statusCodes = $statusCodes
-        status = if($failedCount -eq 0) {'passed'} else {'failed'}
-        timeout = $timeout
     }
 }
 
@@ -88,40 +73,63 @@ function Invoke-WebHealthCheck {
 #>
 
 function CustomWebRequest ($uri, $headers, $method, $contentType, $timeout, [System.Net.NetworkCredential] $credentials, $postData) {
-	$request = [System.Net.WebRequest]::Create("$uri")
-	$request.Method = $method
-	$request.AllowAutoRedirect = $false
-	$request.ContentType = $contentType
-    
-    if($headers){
-        $headers.Keys | % {
-            $request.Headers.add($_, $headers.Item($_))
-        }
-    }
-    
-	$request.Timeout = $timeout
-	
-    if(!$credentials){
-        $request.UseDefaultCredentials = $true    
-    } else {
-        $request.UseDefaultCredentials = $false
-        $request.Credentials = $credentials
-    }
-    
-	if($method -ne "GET"){	#for all methods EXCEPT for 'GET' add content
-		$buffer = [System.Text.Encoding]::UTF8.GetBytes($postdata)
-		$request.ContentLength = $buffer.Length;
-		$requestStream = $request.GetRequestStream()
-		$requestStream.Write($buffer, 0, $buffer.Length)
-		$requestStream.Flush()
-		$requestStream.Close()
-	}
-	
+    $status = @{}
     try {
-	   return $request.GetResponse()
-    } catch [System.Net.WebException] {
-       throw $($_.ToString() -replace 'The remote server returned an error:', '' `
-                             -replace '\(', '' `
-                             -replace '\)', '').Trim()
-    }
+    	$request = [System.Net.WebRequest]::Create("$uri")
+    	$request.Method = $method
+    	$request.AllowAutoRedirect = $false
+    	$request.ContentType = $contentType
+        
+        if($headers){
+            $headers.Keys | % {
+                $request.Headers.add($_, $headers.Item($_))
+            }
+        }
+        
+    	$request.Timeout = $timeout
+    	
+        if(!$credentials){
+            $request.UseDefaultCredentials = $true    
+        } else {
+            $request.UseDefaultCredentials = $false
+            $request.Credentials = $credentials
+        }
+        
+    	if($method -ne "GET"){	#for all methods EXCEPT for 'GET' add content
+    		$buffer = [System.Text.Encoding]::UTF8.GetBytes($postdata)
+    		$request.ContentLength = $buffer.Length;
+    		$requestStream = $request.GetRequestStream()
+    		$requestStream.Write($buffer, 0, $buffer.Length)
+    		$requestStream.Flush()
+    		$requestStream.Close()
+    	}
+    	
+    	   $response = $request.GetResponse()
+           $code =  [int][system.net.httpstatuscode]::$($response.StatusCode)
+           $status = @{
+               Code = $code
+               Message = $response.StatusCode
+               Color = 'Green'
+               Success = $true
+           }
+        } catch [System.Net.WebException] {
+           $message = $($_.ToString() -replace 'The remote server returned an error:', '' `
+                                      -replace '\(', '' `
+                                      -replace '\)', '').Trim()
+
+           $statusString = $message.Split(" ", 2)
+           $status = @{
+               Code = $statusString[0]
+               Message = $statusString[1]
+               Color = 'Red'
+               Success = $false
+           }
+
+        } finally {
+            if($response){
+                $response.Close()
+                $response.Dispose()
+            }
+        }
+    return $status
 }

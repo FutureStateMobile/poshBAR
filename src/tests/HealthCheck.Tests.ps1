@@ -8,17 +8,27 @@ Describe 'Web Health Checks' {
     
     Context 'Will create a Mock Http Web Request' {
         # setup
-        Mock CustomWebRequest {} -ModuleName poshBAR
+        Mock CustomWebRequest {
+            return @{
+                Code = '200'
+                Message = 'OK'
+                Color = 'Green'
+                Success = $true
+            }
+        } -ModuleName poshBAR
+        
         $request = @{
             uri = 'http://foo'
             verbs = 'GET', 'PUT', 'POST', 'DELETE'
             postData = "{'foo': 'bar'}"
-            contentType = 'txt/javascript'
+            contentType = 'application/javascript'
             timeout = 5
             customHeaders = @{
                 'someKey' = 'someVal'
             }
         }
+        $expectedStatusCode = '200'
+        $expectedSuccess = $true
         
         # execute
         $execute = { Invoke-WebHealthCheck $request }
@@ -29,14 +39,11 @@ Describe 'Web Health Checks' {
             Assert-MockCalled CustomWebRequest -ModuleName poshBAR -exactly $request.verbs.Count
         }
         
-        It 'Should return a hashtable of appropriate data' {
-            $result.uri | Should Be $request.uri
-            $result.verbs | Should Be $request.verbs 
-            $result.postData | Should Be $request.postData
-            $result.contentType | Should Be $request.contentType
-            $result.timeout | Should Be $request.timeout
-            $result.customHeaders | Should Be $request.customHeaders 
-            $result.totalRequests | Should Be $request.verbs.Count
+        It 'Should return a hashtable of appropriate data.' {
+            $result.totalRequests | Should Be 4
+            $result.failedRequests | Should Be 0
+            $result.statusCodes | Should Be $expectedStatusCode
+            $result.success | Should Be $expectedSuccess
         }
     }
     
@@ -44,28 +51,26 @@ Describe 'Web Health Checks' {
         # setup
         $uri = 'http://httpstat.us/200'
         $request = @{ uri = $uri; verbs = 'GET','PUT','POST','DELETE'}
+        $expectedStatusCode = '200'
+        $expectedSuccess = $true
         
         # execute
         $result = Invoke-WebHealthCheck $request 
         
         # assert
         It 'Should return a hashtable of appropriate data.' {
-            $result.uri | Should Be $uri
-            $result.verbs | Should Be $request.verbs 
-            $result.postData | Should Be '{}'
-            $result.contentType | Should Be "application/json"
-            $result.customHeaders | Should BeNullOrEmpty 
             $result.totalRequests | Should Be 4
-            $result.statusCodes | Should Be '200 OK.'
-            $result.status | Should Be 'passed'
+            $result.failedRequests | Should Be 0
+            $result.statusCodes | Should Be $expectedStatusCode
+            $result.success | Should Be $expectedSuccess
         }
     }
     
     Context 'Will create an actual HTTP GET request and expect a 301 Moved Permanently.' {
         # setup
         $uri = 'http://httpstat.us/301'
-        $expectedStatusCode = '301 MovedPermanently.'
-        $expectedStatus = 'passed'
+        $expectedStatusCode = '301'
+        $expectedSuccess = $true
         $request = @{ uri = $uri; verbs = 'GET','PUT','POST','DELETE'}
         
         # execute
@@ -73,60 +78,50 @@ Describe 'Web Health Checks' {
         $result = . $execute
         # assert
         It 'Should return a hashtable of appropriate data.' {
-            $result.uri | Should Be $uri
-            $result.verbs | Should Be $request.verbs 
-            $result.postData | Should Be '{}'
-            $result.contentType | Should Be "application/json"
-            $result.customHeaders | Should BeNullOrEmpty 
             $result.totalRequests | Should Be 4
+            $result.failedRequests | Should Be 0
             $result.statusCodes | Should Be $expectedStatusCode
-            $result.status | Should Be $expectedStatus
+            $result.success | Should Be $expectedSuccess
         }
     }
     
     Context 'Will create an actual HTTP GET request and expect a 404 Not Found.' {
         # setup
         $uri = 'http://httpstat.us/404'
-        $expectedStatusCode = '404 Not Found.'
-        $expectedStatus = 'failed'
         $request = @{ uri = $uri; verbs = 'GET','PUT','POST','DELETE'}
+        $expectedStatusCode = '404'
+        $expectedSuccess = $false
         
         # execute
         $execute = { Invoke-WebHealthCheck $request } 
         $result = . $execute
+        
         # assert
         It 'Should return a hashtable of appropriate data.' {
-            $result.uri | Should Be $uri
-            $result.verbs | Should Be $request.verbs 
-            $result.postData | Should Be '{}'
-            $result.contentType | Should Be "application/json"
-            $result.customHeaders | Should BeNullOrEmpty 
             $result.totalRequests | Should Be 4
+            $result.failedRequests | Should Be 4
             $result.statusCodes | Should Be $expectedStatusCode
-            $result.status | Should Be $expectedStatus
+            $result.success | Should Be $expectedSuccess
         }
     }
     
     Context 'Will create an actual HTTP GET request and expect a 500 Internal Server Error.' {
         # setup
         $uri = 'http://httpstat.us/500'
-        $expectedStatusCode = '500 Internal Server Error.'
-        $expectedStatus = 'failed'
         $request = @{ uri = $uri; verbs = 'GET','PUT','POST','DELETE'}
+        $expectedStatusCode = '500'
+        $expectedSuccess = $false
         
         # execute
         $execute = { Invoke-WebHealthCheck $request } 
         $result = . $execute
+        
         # assert
         It 'Should return a hashtable of appropriate data.' {
-            $result.uri | Should Be $uri
-            $result.verbs | Should Be $request.verbs 
-            $result.postData | Should Be '{}'
-            $result.contentType | Should Be "application/json"
-            $result.customHeaders | Should BeNullOrEmpty 
             $result.totalRequests | Should Be 4
+            $result.failedRequests | Should Be 4
             $result.statusCodes | Should Be $expectedStatusCode
-            $result.status | Should Be $expectedStatus
+            $result.success | Should Be $expectedSuccess
         }
     }
 } 
