@@ -92,6 +92,13 @@ function Invoke-WebHealthCheck {
     
     $table.ForEach({[PSCustomObject]$_}) | Format-Table -AutoSize -Expand Both
     
+    <#
+    # powershell V2
+    $(foreach ($ht in $table) {
+        new-object PSObject -Property $ht
+    }) | Format-Table -AutoSize
+    #>
+    
     if($failedCount -gt 0) {
         Write-Host  ($msgs.error_healthchecks_failed -f $failedCount, $totalRequests) -f Red 
     } else {
