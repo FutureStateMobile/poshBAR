@@ -11,7 +11,7 @@ $here = Split-Path $script:MyInvocation.MyCommand.Path
 Import-Module "$currentDir\modules\poshBAR\poshBAR" -force
 
 $environmentSettings = Get-EnvironmentSettings $environment "//environmentSettings"
-$websiteSettings = $environmentSettings.webSites.[NameOfYourWebsiteNode]
+$websiteSettings = $environmentSettings.webSites.[project]
 
 RequiredFeatures @(
     'IIS-WebServer',

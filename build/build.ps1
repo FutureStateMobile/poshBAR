@@ -15,7 +15,7 @@ $script:this = @{
 # Dogfood
 Import-Module "$($this.srcDir)\poshBAR" -force -Global
 
-Task default -depends Package
+Task default -depends RunPesterTests, Package
 
 Task SetupPaths {
     Write-Host "Adding some of our tools to the Path so we can run them easier"
@@ -60,7 +60,7 @@ Task GenerateDocumentation -depends SetupPaths, UpdateVersion, MakeBuildDir -ali
     Exec {.\out-html.ps1 -moduleName 'poshBAR' -outputDir "$baseDir"} -retry 10 # retry because of the build agent issues when committing multiple branches.
 }
 
-Task Package -depends SetupPaths, UpdateVersion, MakeBuildDir, RunPesterTests, GenerateDocumentation {
+Task Package -depends SetupPaths, UpdateVersion, MakeBuildDir, GenerateDocumentation {
 
     Update-XmlConfigValues $this.devopsNugetPackage "//*[local-name() = 'summary']" "$($this.devopsSummary) v-$version"
     exec { NuGet.exe Pack $this.devopsNugetPackage -Version "$version.$buildNumber" -OutputDirectory $this.buildPublishDir -NoPackageAnalysis } "Failed to package the Devops Scripts."

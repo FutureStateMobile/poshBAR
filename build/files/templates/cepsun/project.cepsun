@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>[project]</id>
+    <version>0.1.1</version>
+    <title>[project] title here</title>
+    <description>[project] description here</description>
+    <summary>[project] 0.1.1 Developer Build</summary>
+    <tags>[project]</tags>
+    <authors>auth</authors>
+    <owners>owner</owners>
+    <projectUrl>http://[project].com</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright 2015 [project].</copyright>
+  </metadata>
+  <files>
+    <file src="..\build-artifacts\output\_PublishedWebsites\[project]\**\*.*" target="website" exclude="..\build-artifacts\output\_PublishedWebsites\project\**\*.pdb" />
+    <file src="..\build\deploy.ps1" target="deploy.ps1" />
+    <file src="..\build\environments\**\*.*" target="environments" />
+    <file src="..\packages\poshBAR.*\tools\modules\**\*.*" target="modules" />
+  </files>
+</package>
