@@ -1,13 +1,13 @@
 function Invoke-WebHealthCheck {
     [CmdletBinding()]
     param(
-        [parameter(Mandatory=$true, Position=0, ParameterSetName='requestObject')] [hashtable[]] $request,
+        [parameter(Mandatory=$true, Position=0, ParameterSetName='requestObject')] [object[]] $request,
         [parameter(Mandatory=$true, Position=0, ParameterSetName='call')] [string] $uri,
         [parameter(Mandatory=$false, Position=1, ParameterSetName='call')] [string[]] $verbs = 'GET',
         [parameter(Mandatory=$false, Position=2, ParameterSetName='call')] [string] $postData = '{}',
         [parameter(Mandatory=$false, Position=3, ParameterSetName='call')] [string] $contentType = 'application/json',
         [parameter(Mandatory=$false, Position=4, ParameterSetName='call')] [int] $timeout = 30000,
-        [parameter(Mandatory=$false, Position=5, ParameterSetName='call')] [hashtable] $customHeaders,
+        [parameter(Mandatory=$false, Position=5, ParameterSetName='call')] [object] $customHeaders,
         [parameter(Mandatory=$false, Position=6, ParameterSetName='call')] [System.Net.NetworkCredential] $credentials
     )   
     
