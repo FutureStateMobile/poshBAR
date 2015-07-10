@@ -67,6 +67,7 @@ function Invoke-WebHealthCheck {
         return
     }
     
+    $table = @()
     $totalRequests = $verbs.Count
 	$failedCount = 0
     $statusCodes = @()
@@ -82,14 +83,14 @@ function Invoke-WebHealthCheck {
                                       -credentials $credentialsParam `
                                       -postData $postData
                                           
-
-	     
-         Write-Host ('{0} {1}.' -f $status.Code, $status.Message) -f $status.Color
-         $statusCodes += $status.Code
-         if(!$status.Success){
-             $failedCount++
-         }
+        $table +=  @{uri = $uri; status = ('{0} {1}' -f $status.Code, $status.Message); verb = $verb}
+        $statusCodes += $status.Code
+        if(!$status.Success){
+            $failedCount++
+        }
     }
+    
+    $table.ForEach({[PSCustomObject]$_}) | Format-Table -AutoSize -Expand Both
     
     if($failedCount -gt 0) {
         Write-Host  ($msgs.error_healthchecks_failed -f $failedCount, $totalRequests) -f Red 
@@ -152,7 +153,9 @@ function CustomWebRequest ($uri, $headers, $method, $contentType, $timeout, [Sys
         } catch [System.Net.WebException] {
            $message = $($_.ToString() -replace 'The remote server returned an error:', '' `
                                       -replace '\(', '' `
-                                      -replace '\)', '').Trim()
+                                      -replace '\)', '' `
+                                      -replace '\.', ''
+                       ).Trim()
 
            $statusString = $message.Split(" ", 2)
            $status = @{
