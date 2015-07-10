@@ -1,9 +1,46 @@
+<#
+    .SYNOPSIS 
+    Check to see if a website is up and running
+    
+    .DESCRIPTION
+     Check to see if a website is up and running
+     
+     .EXAMPLE
+     Invoke-WebHealthCheck 'http://google.com' 'GET'
+         
+     .EXAMPLE
+     Invoke-WebHealthCheck @{uri = 'https://google.com'; verbs = 'GET'}
+     
+     .PARAMETER request
+     An object containing all of the fields required to make a Web Health Check. This is used when storing all of the data in an XML document. A hashtable also works.
+     
+     .PARAMETER uri
+     The endpoint we are making the request to.
+     
+     .PARAMETER verbs
+     An array of http verbs [GET, PUT, POST, DELETE, HEAD, OPTIONS, TRACE ].
+     
+     .PARAMETER postData
+     The data you would like to send with the request (will not work with GET).
+     
+     .PARAMETER contentType
+     The Content Type to be sent with the request.
+     
+     .PARAMETER timeout
+     How long to wait before timing out the request.
+     
+     .PARAMETER customHeaders
+     Any additional headers that should be sent with the request.
+     
+     .PARAMETER credentials
+     A [System.Net.NetworkCredential] object containing the credentials to be sent with the request.
+#>
 function Invoke-WebHealthCheck {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='call')]
     param(
-        [parameter(Mandatory=$true, Position=0, ParameterSetName='requestObject')] [object[]] $request,
+        [parameter(Mandatory=$true, Position=0, ParameterSetName='requestObject')] [object] $request,
         [parameter(Mandatory=$true, Position=0, ParameterSetName='call')] [string] $uri,
-        [parameter(Mandatory=$false, Position=1, ParameterSetName='call')] [string[]] $verbs = 'GET',
+        [parameter(Mandatory=$false, Position=1, ParameterSetName='call')] [alias('methods')] [string[]] $verbs = 'GET',
         [parameter(Mandatory=$false, Position=2, ParameterSetName='call')] [string] $postData = '{}',
         [parameter(Mandatory=$false, Position=3, ParameterSetName='call')] [string] $contentType = 'application/json',
         [parameter(Mandatory=$false, Position=4, ParameterSetName='call')] [int] $timeout = 30000,

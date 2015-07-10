@@ -124,4 +124,40 @@ Describe 'Web Health Checks' {
             $result.success | Should Be $expectedSuccess
         }
     }
+    
+    Context 'Will ensure the first example runs as expected.' {
+        # setup
+        $example = { Invoke-WebHealthCheck 'http://google.com' 'GET' }
+        $expectedStatusCode = '302'
+        $expectedSuccess = $true
+        
+        # execute
+        $result = . $example
+        
+        # assert
+        It 'Should return a hashtable of appropriate data.' {
+            $result.totalRequests | Should Be 1
+            $result.failedRequests | Should Be 0
+            $result.statusCodes | Should Be $expectedStatusCode
+            $result.success | Should Be $expectedSuccess
+        }
+    }
+    
+    Context 'Will ensure the second example runs as expected.' {
+        # setup
+        $example = { Invoke-WebHealthCheck @{uri = 'https://google.com'; verbs = 'GET'} }
+        $expectedStatusCode = '302'
+        $expectedSuccess = $true
+        
+        # execute
+        $result = . $example
+        
+        # assert
+        It 'Should return a hashtable of appropriate data.' {
+            $result.totalRequests | Should Be 1
+            $result.failedRequests | Should Be 0
+            $result.statusCodes | Should Be $expectedStatusCode
+            $result.success | Should Be $expectedSuccess
+        }
+    }
 } 
