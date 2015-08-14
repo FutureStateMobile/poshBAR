@@ -178,6 +178,7 @@ Export-ModuleMember `
           'Use-Object',
           'Invoke-OracleCommand',
           'Invoke-OracleFile',
+          'Reset-OracleDatabase',
           'Invoke-BlockWithTokenReplacedFile'
           )
 
