@@ -6,7 +6,7 @@ function Invoke-Nunit {
         [string] $runCommand, 
         [bool] $includeCoverage,
         [string] $coverageRulesPath )
-    Find-ToolPath 'nunit'
+    Find-ToolPath 'nunit-console.exe'
     if ( $includeCoverage ){
         Invoke-NUnitWithCoverage $targetAssembly $outputDir $runCommand $coverageRulesPath
     } else {
@@ -26,8 +26,8 @@ function Invoke-NUnitWithCoverage {
         [string] $outputDir, 
         [string] $runCommand, 
         [string] $coverageRulesPath)
-    Find-ToolPath 'nunit'
-    Find-ToolPath 'dotcover'
+    Find-ToolPath 'nunit-console.exe'
+    Find-ToolPath 'dotcover.exe'
     $fileName = Get-TestFileName $outputDir $runCommand
 
     $xmlFile = "$fileName-TestResults.xml"
