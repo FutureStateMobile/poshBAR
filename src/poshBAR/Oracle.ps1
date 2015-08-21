@@ -68,3 +68,62 @@ function Invoke-OracleFile {
     $sqlToRun = Get-Content $sqlFile | Out-String
     Invoke-OracleCommand $sqlToRun $connectionString
 }
+
+<#
+    .SYNOPSIS
+        DROPS and RECREATES Database! Resets a development Oracle database by dropping tablespace and recreating with requested user as owner
+        
+    .PARAMETER $schemaName
+        The name of the schema
+        
+    .PARAMETER $databaseStorageFile
+        The absolute path of the file to store the tablespace in
+        
+    .PARAMETER $userId
+        The userId of the user to own the schema
+        
+    .PARAMETER $password
+        The password for the user
+           
+    .PARAMETER $connectionString
+        The oracle database connection string
+                     
+    .EXAMPLE
+        Reset-OracleDatabase 'MyDatabase' 'C:\databases\MyDatabase.dbf' 'MyUser' 'MyUserPassword' 'Data Source=localhost/XE;User Id=system;Password=SAus3r'
+                
+    .NOTES
+        WARNING: only to be used on development databases - DROPS the Database!
+#>
+function Reset-OracleDatabase {
+    param(        
+        [parameter(Mandatory=$true,position=0)] [string] $schemaName,
+        [parameter(Mandatory=$true,position=1)] [string] $databaseStorageFile,
+        [parameter(Mandatory=$true,position=2)] [string] $userId,
+        [parameter(Mandatory=$true,position=3)] [string] $password,
+        [parameter(Mandatory=$true,position=4)] [string] $connectionString
+	)        	   
+
+    $dbDir = Split-Path $databaseStorageFile                       
+    if(! (Test-Path $dbDir)) {
+        # create the database directory if it doesn't exist
+        New-Item -ItemType Directory -Force -Path $dbDir 
+    } else {
+        if(Test-Path $databaseStorageFile) {
+            Write-Host "Removing old tablespace $schemaName"
+            try {
+                Invoke-OracleCommand "drop user $userId cascade" $connectionString
+            } catch {
+                Write-Warning "Failed to drop user $userId in database rebuild but assuming it just doesn't exist and continuing ..."
+            }            
+            try {
+                Invoke-OracleCommand "DROP TABLESPACE $schemaName INCLUDING CONTENTS AND DATAFILES" $connectionString
+            } catch {
+                Write-Warning "Failed to drop tablespace $schemaName in database rebuild but assuming it just doesn't exist and continuing ..."
+            }            
+        }
+    }    
+    Write-Host "Creating tablespace $schemaName in file $databaseStorageFile"
+    Invoke-OracleCommand "CREATE TABLESPACE $schemaName DATAFILE '$databaseStorageFile' SIZE 10M REUSE AUTOEXTEND ON NEXT 10M MAXSIZE 200M" $connectionString       
+    Write-Host "Creating user $($databaseConfig.userId)" 
+    Invoke-OracleCommand "GRANT all PRIVILEGES TO $userId IDENTIFIED BY $password" $connectionString    		
+}
