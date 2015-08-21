@@ -10,23 +10,18 @@
         The name of the tool to add
 
     .EXAMPLE
-        Find-ToolPath 'dotcover'
+        Find-ToolPath 'dotcover.exe'
 
     .EXAMPLE
-        Find-ToolPath 'nunit'
-
-    .EXAMPLE
-        Find-ToolPath 'xunit'
+        Find-ToolPath 'sometool.exe'
 #>
 function Find-ToolPath {
     [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string] [alias('name')] $toolName
     )
-
-    $here = Resolve-Path './'
-    $upOne = Resolve-Path "$here\.."
-
+    
+    $here = Split-Path $script:MyInvocation.MyCommand.Path
     Write-Verbose "Current Directory is '$here'"
     
     # try to find it in the existing path.
@@ -38,39 +33,52 @@ function Find-ToolPath {
         return $foundPath
     }
 
-    # try to find it in the packages path
-    $packagePath = "$here\..\packages\$toolName.*\tools"
-    Write-Verbose "Looking for '$toolName' in '$packagePath'"
-    if(Test-Path $packagePath) {
-        $foundPath = (Resolve-Path $packagePath).Path
-        Write-Verbose "Found '$toolName' in '$foundPath'"
-        $env:PATH += ";$foundPath"
-        return $foundPath
-    }
-
-    # try to find it in the tools directory (usually in a nupkg file)
-    $nuspecToolsPath = "$here\tools"
-    Write-Verbose "Looking for '$toolName' in '$nuspecToolsPath'"
-    if(Test-Path $nuspecToolsPath) {
-        $foundPath = (Resolve-Path $nuspecToolsPath).Path
-        $exists = Get-ChildItem $path | ? {$_ -like "*$toolName*"}
-        if($exists) {
+    # try to find it in the current directory
+    Write-Verbose "Looking for '$toolName' in '$here'"
+    if(Test-Path $here) {
+        $foundPath = try { (Get-ChildItem $here -recurse | ? {$_ -like "*$toolName*"})[0].DirectoryName } catch { $null }
+        if($foundPath) {
             Write-Verbose "Found '$toolName' in '$foundPath'"
-            $env:PATH += ";$foundPath"
+            $env:PATH += ";$foundPath;"
             return $foundPath
         }
     }
 
-    # Heavy Weight, search entire directly tree from '$upOne' to search
-    $itm = Get-ChildItem -Path $upOne -Recurse -ErrorAction SilentlyContinue | ? {$_ -like "*$toolName*" -and $_.Extension -eq '.exe'} | select -First 1
-    Write-Verbose "Looking for '$toolName' recursively from '$upOne'"
-    if($itm){
-        Write-Verbose "Found '$toolName' in '$($itm.DirectoryName)'"
-        $foundPath = $($itm.DirectoryName)
-        $env:PATH += ";$foundPath"
-        return $foundPath
+    # try to find it in the packages path
+    $packagePath = "$here\..\..\..\..\packages"
+    Write-Verbose "Looking for '$toolName' in '$packagePath'"
+    if(Test-Path $packagePath) {
+        $foundPath = try { (Get-ChildItem $packagePath -recurse | ? {$_ -like "*$toolName*"})[0].DirectoryName } catch { $null }
+        if($foundPath) {
+            Write-Verbose "Found '$toolName' in '$foundPath'"
+            $env:PATH += ";$foundPath;"
+            return $foundPath
+        }
     }
 
+    # try to find it in the tools directory (usually in a nupkg file)
+    $nuspecToolsPath = "$here\..\..\tools"
+    Write-Verbose "Looking for '$toolName' in '$nuspecToolsPath'"
+    if(Test-Path $nuspecToolsPath) {
+        $foundPath = try { (Get-ChildItem $nuspecToolsPath -recurse | ? {$_ -like "*$toolName*"})[0].DirectoryName } catch { $null }
+        if($foundPath) {
+            Write-Verbose "Found '$toolName' in '$foundPath'"
+            $env:PATH += ";$foundPath;"
+            return $foundPath
+        }
+    }
+
+    # try to find it in the packages tools based on the tests working directory
+    $altPathForTests = "$here\..\..\..\tools"
+    Write-Verbose "Looking for '$toolName' in '$altPathForTests'"
+    if(Test-Path $altPathForTests) {
+        $foundPath = try { (Get-ChildItem $altPathForTests -recurse | ? {$_ -like "*$toolName*"})[0].DirectoryName } catch { $null }
+        if($foundPath) {
+            Write-Verbose "Found '$toolName' in '$foundPath'"
+            $env:PATH += ";$foundPath;"
+            return $foundPath
+        }
+    }
 
     throw ($msgs.error_cannot_find_tool -f $toolName)
 }
