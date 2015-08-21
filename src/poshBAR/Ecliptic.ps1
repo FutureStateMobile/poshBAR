@@ -22,7 +22,7 @@ function Invoke-Ecliptic {
     [CmdletBinding()]
     param([string] $testDir)
     
-    Find-ToolPath 'ecliptic'
+    Find-ToolPath 'ecliptic.exe'
     exec { Ecliptic.exe $testDir } ($msgs.error_specflow_generation -f $testDir)
 }
 Set-Alias ecliptic Invoke-Ecliptic
