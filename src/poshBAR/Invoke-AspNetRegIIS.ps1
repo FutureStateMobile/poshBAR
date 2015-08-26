@@ -51,7 +51,7 @@ function Invoke-AspNetRegIIS {
     } else {
         try{
             Write-Host "Executing: '$path\aspnet_regiis.exe $($PsCmdlet.ParameterSetName)'." -NoNewline
-            Exec {. "$path\aspnet_regiis.exe $($PsCmdlet.ParameterSetName)"} $msgs.wrn_aspnet_regiis_not_found
+            Exec {. "$path\aspnet_regiis.exe ${$PsCmdlet.ParameterSetName}"} $msgs.wrn_aspnet_regiis_not_found
             Write-Host "`tDone" -f Green
         } catch {
             Write-Host '' # just inputs a carriage return if an error occurs
