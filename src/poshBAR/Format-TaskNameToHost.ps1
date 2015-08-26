@@ -28,13 +28,13 @@ function Format-TaskNameToHost
 
     $ErrorActionPreference = "Stop"
     $taskName = $taskName.SubString(0,1).ToUpper()+$taskName.SubString(1)
-    $taskNameWithBraces = "[ $($taskName -csplit '(?<!^)(?=[A-Z])' -join ' ') ]"
+    $taskName = " [ $($taskName -csplit '(?<!^)(?=[A-Z])' -join ' ') ] "
 
     [int] $headingLength = 120
-    [int] $leftLength = (($headingLength - $taskNameWithBraces.length) / 2) + $taskNameWithBraces.length 
+    [int] $leftLength = (($headingLength - $taskName.length) / 2) + $taskName.length 
 
     write-host ""
-    write-host $taskNameWithBraces.padleft($leftLength, "-").padright($headingLength, "-") -foregroundcolor cyan
+    write-host $taskName.padleft($leftLength, "-").padright($headingLength, "-") -foregroundcolor cyan
 
     if($poshBAR.IsRunningOnTeamCity) {
         Write-Host "##teamcity[progressMessage '$taskName']"
