@@ -9,8 +9,6 @@ if ( $OctopusParameters ) {
     $poshBAR.DisableCreateIISApplicationPool = [System.Convert]::ToBoolean($OctopusParameters['poshBAR.DisableCreateIISApplicationPool'])
     $poshBAR.DisableCreateIISWebsite = [System.Convert]::ToBoolean($OctopusParameters['poshBAR.DisableCreateIISWebsite'])
     $poshBAR.DisableCreateIISApplication = [System.Convert]::ToBoolean($OctopusParameters['poshBAR.DisableCreateIISApplication'])
-    
-    
 }
 
 return $poshBAR
