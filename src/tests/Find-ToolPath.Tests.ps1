@@ -3,12 +3,12 @@ $ErrorActionPreference = 'Stop'
 Describe 'Find Tool Path' { 
     
     # Setup
-    BeforeEach {
+    BeforeAll {
         $originalPath = $env:PATH
     }
     
     # Teardown
-    AfterEach {
+    AfterAll {
         $env:PATH = $originalPath
     }
     
@@ -18,8 +18,7 @@ Describe 'Find Tool Path' {
        
         # execute
         $execute = {Find-ToolPath $toolName} 
-        $result = & $execute
-        
+       
         # assert
         It 'Should not thow for a valid tool.' {
             $execute | should not throw

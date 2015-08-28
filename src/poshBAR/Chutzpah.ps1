@@ -29,6 +29,6 @@ function Invoke-Chutzpah {
     param(
         [parameter( Mandatory=$true, Position=0)] [string] $testDirectory
     )
-    Find-ToolPath 'chutzpah'
+    Find-ToolPath 'chutzpah.console.exe'
     exec { chutzpah.console.exe /path $testDirectory /teamcity /coverage } ($msgs.error_chutzpah -f $testDirectory)
 }

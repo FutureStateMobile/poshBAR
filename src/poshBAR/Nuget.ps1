@@ -29,7 +29,7 @@ function New-NugetPackage{
         [parameter(Mandatory=$true, Position=2)][string] $outputDirectory
 	)
 
-    Find-ToolPath 'nuget'
+    Find-ToolPath 'nuget.exe'
 	exec { NuGet.exe Pack $nuspecFile -Version $version -OutputDirectory $outputDirectory -NoPackageAnalysis } "Failed to package $nuspecFile."
 }
 Set-Alias nupack New-NugetPackage

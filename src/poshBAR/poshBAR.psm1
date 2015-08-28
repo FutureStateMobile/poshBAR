@@ -25,6 +25,7 @@ Push-Location $psScriptRoot
 
 # Set Overrides
 . .\OctopusDeploy\Set-OverridesFromOctopusDeploy.ps1 $poshBAR
+. .\TeamCity\Set-TeamCityEnvironment.ps1 $poshBAR
 
 # Import Modules
 . .\Add-HostsFileEntry.ps1
@@ -178,6 +179,8 @@ Export-ModuleMember `
           'Use-Object',
           'Invoke-OracleCommand',
           'Invoke-OracleFile',
+          'Remove-OracleDatabase',
+          'New-OracleDatabase',
           'Reset-OracleDatabase',
           'Invoke-BlockWithTokenReplacedFile'
           )
