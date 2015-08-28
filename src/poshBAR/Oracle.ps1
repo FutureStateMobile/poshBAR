@@ -36,7 +36,6 @@ function Invoke-OracleCommand {
         $connection.Close()
         $connection.Dispose()
     }
-    #if($result -ne 0){$result}
 }
 <#
     .SYNOPSIS
@@ -67,6 +66,48 @@ function Invoke-OracleFile {
         
     $sqlToRun = Get-Content $sqlFile | Out-String
     Invoke-OracleCommand $sqlToRun $connectionString
+}
+
+<#
+    .SYNOPSIS
+        DROPS Database! Drops a development Oracle database by dropping tablespace
+        
+    .PARAMETER $schemaName
+        The name of the schema
+        
+    .PARAMETER $schemaOwnerUserId
+        The user id of the user that owns the schema        
+           
+    .PARAMETER $connectionString
+        The oracle database connection string
+                     
+    .EXAMPLE
+        Remove-OracleDatabase 'MyDatabase' 'MyUser' 'Data Source=localhost/XE;User Id=system;Password=SAus3r' $false
+                
+    .NOTES
+        WARNING: only to be used on development databases - DROPS the Database!
+#>
+function Remove-OracleDatabase {
+    param(        
+        [parameter(Mandatory=$true,position=0)] [string] $schemaName,
+        [parameter(Mandatory=$true,position=1)] [string] $schemaOwnerUserId,
+        [parameter(Mandatory=$true,position=2)] [string] $connectionString,
+        [parameter(Mandatory=$false,position=3)] [boolean] $failOnError = $true
+	)        	                                  
+    try {
+        Write-Verbose "Dropping database schema owner $schemaOwnerUserId"
+        Invoke-OracleCommand "drop user $schemaOwnerUserId cascade" $connectionString
+    } catch {
+        $message = "Failed to drop schema owner $schemaOwnerUserId when removing database."
+        if ($failOnError) { throw $message } else { Write-Warning $message }        
+    }            
+    try {
+        Write-Verbose "Removing database tablespace $schemaName"
+        Invoke-OracleCommand "DROP TABLESPACE $schemaName INCLUDING CONTENTS AND DATAFILES" $connectionString
+    } catch {
+        $message = "Failed to drop tablespace $schemaName when removing database."
+        if ($failOnError) { throw $message } else { Write-Warning $message }
+    }                    
 }
 
 <#
@@ -108,19 +149,7 @@ function Reset-OracleDatabase {
         # create the database directory if it doesn't exist
         New-Item -ItemType Directory -Force -Path $dbDir 
     } else {
-        if(Test-Path $databaseStorageFile) {
-            Write-Host "Removing old tablespace $schemaName"
-            try {
-                Invoke-OracleCommand "drop user $userId cascade" $connectionString
-            } catch {
-                Write-Warning "Failed to drop user $userId in database rebuild but assuming it just doesn't exist and continuing ..."
-            }            
-            try {
-                Invoke-OracleCommand "DROP TABLESPACE $schemaName INCLUDING CONTENTS AND DATAFILES" $connectionString
-            } catch {
-                Write-Warning "Failed to drop tablespace $schemaName in database rebuild but assuming it just doesn't exist and continuing ..."
-            }            
-        }
+        Remove-OracleDatabase $schemaName $userId $connectionString
     }    
     Write-Host "Creating tablespace $schemaName in file $databaseStorageFile"
     Invoke-OracleCommand "CREATE TABLESPACE $schemaName DATAFILE '$databaseStorageFile' SIZE 10M REUSE AUTOEXTEND ON NEXT 10M MAXSIZE 200M" $connectionString       
