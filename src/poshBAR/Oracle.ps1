@@ -102,6 +102,7 @@ function Remove-OracleDatabase {
         if ($failOnError) { throw $message } else { Write-Warning $message }        
     }            
     try {
+        
         Write-Verbose "Removing database tablespace $schemaName"
         Invoke-OracleCommand "DROP TABLESPACE $schemaName INCLUDING CONTENTS AND DATAFILES" $connectionString
     } catch {
@@ -109,7 +110,48 @@ function Remove-OracleDatabase {
         if ($failOnError) { throw $message } else { Write-Warning $message }
     }                    
 }
+<#
+    .SYNOPSIS
+        CREATES new database with requested user as owner
+        
+    .PARAMETER $schemaName
+        The name of the schema
+        
+    .PARAMETER $databaseStorageFile
+        The absolute path of the file to store the tablespace in
+        
+    .PARAMETER $schemaOwnerUserId
+        The user id of the user to own the schema
+        
+    .PARAMETER $schemaOwnerPassword
+        The password for the schema owner
+           
+    .PARAMETER $connectionString
+        The oracle database connection string
+                     
+    .EXAMPLE
+        New-OracleDatabase 'MyDatabase' 'C:\databases\MyDatabase.dbf' 'MyUser' 'MyUserPassword' 'Data Source=localhost/XE;User Id=system;Password=SAus3r'
+                    
+#>
+function New-OracleDatabase {
+    param(        
+        [parameter(Mandatory=$true,position=0)] [string] $schemaName,
+        [parameter(Mandatory=$true,position=1)] [string] $databaseStorageFile,
+        [parameter(Mandatory=$true,position=2)] [string] $schemaOwnerUserId,
+        [parameter(Mandatory=$true,position=3)] [string] $schemaOwnerPassword,
+        [parameter(Mandatory=$true,position=4)] [string] $connectionString
+	)        	   
 
+    $dbDir = Split-Path $databaseStorageFile                       
+    if(! (Test-Path $dbDir)) {
+        # create the database directory if it doesn't exist
+        New-Item -ItemType Directory -Force -Path $dbDir 
+    }    
+    Write-Host "Creating tablespace $schemaName in file $databaseStorageFile"
+    Invoke-OracleCommand "CREATE TABLESPACE $schemaName DATAFILE '$databaseStorageFile' SIZE 10M REUSE AUTOEXTEND ON NEXT 10M MAXSIZE 200M" $connectionString       
+    Write-Host "Creating user $($databaseConfig.userId)" 
+    Invoke-OracleCommand "GRANT all PRIVILEGES TO $userId IDENTIFIED BY $schemaOwnerPassword" $connectionString    		
+}
 <#
     .SYNOPSIS
         DROPS and RECREATES Database! Resets a development Oracle database by dropping tablespace and recreating with requested user as owner
@@ -120,10 +162,10 @@ function Remove-OracleDatabase {
     .PARAMETER $databaseStorageFile
         The absolute path of the file to store the tablespace in
         
-    .PARAMETER $userId
+    .PARAMETER $schemaOwnerUserId
         The userId of the user to own the schema
         
-    .PARAMETER $password
+    .PARAMETER $schemaOwnerPassword
         The password for the user
            
     .PARAMETER $connectionString
@@ -139,20 +181,14 @@ function Reset-OracleDatabase {
     param(        
         [parameter(Mandatory=$true,position=0)] [string] $schemaName,
         [parameter(Mandatory=$true,position=1)] [string] $databaseStorageFile,
-        [parameter(Mandatory=$true,position=2)] [string] $userId,
-        [parameter(Mandatory=$true,position=3)] [string] $password,
+        [parameter(Mandatory=$true,position=2)] [string] $schemaOwnerUserId,
+        [parameter(Mandatory=$true,position=3)] [string] $schemaOwnerPassword,
         [parameter(Mandatory=$true,position=4)] [string] $connectionString
 	)        	   
 
     $dbDir = Split-Path $databaseStorageFile                       
-    if(! (Test-Path $dbDir)) {
-        # create the database directory if it doesn't exist
-        New-Item -ItemType Directory -Force -Path $dbDir 
-    } else {
-        Remove-OracleDatabase $schemaName $userId $connectionString
+    if(Test-Path $dbDir) {
+        Remove-OracleDatabase $schemaName $schemaOwnerUserId $connectionString
     }    
-    Write-Host "Creating tablespace $schemaName in file $databaseStorageFile"
-    Invoke-OracleCommand "CREATE TABLESPACE $schemaName DATAFILE '$databaseStorageFile' SIZE 10M REUSE AUTOEXTEND ON NEXT 10M MAXSIZE 200M" $connectionString       
-    Write-Host "Creating user $($databaseConfig.userId)" 
-    Invoke-OracleCommand "GRANT all PRIVILEGES TO $userId IDENTIFIED BY $password" $connectionString    		
+    New-OracleDatabase $schemaName $databaseStorageFile $schemaOwnerUserId $schemaOwnerPassword $connectionString    		
 }
