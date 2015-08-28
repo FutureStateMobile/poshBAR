@@ -94,20 +94,24 @@ function Remove-OracleDatabase {
         [parameter(Mandatory=$true,position=2)] [string] $connectionString,
         [parameter(Mandatory=$false,position=3)] [boolean] $failOnError = $true
 	)        	                                  
+    $failureDetected = $false
     try {
         Write-Verbose "Dropping database schema owner $schemaOwnerUserId"
         Invoke-OracleCommand "drop user $schemaOwnerUserId cascade" $connectionString
     } catch {
-        $message = "Failed to drop schema owner $schemaOwnerUserId when removing database."
-        if ($failOnError) { throw $message } else { Write-Warning $message }        
+        Write-Warning "Failed to drop schema owner $schemaOwnerUserId when removing database - either the user has a connection to the database or the user does not exist."
+        $failureDetected = $true       
     }            
     try {
         
         Write-Verbose "Removing database tablespace $schemaName"
         Invoke-OracleCommand "DROP TABLESPACE $schemaName INCLUDING CONTENTS AND DATAFILES" $connectionString
     } catch {
-        $message = "Failed to drop tablespace $schemaName when removing database."
-        if ($failOnError) { throw $message } else { Write-Warning $message }
+        Write-Warning "Failed to drop tablespace $schemaName when removing database - either the database has current connections or does not exist."
+        $failureDetected = $true
+    }
+    if ($failureDetected -and $failOnError) { 
+        throw "Failed to remove database, see above warnings!" 
     }                    
 }
 <#
@@ -150,7 +154,7 @@ function New-OracleDatabase {
     Write-Host "Creating tablespace $schemaName in file $databaseStorageFile"
     Invoke-OracleCommand "CREATE TABLESPACE $schemaName DATAFILE '$databaseStorageFile' SIZE 10M REUSE AUTOEXTEND ON NEXT 10M MAXSIZE 200M" $connectionString       
     Write-Host "Creating user $($databaseConfig.userId)" 
-    Invoke-OracleCommand "GRANT all PRIVILEGES TO $userId IDENTIFIED BY $schemaOwnerPassword" $connectionString    		
+    Invoke-OracleCommand "GRANT all PRIVILEGES TO $schemaOwnerUserId IDENTIFIED BY $schemaOwnerPassword" $connectionString    		
 }
 <#
     .SYNOPSIS
@@ -188,7 +192,8 @@ function Reset-OracleDatabase {
 
     $dbDir = Split-Path $databaseStorageFile                       
     if(Test-Path $dbDir) {
-        Remove-OracleDatabase $schemaName $schemaOwnerUserId $connectionString
+        $failOnError = Test-Path $databaseStorageFile
+        Remove-OracleDatabase $schemaName $schemaOwnerUserId $connectionString $failOnError
     }    
     New-OracleDatabase $schemaName $databaseStorageFile $schemaOwnerUserId $schemaOwnerPassword $connectionString    		
 }
