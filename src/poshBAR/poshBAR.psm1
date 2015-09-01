@@ -182,7 +182,8 @@ Export-ModuleMember `
           'Remove-OracleDatabase',
           'New-OracleDatabase',
           'Reset-OracleDatabase',
-          'Invoke-BlockWithTokenReplacedFile'
+          'Invoke-BlockWithTokenReplacedFile',
+          'Write-TokenReplacedFile'
           )
 
 # Messages
