@@ -56,18 +56,19 @@ function Update-AssemblyVersions
 
     ls -r -filter AssemblyInfo.cs | % {
         $filename = $_.Directory.ToString() + '\' + $_.Name
+        
         #ni "$filename.temp" -type file
         # If you are using a source control that requires to check-out files before 
         # modifying them, make sure to check-out the file here.
         # For example, TFS will require the following command:
         # tf checkout $filename
         try {
-            (cat $filename) | % {
+            (Get-Content $filename) | % {
                 % {$_ -replace $assemblyVersionPattern, $assemblyVersion } |
                 % {if($copyright) {$_ -replace $assenblyCopyrightPattern, $assemblyCopyright} } |
                 % {$_ -replace $fileVersionPattern, $fileVersion } |
                 % {$_ -replace $informationalVersionPattern, $informationalVersion }
-            } | sc "$filename.temp"   
+            } | Out-File "$filename.temp" -force
             rm $filename -force 
         } finally {
             ren "$filename.temp" $filename    

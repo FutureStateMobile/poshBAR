@@ -66,22 +66,21 @@ function Invoke-AspNetRegIIS {
         throw $msgs.error_aspnet_regiis_not_found
     }
   
-    $command = @("$path\aspnet_regiis.exe")
+    $regIisArgs = @()
     if($PsCmdlet.ParameterSetName -eq '-s'){
-    Write-Host "Ensuring ASP.NET version $framework is registered for $siteName."
+        Write-Host "Ensuring ASP.NET version $framework is registered for $siteName."
         
-        $command += "-s"
-            
+        $regIisArgs += '-s'
+                    
         $siteId = Get-IISSiteId $siteName
         $sitePath = "W3SVC/$siteId/root"
-        $command += "$sitePath"
-            
+        $regIisArgs += $sitePath
+                    
         $output.siteName = $siteName
         $output.sitePath = $sitePath
     } else {
-        
         Write-Host "Ensuring ASP.NET version $framework is registered in IIS."
-        $command += "${$PsCmdlet.ParameterSetName}"
+        $regIisArgs += $PsCmdlet.ParameterSetName
         if( $poshBAR.DisableGlobalASPNETRegIIS ) {
             Write-Host '' # just inputs a carriage return if an error occurs
             Write-Warning $($msgs.wrn_aspnet_regiis_disabled -f $framework)
@@ -89,19 +88,23 @@ function Invoke-AspNetRegIIS {
     }
     
     if($noRestart.IsPresent) {
-        $command += '-norestart'
+        $regIisArgs += '-norestart'
         $output.norestart = $true
     }
-    
-    
+
+    $originalPATH = $env:PATH
+    $env:PATH += ";$path"
+        
     try{
-        Write-Host "Executing: $command" -NoNewline
-        Exec {. $command} $msgs.wrn_aspnet_regiis_not_found
-        Write-Host "`tDone" -f Green
+        Write-Host "Executing: aspnet_regiis.exe $regIisArgs"
+        Exec {aspnet_regiis.exe $regIisArgs} $msgs.wrn_aspnet_regiis_not_found
+        Write-Host "Done" -f Green
     } catch {
         Write-Host '' # just inputs a carriage return if an error occurs
         Write-Warning $_ # We don't want to fail deployment if this command fails. Just write out the warning.
         Write-Host 'The deployment will continue...'
+    } finally {
+        $env:PATH = $originalPATH
     }
 
     Write-Output $output
