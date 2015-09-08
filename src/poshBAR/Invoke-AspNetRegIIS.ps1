@@ -2,13 +2,16 @@
     .DESCRIPTION
        Will register asp.net into IIS
 
+    .EXAMPLE 
+        aspnet_regiis -s example.com -norestart
+
     .EXAMPLE
         Invoke-AspNetRegIIS -i
 
     .EXAMPLE 
         aspnet_regiis -iru -framework 3.5
 
-    .PARAMETER $siteName
+    .PARAMETER siteName
         Install ASP.NET to a specific site only (recommended). 
 
     .PARAMETER i
