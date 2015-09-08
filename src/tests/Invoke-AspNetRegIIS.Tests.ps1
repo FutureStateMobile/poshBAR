@@ -7,46 +7,64 @@ Describe 'Invoke ASP_NET RegIIS' {
         Mock Invoke-ExternalCommand {} -moduleName poshBAR
     }
     
-    Context 'Will prevent execution when "DisableASPNETRegIIS" is set to "true".' {
+    Context 'Will prevent execution when "DisableGlobalASPNETRegIIS" is set to "true".' {
         # setup
         Mock Write-Warning {} -moduleName poshBAR
-        $poshBAR.DisableASPNETRegIIS = $true
+        $poshBAR.DisableGlobalASPNETRegIIS = $true
         
         # execute
-        Invoke-AspNetRegIIS 
+        Invoke-AspNetRegIIS -i
         
         # assert
-        It 'Should prevent installing ASP.NET.' {
+        It 'Should write a warning when attempting to install ASP.NET.' {
             Assert-MockCalled Write-Warning -moduleName poshBAR -Exactly 1
         }
         
-        It 'Should have DisableASPNETRegIIS set to true' {
-             $poshBAR.DisableASPNETRegIIS | should be $true
+        It 'Should have DisableGlobalASPNETRegIIS set to true' {
+             $poshBAR.DisableGlobalASPNETRegIIS | should be $true
         }
         
         # teardown
-        $poshBAR.DisableASPNETRegIIS = $false
+        $poshBAR.DisableGlobalASPNETRegIIS = $false
     }
     
-    Context 'Will invoke aspnet_regiis with defaults.'{
+    Context 'Will invoke aspnet_regiis with the -norestart flag' {
         # setup
-        $4_0Path = if($ENV:PROCESSOR_ARCHITECTURE -eq 'amd64'){ "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319" } else { "$env:WINDIR\Microsoft.NET\Framework\v4.0.30319" }
         
         # execute
-        $execute = { Invoke-AspNetRegIIS }
-        $result = . $execute        
+        $execute = {Invoke-AspNetRegIIS -i -norestart}
+        $result = . $execute    
         
         # assert
-        It 'Should use the appropriate -iur switch.' {
-            $result.switch | should be '-iur'
+        It 'Should add the -norestart switch to the command.' {
+            $result.norestart | should be $true
+        }
+    }
+    
+    Context 'Will invoke aspnet_regiis against a specified site' {
+        # setup
+        Mock Get-IisSiteId {return 999} -moduleName poshBar
+        $siteName = 'example.site.com'
+        
+        # execute
+        $execute = {Invoke-AspNetRegIIS -s $siteName}
+        $result = . $execute    
+        
+        # assert
+        It 'Should return the site name in the output.' {
+            $result.siteName | should be $siteName
         }
         
-        It 'Should use the appropriate path to aspnet_regiis.exe.' {
-            $result.path | should be $4_0Path
+        It 'Should use the appropriate -s switch.' {
+            $result.switch | should be '-s'
         }
         
-        It 'Should invoke aspnet_regiis.exe via EXEC {} command' {
-            Assert-MockCalled Invoke-ExternalCommand -moduleName poshBAR -Exactly 1
+        It 'Should return a sitePath that contains 999.' {
+            $result.sitePath | should match 999
+        }
+        
+        It 'Should call the internal method for getting the site ID.' {
+            Assert-MockCalled Get-IisSiteId -moduleName poshBAR -Exactly 1
         }
     }
     
@@ -84,16 +102,16 @@ Describe 'Invoke ASP_NET RegIIS' {
         }
     }
     
-    Context 'Will invoke aspnet_regiis -iur.'{
+    Context 'Will invoke aspnet_regiis -iru.'{
         # setup
         
         # execute
-        $execute = {Invoke-AspNetRegIIS -iur}
+        $execute = {Invoke-AspNetRegIIS -iru}
         $result = . $execute        
         
         # assert
-        It 'Should use the appropriate -iur switch.' {
-            $result.switch | should be '-iur'
+        It 'Should use the appropriate -iru switch.' {
+            $result.switch | should be '-iru'
         }
         
         It 'Should invoke aspnet_regiis.exe via EXEC {} command' {
@@ -106,7 +124,7 @@ Describe 'Invoke ASP_NET RegIIS' {
         $2_0Path = if($ENV:PROCESSOR_ARCHITECTURE -eq 'amd64'){ "$env:WINDIR\Microsoft.NET\Framework64\v2.0.50727" } else { "$env:WINDIR\Microsoft.NET\Framework\v2.0.50727" }
         
         # execute
-        $execute = {Invoke-AspNetRegIIS -Framework 2.0}
+        $execute = {Invoke-AspNetRegIIS -Framework 2.0 -i}
         $result = . $execute        
         
         # assert
@@ -120,7 +138,7 @@ Describe 'Invoke ASP_NET RegIIS' {
         $3_0Path = if($ENV:PROCESSOR_ARCHITECTURE -eq 'amd64'){ "$env:WINDIR\Microsoft.NET\Framework64\v2.0.50727" } else { "$env:WINDIR\Microsoft.NET\Framework\v2.0.50727" }
         
         # execute
-        $execute = {Invoke-AspNetRegIIS -Framework 3.0}
+        $execute = {Invoke-AspNetRegIIS -Framework 3.0 -i}
         $result = . $execute        
         
         # assert
@@ -134,7 +152,7 @@ Describe 'Invoke ASP_NET RegIIS' {
         $3_5Path = if($ENV:PROCESSOR_ARCHITECTURE -eq 'amd64'){ "$env:WINDIR\Microsoft.NET\Framework64\v2.0.50727" } else { "$env:WINDIR\Microsoft.NET\Framework\v2.0.50727" }
         
         # execute
-        $execute = {Invoke-AspNetRegIIS -Framework 3.5}
+        $execute = {Invoke-AspNetRegIIS -Framework 3.5 -i}
         $result = . $execute        
         
         # assert
@@ -148,7 +166,7 @@ Describe 'Invoke ASP_NET RegIIS' {
         $4_0Path = if($ENV:PROCESSOR_ARCHITECTURE -eq 'amd64'){ "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319" } else { "$env:WINDIR\Microsoft.NET\Framework\v4.0.30319" }
         
         # execute
-        $execute = {Invoke-AspNetRegIIS -Framework 4.0}
+        $execute = {Invoke-AspNetRegIIS -Framework 4.0 -i}
         $result = . $execute        
         
         # assert
@@ -162,7 +180,7 @@ Describe 'Invoke ASP_NET RegIIS' {
         Mock Get-PathToAspNetRegIIS {return 'C:\Foo\Bar'} -moduleName poshbar
         
         # execute
-        $execute = { Invoke-AspNetRegIIS }
+        $execute = { Invoke-AspNetRegIIS  -i}
         
         # assert
         It 'Should throw $msgs.error_aspnet_regiis_not_found exception.' {
