@@ -14,7 +14,7 @@
     <copyright>Copyright 2015 [project].</copyright>
   </metadata>
   <files>
-    <file src="..\build-artifacts\output\_PublishedWebsites\[project]\**\*.*" target="website" exclude="..\build-artifacts\output\_PublishedWebsites\project\**\*.pdb" />
+    <file src="..\build-artifacts\output\_PublishedWebsites\[project]\**\*.*" target="website" exclude="..\build-artifacts\output\_PublishedWebsites\[project]\**\*.pdb" />
     <file src="..\build\deploy.ps1" target="deploy.ps1" />
     <file src="..\build\environments\**\*.*" target="environments" />
     <file src="..\packages\poshBAR.*\tools\modules\**\*.*" target="modules" />
