@@ -47,7 +47,7 @@ function Install-WindowsFeatures{
                     Write-Host "`tDone (with dependencies)" -f Green
                 }
             } else {
-                Write-Host "`tExists." -f Cyan
+                Write-Host "`tAlready exists, skipping." -f Cyan
             }
         }
     }
