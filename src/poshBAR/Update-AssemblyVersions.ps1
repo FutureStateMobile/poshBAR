@@ -31,19 +31,19 @@ function Update-AssemblyVersions
         [parameter(Mandatory=$true,position=0)] [ValidatePattern('^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})(\.[0-9]*?)?$')] [string] $Version,
         [parameter(Mandatory=$true,position=1)] [string] $BuildNumber,
         [parameter(Mandatory=$true,position=2)] [string] $AssemblyInformationalVersion,
-        [parameter(Mandatory=$false,position=3)] [string] $projectRoot = "..\"
-        # [parameter(Mandatory=$false,position=4)] [string] [alias('copyright')]$copyrightFormatString
+        [parameter(Mandatory=$false,position=3)] [string] $projectRoot = "..\",
+        [parameter(Mandatory=$false,position=4)] [string] [alias('copyright')]$copyrightFormatString
     )
 
     $ErrorActionPreference = "Stop"
 
     $assemblyVersionPattern = 'AssemblyVersion(Attribute)?\(".*?"\)'
-    # $assenblyCopyrightPattern = 'AssemblyCopyright(Attribute)?\(".*?"\)'
+    $assenblyCopyrightPattern = 'AssemblyCopyright(Attribute)?\(".*?"\)'
     $fileVersionPattern = 'AssemblyFileVersion(Attribute)?\(".*?"\)'
     $informationalVersionPattern = 'AssemblyInformationalVersion(Attribute)?\(".*?"\)'
    
     $assemblyVersion = 'AssemblyVersion("' + $Version + '.' + $BuildNumber + '")';
-    # $assemblyCopyright = 'AssemblyCopyright("' + ($copyright -f $((Get-Date).year)) + '")';
+    $assemblyCopyright = 'AssemblyCopyright("' + ($copyrightFormatString -f $((Get-Date).year)) + '")';
     $fileVersion = 'AssemblyFileVersion("' + $Version + '.' + $BuildNumber + '")';
     $informationalVersion = 'AssemblyInformationalVersion("' + $AssemblyInformationalVersion + '")';
     
@@ -63,10 +63,8 @@ function Update-AssemblyVersions
             (Get-Content $filename) | % {
                 % {$_ -replace $assemblyVersionPattern, $assemblyVersion } |
                 % {$_ -replace $fileVersionPattern, $fileVersion } |
-                % {$_ -replace $informationalVersionPattern, $informationalVersion } <# |
-                
-                Currently Broken
-                % {if($copyright) {$_ -replace $assenblyCopyrightPattern, $assemblyCopyright} } #>
+                % {$_ -replace $informationalVersionPattern, $informationalVersion } |
+                % {if($copyrightFormatString) {$_ -replace $assenblyCopyrightPattern, $assemblyCopyright} else { $_ } }
             } | Out-File "$filename.temp" -force
             rm $filename -force 
         } catch {
