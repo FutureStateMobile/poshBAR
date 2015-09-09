@@ -4,7 +4,7 @@
         and then updates the AssemblyVersion and AssemblyFileVersion.
 
     .EXAMPLE
-        Update-AssemblyVersions '3.1.2', '233', '3.1.2 Beta 1'
+        Update-AssemblyVersions '3.1.2', '233', '3.1.2 Beta 1' -copyright 'Copyright {0} Acme Corp.'
 
     .PARAMETER Version
         A string containing the version of this dll.  This would be in the format of {Major}.{Minor}.{Revision}
@@ -18,6 +18,9 @@
     .PARAMETER ProjectRoot
         Where to begin recursion when searching for the AssemblyInfo.cs files to be updated.
         
+    .PARAMETER copyrightFormatString
+        The string you want to use in the copyright field
+    
     .SYNOPSIS
         Update all the AssemblyInfo.cs files in a solution so they are the same.
 
@@ -32,7 +35,7 @@ function Update-AssemblyVersions
         [parameter(Mandatory=$true,position=1)] [string] $BuildNumber,
         [parameter(Mandatory=$true,position=2)] [string] $AssemblyInformationalVersion,
         [parameter(Mandatory=$false,position=3)] [string] $projectRoot = "..\",
-        [parameter(Mandatory=$false,position=4)] [string] [alias('copyright')]$copyrightFormatString
+        [parameter(Mandatory=$false,position=4)] [string] [alias('copyright')] $copyrightFormatString
     )
 
     $ErrorActionPreference = "Stop"
@@ -70,13 +73,9 @@ function Update-AssemblyVersions
         } catch {
             Write-Warning $_
         } finally {
-            ren "$filename.temp" $filename    
+            ren "$filename.temp" $filename
         }
         "$filename - Updated"
     }
     Pop-Location
 }
-
-
-
-               
