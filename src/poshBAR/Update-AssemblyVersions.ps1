@@ -18,9 +18,6 @@
     .PARAMETER ProjectRoot
         Where to begin recursion when searching for the AssemblyInfo.cs files to be updated.
         
-    .PARAMETER copyrightFormatString
-        The string to use when setting the assembly's copyright info. This parameter includes a single position format option [ {0} ] that is replaced with the current year.
-
     .SYNOPSIS
         Update all the AssemblyInfo.cs files in a solution so they are the same.
 
@@ -34,19 +31,19 @@ function Update-AssemblyVersions
         [parameter(Mandatory=$true,position=0)] [ValidatePattern('^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})(\.[0-9]*?)?$')] [string] $Version,
         [parameter(Mandatory=$true,position=1)] [string] $BuildNumber,
         [parameter(Mandatory=$true,position=2)] [string] $AssemblyInformationalVersion,
-        [parameter(Mandatory=$false,position=3)] [string] $projectRoot = "..\",
-        [parameter(Mandatory=$false,position=4)] [string] [alias('copyright')]$copyrightFormatString
+        [parameter(Mandatory=$false,position=3)] [string] $projectRoot = "..\"
+        # [parameter(Mandatory=$false,position=4)] [string] [alias('copyright')]$copyrightFormatString
     )
 
     $ErrorActionPreference = "Stop"
 
     $assemblyVersionPattern = 'AssemblyVersion(Attribute)?\(".*?"\)'
-    $assenblyCopyrightPattern = 'AssemblyCopyright(Attribute)?\(".*?"\)'
+    # $assenblyCopyrightPattern = 'AssemblyCopyright(Attribute)?\(".*?"\)'
     $fileVersionPattern = 'AssemblyFileVersion(Attribute)?\(".*?"\)'
     $informationalVersionPattern = 'AssemblyInformationalVersion(Attribute)?\(".*?"\)'
    
     $assemblyVersion = 'AssemblyVersion("' + $Version + '.' + $BuildNumber + '")';
-    $assemblyCopyright = 'AssemblyCopyright("' + ($copyright -f $((Get-Date).year)) + '")';
+    # $assemblyCopyright = 'AssemblyCopyright("' + ($copyright -f $((Get-Date).year)) + '")';
     $fileVersion = 'AssemblyFileVersion("' + $Version + '.' + $BuildNumber + '")';
     $informationalVersion = 'AssemblyInformationalVersion("' + $AssemblyInformationalVersion + '")';
     
@@ -65,11 +62,15 @@ function Update-AssemblyVersions
         try {
             (Get-Content $filename) | % {
                 % {$_ -replace $assemblyVersionPattern, $assemblyVersion } |
-                % {if($copyright) {$_ -replace $assenblyCopyrightPattern, $assemblyCopyright} } |
                 % {$_ -replace $fileVersionPattern, $fileVersion } |
-                % {$_ -replace $informationalVersionPattern, $informationalVersion }
+                % {$_ -replace $informationalVersionPattern, $informationalVersion } <# |
+                
+                Currently Broken
+                % {if($copyright) {$_ -replace $assenblyCopyrightPattern, $assemblyCopyright} } #>
             } | Out-File "$filename.temp" -force
             rm $filename -force 
+        } catch {
+            Write-Warning $_
         } finally {
             ren "$filename.temp" $filename    
         }
@@ -77,3 +78,7 @@ function Update-AssemblyVersions
     }
     Pop-Location
 }
+
+
+
+               
