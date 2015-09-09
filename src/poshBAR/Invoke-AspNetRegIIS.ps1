@@ -116,7 +116,7 @@ Set-Alias aspnet_regiis Invoke-AspNetRegIIS
 function Get-IisSiteId($siteName) {
     $matches = @() # reset matches variable
     $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
-    $regex = '^SITE \".*\" \(id:(?<id>\d).*$'
+    $regex = '^SITE \".*\" \(id:(?<id>\d{1,3}).*$'
       
     $record = Invoke-Expression  "$appcmd list site" | ? {$_.Contains($siteName)}
     $record -match $regex | out-null
