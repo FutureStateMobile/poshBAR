@@ -25,6 +25,9 @@ $appcmd = "$env:windir\system32\inetsrv\appcmd.exe"
     .PARAMETER password
         The password for the Username that this app pool should run as.
 
+    .PARAMETER idleTimeout
+        Amount of time a worker process will remain idle before it shuts down.
+
     .PARAMETER managedPipelineMode
         Is the app pool to be running as 'Classic', or 'Integrated' (Defaults to Integrated)
 
@@ -48,12 +51,12 @@ function New-AppPool{
         [parameter(Mandatory=$false,position=2)] [int] $maxProcesses = 1,
         [parameter(Mandatory=$false,position=3)] [string] [alias('un')] $username,
         [parameter(Mandatory=$false,position=4)] [string] [alias('pwd')] $password,
-        [parameter(Mandatory=$false,position=5)] [string] [ValidateSet('Integrated','Classic')] $managedPipelineMode = 'Integrated',
-        [parameter(Mandatory=$false,position=6)] [string] $managedRuntimeVersion = "v4.0",
+        [parameter(Mandatory=$false,position=5)] [timespan] $idleTimeout = "00:20:00",
+        [parameter(Mandatory=$false,position=6)] [string] [ValidateSet('Integrated','Classic')] $managedPipelineMode = 'Integrated',
+        [parameter(Mandatory=$false,position=7)] [string] $managedRuntimeVersion = "v4.0",
         [parameter(Mandatory=$false)] [switch] $alwaysRunning,
         [parameter(Mandatory=$false)] [switch] $updateIfFound
     )
-
     $exists = Confirm-AppPoolExists $appPoolName
 
     if (!$exists){
@@ -65,6 +68,7 @@ function New-AppPool{
         $newAppPool += " /name:$appPoolName"
         $newAppPool += " /processModel.identityType:$appPoolIdentityType"
         $newAppPool += " /processModel.maxProcesses:$maxProcesses"
+        $newAppPool += " /processModel.idleTimeout:$idleTimeout"
         $newAppPool += " /managedPipelineMode:$managedPipelineMode"
         $newAppPool += " /managedRuntimeVersion:$managedRuntimeVersion"
         $newAppPool += ' /autoStart:true'
@@ -80,7 +84,7 @@ function New-AppPool{
     }else{
         Write-Host "`tApp Pool already exists..." -f Cyan
         if ($updateIfFound.isPresent) {
-            Update-AppPool $appPoolName $appPoolIdentityType $maxProcesses $username $password $managedPipelineMode $managedRuntimeVersion
+            Update-AppPool $appPoolName $appPoolIdentityType $maxProcesses $username $password $idleTimeout $managedPipelineMode $managedRuntimeVersion
         } else {
             Write-Host ($msgs.msg_not_updating -f "Application Pool")
         }
@@ -112,6 +116,9 @@ function New-AppPool{
     .PARAMETER password
         The password for the Username that this app pool should run as.
 
+    .PARAMETER idleTimeout
+        Amount of time a worker process will remain idle before it shuts down.
+
     .PARAMETER managedPipelineMode
         Is the app pool to be running as 'Classic', or 'Integrated' (Defaults to Integrated)
 
@@ -132,9 +139,10 @@ function Update-AppPool{
         [parameter(Mandatory=$false,position=2)] [int] $maxProcesses = 1,
         [parameter(Mandatory=$false,position=3)] [string] $username,
         [parameter(Mandatory=$false,position=4)] [string] $password,
-        [parameter(Mandatory=$false,position=5)] [string] [ValidateSet('Integrated','Classic')] $managedPipelineMode = 'Integrated',
-        [parameter(Mandatory=$false,position=6)] [string] $managedRuntimeVersion = "v4.0",
-        [parameter(Mandatory=$false,position=7)] [switch] $alwaysRunning
+        [parameter(Mandatory=$false,position=5)] [timespan] $idleTimeout = "00:20:00",
+        [parameter(Mandatory=$false,position=6)] [string] [ValidateSet('Integrated','Classic')] $managedPipelineMode = 'Integrated',
+        [parameter(Mandatory=$false,position=7)] [string] $managedRuntimeVersion = "v4.0",
+        [parameter(Mandatory=$false)] [switch] $alwaysRunning
     )
 
     $exists = Confirm-AppPoolExists $appPoolName
@@ -144,6 +152,7 @@ function Update-AppPool{
         $updateAppPool = "$appcmd set APPPOOL $appPoolName"
         $updateAppPool += " /processModel.identityType:$appPoolIdentityType"
         $updateAppPool += " /processModel.maxProcesses:$maxProcesses"
+        $updateAppPool += " /processModel.idleTimeout:$idleTimeout"
         $updateAppPool += " /managedPipelineMode:$managedPipelineMode"
         $updateAppPool += " /managedRuntimeVersion:$managedRuntimeVersion"
         $updateAppPool += ' /autoStart:true'

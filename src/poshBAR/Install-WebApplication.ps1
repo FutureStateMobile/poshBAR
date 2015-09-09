@@ -89,7 +89,7 @@ function Install-WebApplication() {
         Approve-Permissions "$appFilePath/App_Data" $($websiteSettings.appPool.userName) "modify"
     }
 
-    New-AppPool $($websiteSettings.appPool.name) $($websiteSettings.appPool.identityType) $($websiteSettings.appPool.maxWorkerProcesses) $($websiteSettings.appPool.userName) $($websiteSettings.appPool.password) -updateIfFound
+    New-AppPool $($websiteSettings.appPool.name) $($websiteSettings.appPool.identityType) $($websiteSettings.appPool.maxWorkerProcesses) $($websiteSettings.appPool.userName) $($websiteSettings.appPool.password) $($websiteSettings.appPool.idleTimeout) -updateIfFound
 
     New-Site $($websiteSettings.siteName) $siteFilePath ($websiteSettings.bindings) $($websiteSettings.appPool.name) -updateIfFound
     Set-IISAuthentication $websiteSettings.iisAuthenticationTypes true $($websiteSettings.siteName)
