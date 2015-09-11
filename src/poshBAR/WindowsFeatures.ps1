@@ -10,9 +10,10 @@
         
     .EXAMPLE
         Install-WindowsFeatures 'IIS-ASPNET45?'
-        
+    
     .NOTES
         Optional features can be passed in with a trailing `?` (see Example 2).
+        poshBAR contains an override `$poshBAR.DisableWindowsFeaturesAdministration` which when set to $true will cause this method to throw an exception when trying to install a missing Windows Feature. The purpose of this is to ensure proper change control can be maintained within your Enterprise.
 #>
 function Install-WindowsFeatures{
     [CmdletBinding()]
@@ -54,6 +55,9 @@ function Install-WindowsFeatures{
 }
 
 <#
+    .OUTPUTS 
+        [hashtable] - Key/Value collection where the KEY is the Windows Feature, and the value is it's state.
+
     .SYNOPSIS
         Get's all windows features available to the current machine. Also allows fuzzy filtering based on feature name.
         
@@ -65,12 +69,10 @@ function Install-WindowsFeatures{
 
     .PARAMETER filter
         Part of the feature name you would like to filter by. (not case sensitive)
-
-    .REMARKS
-        Locating Windows Features is done using DISM.exe
-
+        
     .NOTES
         Windows features are stored in $poshBAR:WindowsFeatures in order to improve future lookup times.
+        Locating Windows Features is done using DISM.exe
         
 #>
 function Get-WindowsFeatures {

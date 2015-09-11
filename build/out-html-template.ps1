@@ -195,8 +195,9 @@ $commandsHelp | % {
     if ($inputTypes.Length -gt 0 -and -not $inputTypes.Contains('inputType')) {
 @"
 						<div>
-					        <h3> Input Type </h3>
-					        <div>$inputTypes</div>
+					        <h3> Inputs </h3>
+                            <p>The input type is the type of the objects that you can pipe to the cmdlet.</p>
+                            <ul><li>$inputTypes</li></ul>
 					    </div>
 "@
 	}
@@ -204,8 +205,9 @@ $commandsHelp | % {
     if ($returnValues.Length -gt 0 -and -not $returnValues.StartsWith("returnValue")) {
 @"
 						<div>
-							<h3> Return Values </h3>
-							<div>$returnValues</div>
+							<h3> Outputs </h3>
+                            <p>The output type is the type of the objects that the cmdlet emits.</p>
+							<ul><li>$returnValues</li></ul>
 						</div>
 "@
 	}
