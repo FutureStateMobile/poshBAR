@@ -10,9 +10,10 @@
         
     .EXAMPLE
         Install-WindowsFeatures 'IIS-ASPNET45?'
-        
+    
     .NOTES
         Optional features can be passed in with a trailing `?` (see Example 2).
+        poshBAR contains an override `$poshBAR.DisableWindowsFeaturesAdministration` which when set to $true will cause this method to throw an exception when trying to install a missing Windows Feature. The purpose of this is to ensure proper change control can be maintained within your Enterprise.
 #>
 function Install-WindowsFeatures{
     [CmdletBinding()]
@@ -47,24 +48,42 @@ function Install-WindowsFeatures{
                     Write-Host "`tDone (with dependencies)" -f Green
                 }
             } else {
-                Write-Host "`tExists." -f Cyan
+                Write-Host "`tAlready exists, skipping." -f Cyan
             }
         }
     }
 }
 
 <#
+    .OUTPUTS 
+        [hashtable] - Key/Value collection where the KEY is the Windows Feature, and the value is it's state.
+
     .SYNOPSIS
-        Get's all windows features available to the current machine and stores them in $env:TEMP
+        Get's all windows features available to the current machine. Also allows fuzzy filtering based on feature name.
         
     .EXAMPLE
         Get-WindowsFeatures
+
+    .EXAMPLE
+        Get-WindowsFeatures http
+
+    .PARAMETER filter
+        Part of the feature name you would like to filter by. (not case sensitive)
+        
     .NOTES
-        Windows features are stored in $env:TEMP in order to improve future lookup times.
-        The lookup is done using DISM.exe
+        Windows features are stored in $poshBAR:WindowsFeatures in order to improve future lookup times.
+        Locating Windows Features is done using DISM.exe
+        
 #>
 function Get-WindowsFeatures {
-    
+    [CmdletBinding()]
+    param(
+        [parameter(Mandatory=$false, Position=0)] [string] $filter
+    )
+    Write-Host
+    Write-Host 'Getting Windows Features for the local Operating System.' -NoNewline
+
+    # if the variable is emtpy, go off and populate it with features available to the local operating system
     if(!$global:poshBAR.WindowsFeatures){
         $global:poshBAR.WindowsFeatures = @{}
         
@@ -77,6 +96,16 @@ function Get-WindowsFeatures {
             $global:poshBAR.WindowsFeatures.Add($feature, $state)
         }
     }
+
+    # if a filter is passed in, be sure to filter the results
+    if($filter) {
+        $filter = $filter.ToLower()
+        Write-Host "`tFiltered: [ $filter ]" -ForegroundColor DarkCyan
+        return $global:poshBAR.WindowsFeatures.GetEnumerator() | ? { $_.Key.ToLower().Contains($filter) }
+    }
+
+    Write-Host # carriage return
+    # otherwise return all results.
     return $global:poshBAR.WindowsFeatures
 }
 

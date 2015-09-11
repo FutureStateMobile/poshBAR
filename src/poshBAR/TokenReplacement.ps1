@@ -35,11 +35,7 @@ function Invoke-BlockWithTokenReplacedFile {
     $tokenReplacedFile = "$($fileToTokenReplace)_tokenreplaced"
         
     try {        
-        $fileContents = Get-Content $fileToTokenReplace
-        foreach ($token in $tokenValues.GetEnumerator()) {        
-            $fileContents = $fileContents -replace $token.Name, $token.Value
-        }
-        Set-Content -Path $tokenReplacedFile -Value $fileContents                       
+        Write-TokenReplacedFile $fileToTokenReplace $tokenReplacedFile $tokenValues       
         Invoke-Command $blockToAcceptTokenReplacedFile -ArgumentList $tokenReplacedFile 
     } catch {
         if($continuationMessage){
@@ -54,5 +50,38 @@ function Invoke-BlockWithTokenReplacedFile {
     } finally {       
         Remove-Item $tokenReplacedFile -force
     }
-    if($result -ne 0){$result}
 }
+<#
+    .SYNOPSIS
+        Writes a copy of file with tokens replaced to requested output file
+        
+    .PARAMETER fileToTokenReplace
+        File to perform token replacement on
+
+    .PARAMETER outFile
+        Output file for token replaced result
+                
+    .PARAMETER tokenValues
+        Hashtable of key value pairs to replaced in file   
+        
+    .EXAMPLE
+        Write-TokenReplacedFile "somePath\someFile.txt" "somePath\tokenReplacedFile.txt" @{ 'token1Key' = 'token1Value'; 'token2Key' = 'token2Value' }
+        
+    .NOTES
+        The file is token replaced and the contents stored in requested output file
+#>
+function Write-TokenReplacedFile {
+    [CmdletBinding()]
+    param(
+        [parameter(Position=0)][string] $fileToTokenReplace,
+        [parameter(position=1)][string] $outFile,
+        [parameter(position=2)][hashtable] $tokenValues
+    )                      
+    $fileContents = Get-Content -Raw $fileToTokenReplace
+    foreach ($token in $tokenValues.GetEnumerator()) {        
+        $fileContents = $fileContents -replace $token.Name, $token.Value
+    }     
+    [io.file]::WriteAllText($outFile,$fileContents)                             
+}
+
+

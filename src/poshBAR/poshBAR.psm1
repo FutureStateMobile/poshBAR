@@ -25,6 +25,7 @@ Push-Location $psScriptRoot
 
 # Set Overrides
 . .\OctopusDeploy\Set-OverridesFromOctopusDeploy.ps1 $poshBAR
+. .\TeamCity\Set-TeamCityEnvironment.ps1 $poshBAR
 
 # Import Modules
 . .\Add-HostsFileEntry.ps1
@@ -178,7 +179,11 @@ Export-ModuleMember `
           'Use-Object',
           'Invoke-OracleCommand',
           'Invoke-OracleFile',
-          'Invoke-BlockWithTokenReplacedFile'
+          'Remove-OracleDatabase',
+          'New-OracleDatabase',
+          'Reset-OracleDatabase',
+          'Invoke-BlockWithTokenReplacedFile',
+          'Write-TokenReplacedFile'
           )
 
 # Messages
@@ -206,7 +211,7 @@ convertfrom-stringdata @"
     error_webapplication_creation_disabled = Creating a web application is not permitted because "DisableCreateIISApplication" has been set to "true" for this environment.
     error_healthchecks_failed = {0} of {1} Health Check[s] Failed.
     wrn_aspnet_regiis_not_found = An error occurred while trying to register IIS. If you're running this command on Server => 2012, please add IIS-ASPNET45 as a Windows Feature.
-    wrn_aspnet_regiis_disabled = Installing ASP.NET {0} is not permitted because "DisableASPNETRegIIS" has been set to "true".
+    wrn_aspnet_regiis_disabled = Installing ASP.NET {0} is not permitted because "DisableGlobalASPNETRegIIS" has been set to "true".
     wrn_host_file_admin_disabled = Editing the host file is not permitted because "DisableHostFileAdministration" has beeen set to "true" for this environment.
     wrn_loopback_fix_disabled = Adding a loopback fix to the registry is not permitted because "DisableLoopbackFix" has been set to "true" for this environment.
     wrn_full_permission = You have applied FULL permission to '{0}' for '{1}'. THIS IS DANGEROUS!

@@ -27,7 +27,7 @@ function Invoke-XUnit{
         [bool] $includeCoverage,
         [string] $coverageRulesPath )
 
-        Find-ToolPath 'xunit'
+        Find-ToolPath 'xunit.console.exe'
 
     if ( $includeCoverage ){
         Invoke-XUnitWithCoverage $targetAssembly $outputDir $runCommand $coverageRulesPath
@@ -67,8 +67,8 @@ function Invoke-XUnitWithCoverage {
         [string] $runCommand, 
         [string] $coverageRulesPath)
         
-        Find-ToolPath 'xunit'
-        Find-ToolPath 'dotcover'
+        Find-ToolPath 'xunit.console.exe'
+        Find-ToolPath 'dotcover.exe'
     
     $fileName = Get-TestFileName $outputDir $runCommand
 
@@ -77,7 +77,7 @@ function Invoke-XUnitWithCoverage {
     $coverageFile = "$fileName-CoverageResults.dcvr"
     
     # who knows, this might fall over one day.
-    $xu = resolve-path ".\..\packages\xunit.runners.*\tools\xunit-console.exe"
+    $xu = resolve-path ".\..\packages\xunit.runners.*\tools\xunit.console.exe"
     exec{ dotcover.exe cover $coverageRulesPath /TargetExecutable=$xu /TargetArguments="$targetAssembly /fixture:$runCommand /xml=$xmlFile /out=$txtFile /nologo /framework=4.0" /Output=$coverageFile /ReportType=html} ($msgs.error_coverage_failed -f $runCommand)
     $msgs.msg_teamcity_importdata -f 'dotNetCoverage', 'dotcover', $coverageFile
 }

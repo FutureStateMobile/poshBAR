@@ -36,7 +36,6 @@ function Invoke-OracleCommand {
         $connection.Close()
         $connection.Dispose()
     }
-    #if($result -ne 0){$result}
 }
 <#
     .SYNOPSIS
@@ -67,4 +66,134 @@ function Invoke-OracleFile {
         
     $sqlToRun = Get-Content $sqlFile | Out-String
     Invoke-OracleCommand $sqlToRun $connectionString
+}
+
+<#
+    .SYNOPSIS
+        DROPS Database! Drops a development Oracle database by dropping tablespace
+        
+    .PARAMETER $schemaName
+        The name of the schema
+        
+    .PARAMETER $schemaOwnerUserId
+        The user id of the user that owns the schema        
+           
+    .PARAMETER $connectionString
+        The oracle database connection string
+                     
+    .EXAMPLE
+        Remove-OracleDatabase 'MyDatabase' 'MyUser' 'Data Source=localhost/XE;User Id=system;Password=SAus3r' $false
+                
+    .NOTES
+        WARNING: only to be used on development databases - DROPS the Database!
+#>
+function Remove-OracleDatabase {
+    param(        
+        [parameter(Mandatory=$true,position=0)] [string] $schemaName,
+        [parameter(Mandatory=$true,position=1)] [string] $schemaOwnerUserId,
+        [parameter(Mandatory=$true,position=2)] [string] $connectionString,
+        [parameter(Mandatory=$false,position=3)] [boolean] $failOnError = $true
+	)        	                                  
+    $failureDetected = $false
+    try {
+        Write-Verbose "Dropping database schema owner $schemaOwnerUserId"
+        Invoke-OracleCommand "drop user $schemaOwnerUserId cascade" $connectionString
+    } catch {
+        Write-Warning "Failed to drop schema owner $schemaOwnerUserId when removing database - either the user has a connection to the database or the user does not exist."
+        $failureDetected = $true       
+    }            
+    try {
+        
+        Write-Verbose "Removing database tablespace $schemaName"
+        Invoke-OracleCommand "DROP TABLESPACE $schemaName INCLUDING CONTENTS AND DATAFILES" $connectionString
+    } catch {
+        Write-Warning "Failed to drop tablespace $schemaName when removing database - either the database has current connections or does not exist."
+        $failureDetected = $true
+    }
+    if ($failureDetected -and $failOnError) { 
+        throw "Failed to remove database, see above warnings!" 
+    }                    
+}
+<#
+    .SYNOPSIS
+        CREATES new database with requested user as owner
+        
+    .PARAMETER $schemaName
+        The name of the schema
+        
+    .PARAMETER $databaseStorageFile
+        The absolute path of the file to store the tablespace in
+        
+    .PARAMETER $schemaOwnerUserId
+        The user id of the user to own the schema
+        
+    .PARAMETER $schemaOwnerPassword
+        The password for the schema owner
+           
+    .PARAMETER $connectionString
+        The oracle database connection string
+                     
+    .EXAMPLE
+        New-OracleDatabase 'MyDatabase' 'C:\databases\MyDatabase.dbf' 'MyUser' 'MyUserPassword' 'Data Source=localhost/XE;User Id=system;Password=SAus3r'
+                    
+#>
+function New-OracleDatabase {
+    param(        
+        [parameter(Mandatory=$true,position=0)] [string] $schemaName,
+        [parameter(Mandatory=$true,position=1)] [string] $databaseStorageFile,
+        [parameter(Mandatory=$true,position=2)] [string] $schemaOwnerUserId,
+        [parameter(Mandatory=$true,position=3)] [string] $schemaOwnerPassword,
+        [parameter(Mandatory=$true,position=4)] [string] $connectionString
+	)        	   
+
+    $dbDir = Split-Path $databaseStorageFile                       
+    if(! (Test-Path $dbDir)) {
+        # create the database directory if it doesn't exist
+        New-Item -ItemType Directory -Force -Path $dbDir 
+    }    
+    Write-Host "Creating tablespace $schemaName in file $databaseStorageFile"
+    Invoke-OracleCommand "CREATE TABLESPACE $schemaName DATAFILE '$databaseStorageFile' SIZE 10M REUSE AUTOEXTEND ON NEXT 10M MAXSIZE 200M" $connectionString       
+    Write-Host "Creating user $($databaseConfig.userId)" 
+    Invoke-OracleCommand "GRANT all PRIVILEGES TO $schemaOwnerUserId IDENTIFIED BY $schemaOwnerPassword" $connectionString    		
+}
+<#
+    .SYNOPSIS
+        DROPS and RECREATES Database! Resets a development Oracle database by dropping tablespace and recreating with requested user as owner
+        
+    .PARAMETER $schemaName
+        The name of the schema
+        
+    .PARAMETER $databaseStorageFile
+        The absolute path of the file to store the tablespace in
+        
+    .PARAMETER $schemaOwnerUserId
+        The userId of the user to own the schema
+        
+    .PARAMETER $schemaOwnerPassword
+        The password for the user
+           
+    .PARAMETER $connectionString
+        The oracle database connection string
+                     
+    .EXAMPLE
+        Reset-OracleDatabase 'MyDatabase' 'C:\databases\MyDatabase.dbf' 'MyUser' 'MyUserPassword' 'Data Source=localhost/XE;User Id=system;Password=SAus3r'
+                
+    .NOTES
+        WARNING: only to be used on development databases - DROPS the Database!
+#>
+function Reset-OracleDatabase {
+    param(        
+        [parameter(Mandatory=$true,position=0)] [string] $schemaName,
+        [parameter(Mandatory=$true,position=1)] [string] $databaseStorageFile,
+        [parameter(Mandatory=$true,position=2)] [string] $schemaOwnerUserId,
+        [parameter(Mandatory=$true,position=3)] [string] $schemaOwnerPassword,
+        [parameter(Mandatory=$true,position=4)] [string] $connectionString
+	)        	   
+
+    $dbDir = Split-Path $databaseStorageFile                       
+    if(Test-Path $dbDir) {
+        $failOnError = Test-Path $databaseStorageFile
+        Remove-OracleDatabase $schemaName $schemaOwnerUserId $connectionString $failOnError
+    }    
+    New-OracleDatabase $schemaName $databaseStorageFile $schemaOwnerUserId $schemaOwnerPassword $connectionString    		
 }

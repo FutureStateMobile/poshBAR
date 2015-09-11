@@ -59,7 +59,7 @@ Describe 'SSL Certificates' {
         $out = New-Item 'TestDrive:\testDir2' -ItemType Directory -Force
         
         # execute
-        $result = New-PrivateKeyAndCertificateSigningRequest $name $password $subject $out | New-Certificate | New-PfxCertificate -password $password
+        $result = New-PrivateKeyAndCertificateSigningRequest $name $password $subject $out -verbose | New-Certificate -verbose | New-PfxCertificate -password $password -verbose
         
         # assert
         It 'Should have a .key file on the path' {

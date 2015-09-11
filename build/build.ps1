@@ -12,7 +12,7 @@ $script:this = @{
     testDir = "$baseDir\src\tests"
 }
 
-# Dogfood
+# Dogfood (dog eats own tail)
 Import-Module "$($this.srcDir)\poshBAR" -force -Global
 
 Task default -depends RunPesterTests, Package
@@ -69,13 +69,13 @@ Task Package -depends SetupPaths, UpdateVersion, MakeBuildDir, GenerateDocumenta
 Task RunPesterTests -depends UpdateVersion, MakeBuildDir -alias tests {
     $tmp = $env:TEMP
     $env:TEMP = $this.workingDir
-    
+       
     # re-import poshBAR after changes.
     Remove-Module poshBAR -force
     Import-Module "$($this.workingDir)\poshBar" -force
     
     Import-Module "$($this.packagesDir)\pester.*\tools\pester.psm1" -force  -Global
-    $results = Invoke-Pester -relative_path $this.testDir -PassThru -OutputFile "$($this.resultsDir)\pester.xml" -OutputFormat NUnitXml
+    $results = Invoke-Pester -relative_path $this.testDir -TestName $pesterTestName -PassThru -OutputFile "$($this.resultsDir)\pester.xml" -OutputFormat NUnitXml
     if($results.FailedCount -gt 0) {
         throw "$($results.FailedCount) Tests Failed."
     }

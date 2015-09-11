@@ -20,17 +20,6 @@
             <!-- valid IIS Security Authentication types are: [anonymousAuthentication, basicAuthentication, clientCertificateMappingAuthentication, 
                                                                digestAuthentication, iisClientCertificateMappingAuthentication, windowsAuthentication]-->
             <iisAuthenticationTypes>anonymousAuthentication</iisAuthenticationTypes>
-            <systemWeb>
-                <authentication>
-                    <!-- valid asp.net Authentication modes are: [Windows, Forms, Passport, None]-->
-                    <mode>Windows</mode>
-                    <timeout>10</timeout>
-                </authentication>
-                <authorization>
-                    <!-- valid web.Config elements: [allowedUsers, allowedRoles, allowedVerbs] -->
-                    <allowedUsers>*</allowedUsers>
-                </authorization>
-            </systemWeb>
             <appPool>
                 <name>[project]</name>
                 <!-- valid identityTypes are: [LocalSystem, LocalService, NetworkService, SpecificUser, ApplicationPoolIdentity] -->
@@ -40,6 +29,8 @@
                 <userName>NT AUTHORITY\Network Service</userName>
                 <!-- Leave blank unless using SpecificUser -->
                 <password></password>
+                <!-- how long to wait as a TimeSpan-->
+                <idleTimeout>00:20:00</idleTimeout>
                 <maxWorkerProcesses>1</maxWorkerProcesses>
             </appPool>
         </[project]>

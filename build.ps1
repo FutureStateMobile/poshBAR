@@ -1,7 +1,8 @@
 param (
     [alias("t")]  [string] $task = "Default",
     [alias("bn")] [string] $buildNumber = "0.1.1.1",
-    [alias("p")]  [switch] $projectHelp
+    [alias("pt")] [string] $pesterTestName,
+    [alias("p")]  [switch] $projectHelp    
 )
 
 $currentDir = Split-Path $script:MyInvocation.MyCommand.Path
@@ -26,6 +27,7 @@ if ($projectHelp.isPresent) {
     Invoke-PSake ".\build\build.ps1" $task -parameters @{
         version = $version;
         buildNumber = $buildNumber;
+        pesterTestName = $pesterTestName;
     }
 
     if ($psake.build_success -eq $false) {
