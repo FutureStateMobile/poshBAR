@@ -248,7 +248,7 @@ $commandsHelp | % {
 @"
                             </div>
 						</div>
-                        <p class='pull-right'><a href='#$($_.name)'>Top of page</a>
+                        <p class='pull-right'><a onclick='document.body.scrollTop = document.documentElement.scrollTop = 0;' style='cursor: pointer;'>Top of page</a>
 "@
 	}
 	if(($_.relatedLinks | Out-String).Trim().Length -gt 0) {
