@@ -120,12 +120,12 @@ $commandsHelp | % {
 @"
 				<div id=`"$(FixString($_.Name))`" class="toggle_container">
 					<div class="page-header">
-						<h1>$(FixString($_.Name))</h1>
+						<h2> $(FixString($_.Name)) </h2>
 "@
 	$syn = FixString($_.synopsis)
     if(!($syn).StartsWith($(FixString($_.Name)))){
 @"
-						<p class="lead">$syn</p>
+						<p>$syn</p>
 						<p>$(FixString(($_.Description  | out-string).Trim()) $true)</p>
 "@
 	}
@@ -134,25 +134,33 @@ $commandsHelp | % {
 "@
 	if (!($_.alias.Length -eq 0)) {
 @"
-						<div>
-							<h3> Aliases </h3>
-							<ul>
+                        <div class='panel panel-default'>
+                            <div class='panel-heading'>
+                                <h3 class='panel-title'> $($_.Name) Aliases </h3>
+                            </div>
+                            <div class='panel-body'>
+                                <ul>
 "@
-	$_.alias | % {
+    $_.alias | % {
 @"
-								<li>$($_.Name)</li>
+                                    <li>$($_.Name)</li>
 "@
-	}
+    }
 @"
-							</ul>
-						</div>
+                                </ul>
+                            </div>
+                        </div>
 "@
 	}
 	if (!($_.syntax | Out-String ).Trim().Contains('syntaxItem')) {
 @"
-						<div>
-							<h3> Syntax </h3>
+                        <div>
+                        <h3> Syntax </h3>
+                        </div>
+						<div class="panel panel-default">
+                            <div class='panel-body'>
 <pre class="brush: ps">$(FixString($_.syntax | out-string))</pre>
+                            </div>
 						</div>
 "@
 	}
@@ -214,40 +222,50 @@ $commandsHelp | % {
     $notes = $(FixString($_.alertSet  | out-string))
     if ($notes.Trim().Length -gt 0) {
 @"
-						<div>
-							<h3> Notes </h3>
-							<div>$notes</div>
+						<div class='panel panel-default'>
+                            <div class='panel-heading'>
+                                <h3 class='panel-title'> Note </h3>
+                            </div>
+							<div class='panel-body'>$notes</div>
 						</div>
 "@
 	}
 	if(($_.examples | Out-String).Trim().Length -gt 0) {
 @"
-						<div>
-							<h3> Examples </h3>
-							<hr>
+                        <div>
+                            <h3> Examples </h3>
+                        </div>
+						<div class='panel panel-default'>
+                            <div class='panel-body'>
 "@
 		$_.examples.example | % {
 @"
-							<h4>$(FixString($_.title.Trim(('-',' '))))</h4>
+							    <strong>$(FixString($_.title.Trim(('-',' '))))</strong>
 <pre class="brush: ps">$(FixString($_.code | out-string ).Trim())</pre>
-							<div>$(FixString($_.remarks | out-string ).Trim())</div>
+							    <div>$(FixString($_.remarks | out-string ).Trim())</div>
 "@
 		}
 @"
+                            </div>
 						</div>
+                        <p class='pull-right'><a href='#$($_.name)'>Top of page</a>
 "@
 	}
 	if(($_.relatedLinks | Out-String).Trim().Length -gt 0) {
 @"
 						<div>
 							<h3> Links </h3>
+                            <div>
+                                <ul>
 "@
-		$_.links | % {
+		$_.links | % { 
 @"
-							<div class='$($_.cssClass)'><a href='$($_.link)' target='$($_.target)'>$($_.name)</a></div>
+							        <li class='$($_.cssClass)'><a href='$($_.link)' target='$($_.target)'>$($_.name)</a></li>
 "@
 		}
 @"
+                                </ul>
+                            </div>
 						</div>
 "@
 	}
