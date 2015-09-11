@@ -23,9 +23,6 @@
     
     .SYNOPSIS
         Update all the AssemblyInfo.cs files in a solution so they are the same.
-
-    .NOTES
-        Nothing yet...
 #> 
 function Update-AssemblyVersions
 {

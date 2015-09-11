@@ -1,3 +1,28 @@
+<#
+    .SYNOPSIS
+        Runs nUnit against a test dll
+        
+    .PARAMETER targetAssembly
+        The target test assembly
+        
+    .PARAMETER outputDir
+        The directory to store the output
+
+    .PARAMETER runCommand
+        The namespace to start the tests from
+    
+    .PARAMETER includeCoverage
+        Switch to tell if we want coverage on the tests
+    
+    .PARAMETER coverageRulesPath
+        Path to coverage rules
+    
+    .EXAMPLE
+        Invoke-Nunit "$buildDir\myTestAssembly.dll" "$outputDir" "myAssembly.Unit" -includeCoverage "$coverageRulesPath"
+    
+    .NOTES
+        Currently 'includeCoverage' invokes the DotCover coverage tool. Some day we'll need to re-think how we want to achieve this.
+#>
 function Invoke-Nunit {
     [CmdletBinding()]
     param( 

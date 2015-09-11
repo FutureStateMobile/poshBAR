@@ -1,4 +1,7 @@
 <#
+    .SYNOPSIS
+        Expands any Nuget package and places the contents in the specified folder.
+
     .DESCRIPTION
         Extracts a Nuget Package file and puts the contents in the specified location.
 
@@ -10,12 +13,6 @@
 
     .PARAMETER destinationFolder
          The full path to the desired destination.
-
-    .SYNOPSIS
-        Expands any Nuget package and places the contents in the specified folder.
-
-    .NOTES
-        Nothing yet...
 #>
 function Expand-NugetPackage
 {

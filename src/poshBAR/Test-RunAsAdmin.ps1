@@ -7,9 +7,6 @@
 
     .SYNOPSIS
         Tests if this powershell invocation is being run as administrator, will break and display an error if it is not.
-
-    .NOTES
-        Nothing yet...
 #>
 function Test-RunAsAdmin
 {

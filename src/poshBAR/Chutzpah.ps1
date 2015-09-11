@@ -1,6 +1,6 @@
 <#
     .DESCRIPTION
-        Nothing yet...
+        Chutzpah is an open source JavaScript test runner which enables you to run unit tests using QUnit, Jasmine, Mocha, CoffeeScript and TypeScript.
     
     .EXAMPLE
         Invoke-Chutzpah 'C:\Dev\MyApp\src'
