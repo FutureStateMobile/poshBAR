@@ -1,4 +1,7 @@
 <#
+    .DESCRIPTION
+        Run Entity Framework migrations against a target database.
+
     .SYNOPSIS
         Run Entity Framework migrations against a target database.
     

@@ -16,9 +16,6 @@
 
     .SYNOPSIS
         Updates a XML file with the value specified at the XPath expression specified..
-
-    .NOTES
-        Nothing yet...
 #>
 function Update-XmlConfigValues
 {
@@ -100,9 +97,6 @@ function Update-XmlConfigValues
 
     .SYNOPSIS
         Updates a XML file with the value specified at the XPath expression specified..
-
-    .NOTES
-        Nothing yet...
 #>
 function Add-XmlConfigValue
 {

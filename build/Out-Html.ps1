@@ -34,10 +34,9 @@ foreach ($h in $commandsHelp){
     # Parse the related links and assign them to a links hashtable.
     if(($h.relatedLinks | Out-String).Trim().Length -gt 0) {
         $links = $h.relatedLinks.navigationLink | % {
-            if($h.uri){ @{name = $h.uri; link = $h.uri; target='_blank'} } 
-            if($h.linkText){ @{name = $h.linkText; link = "#$($h.linkText)"; cssClass = 'psLink'; target='_top'} }
+            if($_.uri){ @{name = $_.uri; link = $_.uri; target='_blank'} } 
+            if($_.linkText){ @{name = $_.linkText; link = "#$($_.linkText)"; cssClass = 'psLink'; target='_top'} }
         }
-        $h.relatedLinks.linkText
         $h | Add-Member Links $links
     }
 

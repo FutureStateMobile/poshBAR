@@ -14,9 +14,6 @@
     .SYNOPSIS
         This will invoke all of the deployment scripts in order in the same way that Octopus Deploy does it. 
         If a deployment fails, it will try to run the deployFailed.ps1 and then throws the exception.
-
-    .NOTES
-        Nothing yet...
 #>
 function Invoke-DeployOctopusNugetPackage{
     [CmdletBinding()]

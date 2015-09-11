@@ -1,3 +1,37 @@
+<#
+    .SYNOPSIS
+        Runs SpecFlow tests against a test dll using the specified testing framework
+          
+     .PARAMETER testProjectFile
+            the .csproj file containing your tests.
+          
+    .PARAMETER testAssemblyFile
+        The target test assembly (dll)
+    
+    .PARAMETER outputDir
+        The directory to store the output
+    
+    .PARAMETER runCommand
+        The namespace to start the tests from
+    
+    .PARAMETER testingFramework
+        Which testing framework is being leveraged (nunit & xunit supported)
+    
+    .PARAMETER coverageRulesPath
+        Path to coverage rules
+        
+    .PARAMETER includeCoverage
+        Switch to tell if we want coverage on the tests
+    
+    .PARAMETER showSpecflowReport
+        Should the specflow report be loaded in the browser after testing is complete.
+    
+    .EXAMPLE
+        Invoke-Nunit "$buildDir\myTestAssembly.dll" "$outputDir" "myAssembly.Unit" -includeCoverage "$coverageRulesPath"
+    
+    .NOTES
+        Currently 'includeCoverage' invokes the DotCover coverage tool. Some day we'll need to re-think how we want to achieve this.
+#>
 function Invoke-SpecFlow {
     [CmdletBinding()]
     param(

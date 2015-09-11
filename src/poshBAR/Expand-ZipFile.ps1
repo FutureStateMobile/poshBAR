@@ -15,9 +15,6 @@
         Expands any zip file and places the contents in the specified folder.  This command uses the Windows Shell to do the unzip and as such the file 
         needs to end in ".zip" in order to work.  This module will temporarily rename the file to '.zip' extension if necessary in order to unzip it, 
         but it will rename it back when finished.
-
-    .NOTES
-        Nothing yet...
 #>
 function Expand-ZipFile
 {

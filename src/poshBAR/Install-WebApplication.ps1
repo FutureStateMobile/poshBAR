@@ -43,9 +43,11 @@ function Install-WebApplication() {
     param( 
         [parameter(Mandatory=$true,position=0)] [string]  [alias('env')] $environment,
         [parameter(Mandatory=$true,position=1)] [System.Xml.XmlElement] [alias('ws')] $websiteSettings,
-        [parameter(Mandatory=$true,position=2)] [ValidatePattern('^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})(\.[0-9]*?)?')] [string] [alias('v')] $version
+        [parameter(Mandatory=$false,position=2)] [ValidatePattern('^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})(\.[0-9]*?)?')] [string] [alias('v')] $version
     )
     $moduleDir = Split-Path $script:MyInvocation.MyCommand.Path
+    $version = if($version){"-$version"} # prepend a dash to the version string if it exists, this allows to to NOT version an app if we don't want to.
+    
     # todo: figure out why running 'deploy' vs 'deploy.ps1' causes this bug.
     $baseDir = if($moduleDir.EndsWith('poshBAR')){
         Resolve-Path "$moduleDir\..\.."
@@ -55,12 +57,12 @@ function Install-WebApplication() {
     
 
     if ( ($websiteSettings.appPath.length -eq 0) -or ($websiteSettings.appPath -eq "/") -or ($websiteSettings.appPath -eq "\") ) {
-        $siteFilePath = "$($websiteSettings.physicalPathRoot)\$($websiteSettings.siteName)\$($websiteSettings.physicalFolderPrefix)-$version"
-        $appFilePath = "$($websiteSettings.physicalPathRoot)\$($websiteSettings.siteName)\$($websiteSettings.physicalFolderPrefix)-$version"
+        $siteFilePath = "$($websiteSettings.physicalPathRoot)\$($websiteSettings.siteName)\$($websiteSettings.physicalFolderPrefix)$version"
+        $appFilePath = "$($websiteSettings.physicalPathRoot)\$($websiteSettings.siteName)\$($websiteSettings.physicalFolderPrefix)$version"
     }
     else {
         $siteFilePath = "$($websiteSettings.physicalPathRoot)\$($websiteSettings.siteName)"
-        $appFilePath = "$($websiteSettings.physicalPathRoot)\$($websiteSettings.siteName)\$($websiteSettings.appPath)\$($websiteSettings.physicalFolderPrefix)-$version"
+        $appFilePath = "$($websiteSettings.physicalPathRoot)\$($websiteSettings.siteName)\$($websiteSettings.appPath)\$($websiteSettings.physicalFolderPrefix)$version"
     }
 
     # Create Folder for the application

@@ -14,7 +14,7 @@
     .PARAMETER coverageRulesPath
         Path to coverage rules
     .EXAMPLE
-        Invoke-Nunit "$buildDir\myTestAssembly.dll" "$outputDir" "myAssembly.Unit" -includeCoverage "$coverageRulesPath"
+        Invoke-XUnit "$buildDir\myTestAssembly.dll" "$outputDir" "myAssembly.Unit" -includeCoverage "$coverageRulesPath"
     .NOTES
         Currently 'includeCoverage' invokes the DotCover coverage tool. Some day we'll need to re-think how we want to achieve this.
 #>
