@@ -55,16 +55,33 @@ function Install-WindowsFeatures{
 
 <#
     .SYNOPSIS
-        Get's all windows features available to the current machine and stores them in $env:TEMP
+        Get's all windows features available to the current machine. Also allows fuzzy filtering based on feature name.
         
     .EXAMPLE
         Get-WindowsFeatures
+
+    .EXAMPLE
+        Get-WindowsFeatures http
+
+    .PARAMETER filter
+        Part of the feature name you would like to filter by. (not case sensitive)
+
+    .REMARKS
+        Locating Windows Features is done using DISM.exe
+
     .NOTES
-        Windows features are stored in $env:TEMP in order to improve future lookup times.
-        The lookup is done using DISM.exe
+        Windows features are stored in $poshBAR:WindowsFeatures in order to improve future lookup times.
+        
 #>
 function Get-WindowsFeatures {
-    
+    [CmdletBinding()]
+    param(
+        [parameter(Mandatory=$false, Position=0)] [string] $filter
+    )
+    Write-Host
+    Write-Host 'Getting Windows Features for the local Operating System.' -NoNewline
+
+    # if the variable is emtpy, go off and populate it with features available to the local operating system
     if(!$global:poshBAR.WindowsFeatures){
         $global:poshBAR.WindowsFeatures = @{}
         
@@ -77,6 +94,16 @@ function Get-WindowsFeatures {
             $global:poshBAR.WindowsFeatures.Add($feature, $state)
         }
     }
+
+    # if a filter is passed in, be sure to filter the results
+    if($filter) {
+        $filter = $filter.ToLower()
+        Write-Host "`tFiltered: [ $filter ]" -ForegroundColor DarkCyan
+        return $global:poshBAR.WindowsFeatures.GetEnumerator() | ? { $_.Key.ToLower().Contains($filter) }
+    }
+
+    Write-Host # carriage return
+    # otherwise return all results.
     return $global:poshBAR.WindowsFeatures
 }
 
