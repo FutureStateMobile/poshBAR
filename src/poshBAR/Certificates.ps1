@@ -217,6 +217,12 @@ function New-PrivateKey {
 
     .Example
         New-CertificateSigningRequest 'cert-name' 'C:\path\to\output' '/CN=bla' 'cert-name.key'
+
+    .INPUTS
+        [hashtable] - accepts a hashtable containing the required parameters so that values can be piped from other certificate methods.
+
+    .OUTPUTS
+        [hashtable] - returns a hashtable containing the parameters passed in so that additional certificate methods can receive data from the pipeline.
 #>
 function New-CertificateSigningRequest {
     [CmdletBinding()]
