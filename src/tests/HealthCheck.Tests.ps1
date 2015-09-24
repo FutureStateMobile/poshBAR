@@ -121,8 +121,8 @@ Describe 'Web Health Checks' {
     
     Context 'Will ensure the first example runs as expected.' {
         # setup
-        $example = { Invoke-WebHealthCheck 'http://google.com' 'GET' }
-        $expectedStatusCode = '302 Redirect'
+        $example = { Invoke-WebHealthCheck 'https://www.google.ca' 'GET' }
+        $expectedStatusCode = '200 OK'
         $expectedSuccess = $true
         
         # execute
@@ -138,8 +138,8 @@ Describe 'Web Health Checks' {
     
     Context 'Will ensure the second example runs as expected.' {
         # setup
-        $example = { Invoke-WebHealthCheck @{uri = 'https://google.com'; verbs = 'GET'} }
-        $expectedStatusCode = '302 Redirect'
+        $example = { Invoke-WebHealthCheck @{uri = 'https://www.google.ca'; verbs = 'GET'} }
+        $expectedStatusCode = '200 OK'
         $expectedSuccess = $true
         
         # execute
