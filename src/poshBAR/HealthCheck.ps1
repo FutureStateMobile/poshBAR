@@ -6,10 +6,10 @@
      Check to see if a website is up and running
      
      .EXAMPLE
-     Invoke-WebHealthCheck 'http://google.com' 'GET'
+     Invoke-WebHealthCheck 'http://httpstat.us/200' 'GET'
          
      .EXAMPLE
-     Invoke-WebHealthCheck @{uri = 'https://google.com'; verbs = 'GET'}
+     Invoke-WebHealthCheck @{uri = 'http://httpstat.us/200'; verbs = 'GET'}
      
      .PARAMETER request
      An object containing all of the fields required to make a Web Health Check. This is used when storing all of the data in an XML document. A hashtable also works.
