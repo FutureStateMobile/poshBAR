@@ -121,7 +121,7 @@ Describe 'Web Health Checks' {
     
     Context 'Will ensure the first example runs as expected.' {
         # setup
-        $example = { Invoke-WebHealthCheck 'https://www.google.ca' 'GET' }
+        $example = { Invoke-WebHealthCheck 'http://httpstat.us/200' 'GET' }
         $expectedStatusCode = '200 OK'
         $expectedSuccess = $true
         
@@ -138,7 +138,7 @@ Describe 'Web Health Checks' {
     
     Context 'Will ensure the second example runs as expected.' {
         # setup
-        $example = { Invoke-WebHealthCheck @{uri = 'https://www.google.ca'; verbs = 'GET'} }
+        $example = { Invoke-WebHealthCheck @{uri = 'http://httpstat.us/200'; verbs = 'GET'} }
         $expectedStatusCode = '200 OK'
         $expectedSuccess = $true
         
