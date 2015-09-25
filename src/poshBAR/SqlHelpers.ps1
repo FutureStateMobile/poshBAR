@@ -29,7 +29,8 @@ function Invoke-SqlStatement() {
     param(
         [parameter(Mandatory=$true,position=0)][string] $sqlToRun,
         [parameter(Mandatory=$true,position=1)][string] $connectionString,
-        [parameter(Mandatory=$false)][switch] $useMaster
+        [parameter(Mandatory=$false)][switch] $useMaster,
+        [parameter(Mandatory=$false)][string[]] $sqlCommandVariables
     )
 
     try {
@@ -40,10 +41,10 @@ function Invoke-SqlStatement() {
         }
 
         if ($conn["User Id"] -ne $null) {
-            Invoke-SqlCmd -Query $sqlToRun -serverinstance $conn["Server"] -database $conn["Database"] -Username $conn["User Id"] -Password $conn["Password"]
+            Invoke-SqlCmd -Query $sqlToRun -serverinstance $conn["Server"] -database $conn["Database"] -Username $conn["User Id"] -Password $conn["Password"] -Variable $sqlCommandVariables
         }
         else {
-            Invoke-SqlCmd -Query $sqlToRun -serverinstance $conn["Server"] -database $conn["Database"]
+            Invoke-SqlCmd -Query $sqlToRun -serverinstance $conn["Server"] -database $conn["Database"] -Variable $sqlCommandVariables
         }
     } catch {
         Write-Host $_ -f Red  # will display the actual sql error in the console
@@ -56,7 +57,8 @@ function Invoke-SqlFile() {
     param(
         [parameter(Mandatory=$true,position=0)][string] $sqlFile,
         [parameter(Mandatory=$true,position=1)][string] $connectionString,
-        [parameter(Mandatory=$false,position=2)][switch] $useMaster
+        [parameter(Mandatory=$false,position=2)][switch] $useMaster,
+        [parameter(Mandatory=$false,position=3)][string[]] $sqlCommandVariables
     )
 
     try {
@@ -67,10 +69,10 @@ function Invoke-SqlFile() {
         }
 
         if ($conn["User Id"] -ne $null) {
-            Invoke-SqlCmd -InputFile $sqlFile -serverinstance $conn["Server"] -database $conn["Database"] -Username $conn["User Id"] -Password $conn["Password"]
+            Invoke-SqlCmd -InputFile $sqlFile -serverinstance $conn["Server"] -database $conn["Database"] -Username $conn["User Id"] -Password $conn["Password"] -Variable $sqlCommandVariables
         }
         else {
-            Invoke-SqlCmd -InputFile $sqlFile -serverinstance $conn["Server"] -database $conn["Database"]
+            Invoke-SqlCmd -InputFile $sqlFile -serverinstance $conn["Server"] -database $conn["Database"] -Variable $sqlCommandVariables
         }
     } catch {
         Write-Host $_ -f Red  # will display the actual sql error in the console
