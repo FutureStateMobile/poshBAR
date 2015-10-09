@@ -75,8 +75,12 @@ function Invoke-MSBuild {
         [Parameter(Mandatory=$false)] [bool] $warnOnArchitectureMismatch = $false,
         [Parameter(Mandatory=$false)] [string[]] $customParameters
     )
+
     # make sure the output directory has a trailing slash
-    $outDir = if(!$outDir.EndsWith('\')){"$outDir\"}
+    if(!$outDir.EndsWith('\')) { $outDir += '\' }
+
+    # Due to a quirk with MSBuild's OutDir property, make sure that paths with spaces end with two backslashes.
+    if($outDir.Contains(' ') -and !$outDir.EndsWith('\\')) { $outDir += '\' }
 
     if(-not (Test-Path "$logPath\MSBuild")) {
         mkdir "$logPath\MSBuild" | out-null
@@ -92,8 +96,8 @@ function Invoke-MSBuild {
         "/logger:FileLogger,Microsoft.Build.Engine;$logFileParam",
         "/property:OutDir=$outDir", 
         "/property:VisualStudioVersion=$culturedVSVersion",
-        "/property:ToolsVersion=$("{0:N1}" -f $dotNetVersion)",
-        "/property:ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=$ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch",
+        "/property:ToolsVersion=$("{0:N1}" -f $toolsVersion)",
+        "/property:ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=$warnOnArchitectureMismatch",
         "/maxcpucount:$maxCpuCount") 
  
     if($customParameters){ $params += $customParameters }
