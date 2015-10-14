@@ -41,6 +41,7 @@ Push-Location $psScriptRoot
 . .\Approve-Permissions.ps1
 . .\Assert-PSVersion.ps1
 . .\Chutzpah.ps1
+. .\DbDeploy.ps1
 . .\Ecliptic.ps1
 . .\EntityFramework.ps1
 . .\Expand-NugetPackage.ps1
@@ -119,6 +120,7 @@ Export-ModuleMember `
           'Invoke-Chutzpah',
           'Invoke-CleanMSBuild',
           'Invoke-DBMigration',
+          'Invoke-DBDeploy',
           'Invoke-Deployment',
           'Invoke-DeployOctopusNugetPackage',
           'Invoke-Ecliptic',
