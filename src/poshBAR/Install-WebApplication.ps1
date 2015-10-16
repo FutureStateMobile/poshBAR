@@ -46,7 +46,6 @@ function Install-WebApplication() {
         [parameter(Mandatory=$false,position=2)] [ValidatePattern('^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})(\.[0-9]*?)?')] [string] [alias('v')] $version
     )
     $moduleDir = Split-Path $script:MyInvocation.MyCommand.Path
-    $version = if($version){"-$version"} # prepend a dash to the version string if it exists, this allows to to NOT version an app if we don't want to.
     
     # todo: figure out why running 'deploy' vs 'deploy.ps1' causes this bug.
     $baseDir = if($moduleDir.EndsWith('poshBAR')){
