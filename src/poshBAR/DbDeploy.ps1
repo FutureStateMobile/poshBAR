@@ -18,7 +18,7 @@ function Invoke-DBDeploy {
 	)
 	Write-Verbose "Invoking DbDeploy with scripts directory $scriptsDir"
 	$dbDeploy = "$dbDeployPackageDir\content\dbdeploy\DatabaseDeploy.exe"
-	$timeStamp = Get-Date -Format FileDateTime
+	$timeStamp = (Get-Date).tostring("yyyyMMdd_HHmmss")
 	$scriptFileName = "$($databaseName)_delta_$timeStamp.sql"
 	$scriptFilePath = "$outputDir\$scriptFileName"
 	$undoScriptFileName = "$($databaseName)_undo_$timeStamp.sql"
