@@ -38,6 +38,7 @@ Push-Location $psScriptRoot
 . .\Find-ToolPath.ps1
 . .\ApplicationAdministration.ps1
 . .\AppPoolAdministration.ps1
+. .\AppPool-Start-Stop-IISAdminTool.ps1
 . .\Approve-Permissions.ps1
 . .\Assert-PSVersion.ps1
 . .\Chutzpah.ps1
@@ -52,6 +53,7 @@ Push-Location $psScriptRoot
 . .\HealthCheck.ps1
 . .\Helpers.ps1
 . .\Install-WebApplication.ps1
+. .\Install-WebApplicationToFolder.ps1
 . .\Invoke-AspNetRegIIS.ps1
 . .\Invoke-Deployment.ps1
 . .\Invoke-DeployOctopusNugetPackage.ps1
@@ -114,6 +116,7 @@ Export-ModuleMember `
           'Get-TestFileName',
           'Get-WindowsFeatures',
           'Install-WebApplication',
+          'Install-WebApplicationToFolder',
           'Install-WindowsFeatures',
           'Invoke-AspNetRegIIS',
           'Invoke-BulkCopy',
@@ -165,6 +168,7 @@ Export-ModuleMember `
           'Set-WebConfigurationPropertyExtended',
           'Start-Application',
           'Start-AppPool',
+          'Start-Stop-AppPool',
           'Start-Site',
           'Step',
           'Stop-Application',
