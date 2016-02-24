@@ -25,10 +25,11 @@ function Find-ToolPath {
     Write-Verbose "Current Directory is '$here'"
     
     # try to find it in the existing path.
-    $paths = $env:PATH.Split(';',[StringSplitOptions]::RemoveEmptyEntries)
-    Write-Verbose "Looking for '$toolName' on the `$env:PATH"
-    if($env:PATH -like "*$toolName*" ) { 
-        $foundPath = $paths | ? { $_ -like "*$toolName*" } | select -First 1
+    $toolNameWithoutExt = $toolName.Split('.')[0]
+    Write-Verbose "Looking for '$toolNameWithoutExt' on the `$env:PATH"
+    if($env:PATH -like "*$toolNameWithoutExt*" ) { 
+        $paths = $env:PATH.Split(';',[StringSplitOptions]::RemoveEmptyEntries)
+        $foundPath = $paths | ? { $_ -like "*$toolNameWithoutExt*" } | select -First 1
         Write-Verbose "Found '$toolName' in '$foundPath'"
         return $foundPath
     }

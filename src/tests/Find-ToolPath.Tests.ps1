@@ -44,6 +44,20 @@ Describe 'Find Tool Path' {
         }
     }
     
+    Context 'Will handle tool with exe extension on PATH' { 
+        # Setup 
+        $toolName = 'mock.exe'
+        $mockToolPath = 'C:\Temp\Mock'
+        $env:PATH += ";$mockToolPath"
+             
+        # execute
+        $result = Find-ToolPath $toolName  
+       
+       # assert         
+        It 'Should find a mock.exe tool on the path and not throw.' {
+            $result | should be $mockToolPath
+        }
+    }
     Context 'Will handle an invalid tool.' {
         # setup
         $toolName = 'Foo'

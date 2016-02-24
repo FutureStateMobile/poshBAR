@@ -65,7 +65,7 @@ function Update-AssemblyVersions
                 % {$_ -replace $fileVersionPattern, $fileVersion } |
                 % {$_ -replace $informationalVersionPattern, $informationalVersion } |
                 % {if($copyrightFormatString) {$_ -replace $assenblyCopyrightPattern, $assemblyCopyright} else { $_ } }
-            } | Out-File "$filename.temp" -force
+            } | Out-File "$filename.temp" -force -Encoding "ASCII"
             rm $filename -force 
         } catch {
             Write-Warning $_
