@@ -11,10 +11,10 @@
     <owners>FutureState Mobile Inc.</owners>
     <projectUrl>https://github.com/FutureStateMobile/poshBAR</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <copyright>Copyright 2014 FutureState Mobile Inc.</copyright>
+    <copyright>Copyright 2016 FutureState Mobile Inc.</copyright>
     <dependencies>
-      <dependency id="psake" version="4.4.1" />
-      <dependency id="NuGet.CommandLine" version="2.8.3" />
+      <dependency id="psake" version="4.5" />
+      <dependency id="NuGet.CommandLine" version="3.3" />
       <dependency id="XmlTransform" />
     </dependencies>
   </metadata>

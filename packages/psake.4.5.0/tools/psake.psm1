@@ -580,10 +580,15 @@ function ConfigureBuildEnvironment {
         '4.0' {
             $versions = @('v4.0.30319')
         }
-        '4.5.1' {
+        {($_ -eq '4.5.1') -or ($_ -eq '4.5.2')} {
             $versions = @('v4.0.30319')
             $buildToolsVersions = @('14.0', '12.0')
         }
+        {($_ -eq '4.6') -or ($_ -eq '4.6.1')} {
+            $versions = @('v4.0.30319')
+            $buildToolsVersions = @('14.0')
+        }
+
         default {
             throw ($msgs.error_unknown_framework -f $versionPart, $framework)
         }
@@ -838,7 +843,7 @@ convertfrom-stringdata @'
 import-localizeddata -bindingvariable msgs -erroraction silentlycontinue
 
 $script:psake = @{}
-$psake.version = "4.4.1" # contains the current version of psake
+$psake.version = "4.5.0" # contains the current version of psake
 $psake.context = new-object system.collections.stack # holds onto the current state of all variables
 $psake.run_by_psake_build_tester = $false # indicates that build is being run by psake-BuildTester
 $psake.config_default = new-object psobject -property @{
