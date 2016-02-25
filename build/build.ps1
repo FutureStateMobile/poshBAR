@@ -19,7 +19,7 @@ Task default -depends RunPesterTests, Package
 
 Task SetupPaths {
     Write-Host "Adding some of our tools to the Path so we can run them easier"
-    $env:Path += ";$($this.packagesDir)\NuGet.CommandLine.2.8.3\tools"
+    $env:Path += ";$($this.packagesDir)\NuGet.CommandLine.3.3.0\tools"
 }
 
 Task MakeBuildDir {
