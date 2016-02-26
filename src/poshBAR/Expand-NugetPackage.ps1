@@ -13,6 +13,9 @@
 
     .PARAMETER destinationFolder
          The full path to the desired destination.
+
+    .PARAMETER removeNuspec
+         Removes the nuspec file after expanding the package; defaults to true
 #>
 function Expand-NugetPackage
 {
