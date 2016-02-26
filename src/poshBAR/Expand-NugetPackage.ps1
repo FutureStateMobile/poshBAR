@@ -19,7 +19,8 @@ function Expand-NugetPackage
     [CmdletBinding()]
     param(
         [parameter(Mandatory=$true,position=0)] [string] [alias('pkgName')] $nugetPackageName,
-        [parameter(Mandatory=$true,position=1)] [string] [alias('dest')] $destinationFolder
+        [parameter(Mandatory=$true,position=1)] [string] [alias('dest')] $destinationFolder,
+        [parameter(Mandatory=$false, position=2)] [bool] $removeNuspec = $true
     )
     $ErrorActionPreference = "Stop"
 
@@ -31,9 +32,11 @@ function Expand-NugetPackage
     Expand-ZipFile $nugetPackageName $destinationFolder
 
     Remove-Item "$destinationFolder\``[Content_Types``].xml" -ea SilentlyContinue
-    Remove-Item "$destinationFolder\*.nuspec" -ea SilentlyContinue
     Remove-Item "$destinationFolder\_rels" -recurse -ea SilentlyContinue
     Remove-Item "$destinationFolder\package" -recurse -ea SilentlyContinue
+    if ($removeNuspec){
+        Remove-Item "$destinationFolder\*.nuspec" -ea SilentlyContinue
+    }
 
     Get-ChildItem $destinationFolder -recurse | where {$_.Mode -match "d"} | move-item -ea SilentlyContinue -dest { ( Invoke-UrlDecode $_.FullName ) }
     Get-ChildItem $destinationFolder -Recurse | Where-Object { !$_.PSIsContainer } |  Rename-Item -ea SilentlyContinue -NewName { Invoke-UrlDecode $_.Name }
