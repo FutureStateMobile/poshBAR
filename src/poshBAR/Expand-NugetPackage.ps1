@@ -46,6 +46,33 @@ function Expand-NugetPackage
     Write-Host "`tDone" -f Green
 }
 
+<#
+    .SYNOPSIS
+    Extracts the version number from a given Nuspec file
+
+    .DESCRIPTION
+    Extracts the version number from a given Nuspec file
+
+    .EXAMPLE
+        Get-VersionFromNuspec  "C:\temp\app.nuspec"
+    
+    .PARAMETER nuspecPath
+    Location of the nuspec file
+#>
+function Get-VersionFromNuspec
+{
+    [CmdletBinding()]
+    param(
+        [parameter(Mandatory=$true,position=0)][ValidateNotNullOrEmpty()] [string] $nuspecPath
+    )
+    if (!(Test-Path $nuspecPath)){
+        throw ($msgs.msg_wasnt_found -f $nuspecPath)
+    } 
+    $nuspec = [xml](Get-Content -Path $nuspecPath)
+    return $nuspec.package.metadata.version
+}
+
+
 function Get-ModuleDirectory {
     return Split-Path $script:MyInvocation.MyCommand.Path
 }

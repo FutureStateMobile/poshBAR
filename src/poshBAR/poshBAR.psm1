@@ -102,6 +102,7 @@ Export-ModuleMember `
           'Confirm-SiteExists',
           'Exec',
           'Expand-NugetPackage',
+          'Get-VersionFromNuspec',
           'Expand-ZipFile',
           'Format-TaskNameToHost',
           'Get-Application',
