@@ -16,6 +16,9 @@
     .PARAMETER culture
         If provided will look up settings for an environment based on culture information provided.
 
+    .PARAMETER overrides 
+        A hashtable of any properties that should be overridden. Defaults to the global OctopusParameters when running in Octopus.
+
     .SYNOPSIS
         Will grab a set of values from the proper environment file and returns them as an object which you can reffer to like any other object.
         If there is a matching variable in the OctopusParameters, it will use that variable instead of the one located in the XML.
@@ -31,7 +34,8 @@ function Get-EnvironmentSettings
         [parameter(Mandatory=$true,position=0)] [string] [alias('env')] $environment,
         [parameter(Mandatory=$true,position=1)] [string] [alias('xpath')] $nodeXPath = "/",
         [parameter(Mandatory=$false,position=2)] [string] $environmentsPath,
-        [parameter(Mandatory=$false,position=3)] [string] $culture
+        [parameter(Mandatory=$false,position=3)] [string] $culture,
+        [parameter(Mandatory=$false)] [hashtable] $overrides = $OctopusParameters
     )
 
     $ErrorActionPreference = "Stop"
@@ -55,17 +59,17 @@ function Get-EnvironmentSettings
         $doc.Load("$environmentsDir\$($environment).xml")
     }
 
-    if($OctopusParameters){
+    if($overrides){
         Write-Host ($msgs.msg_octopus_overrides -f $environment) 
-        foreach($key in $OctopusParameters.Keys)
+        foreach($key in $overrides.Keys)
         {
             $myXPath = "$nodeXPath/$($key.Replace(".", "/"))"
             try{
                 $node = $doc.SelectSingleNode($myXPath)
             
                 if($node){
-                    Write-Host ($msgs.msg_overriding_to -f $key, $($OctopusParameters["$key"]))
-                    $node.InnerText = $($OctopusParameters["$key"])
+                    Write-Verbose ($msgs.msg_overriding_to -f $key, $($overrides["$key"]))
+                    $node.InnerText = $($overrides["$key"])
                 }
             } catch { 
                 <# sometimes Octopus passes in crappy data #> 

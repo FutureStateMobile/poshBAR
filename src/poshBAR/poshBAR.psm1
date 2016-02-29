@@ -237,7 +237,7 @@ convertfrom-stringdata @"
     msg_web_app_success = Successfully deployed Web Application '{0}'.
     msg_copying_content = Copying {0} content to {1}.
     msg_use_machine_environment = Transforming config file {0}.xml with {1}.xml (xdt transform).
-    msg_octopus_overrides = Checking for Octopus Overrides for environment '{0}'.
+    msg_octopus_overrides = Checking for overrides for environment '{0}'.
     msg_teamcity_importdata = ##teamcity[importData type='{0}' tool='{1}' path='{2}']
     msg_teamcity_buildstatus = ##teamcity[buildStatus text='{0}']
     msg_teamcity_buildstatisticvalue = ##teamcity[buildStatisticValue key='{0}' value='{1}']
