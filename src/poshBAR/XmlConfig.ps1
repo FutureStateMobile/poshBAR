@@ -156,13 +156,20 @@ function Invoke-XmlDocumentTransform
         [string] $transformPathAndFile,
         
         [Parameter(Mandatory=$false, Position=3)] 
-        [string] $outputPathAndFile
+        [string] $outputPathAndFile,
+
+        [Parameter(Mandatory=$false, Position=4)] 
+        [string] $xmlTransformExe
     )    
-    Find-ToolPath 'xmltransform.exe'
+
+    if (!$xmlTransformExe){
+        $xmlTransformExe = 'xmltransform.exe'
+        Find-ToolPath $xmlTransformExe
+    }
     
     Write-Host "Transforming '$inputPathAndFile' with '$transformPathAndFile'."
     $outputPathAndFile = if($outputPathAndFile) {$outputPathAndFile} else {$inputPathAndFile}
-    Exec { xmltransform.exe -i $inputPathAndFile -t $transformPathAndFile -o $outputPathAndFile } "Could not invoke xmltransform, make sure it's found in `$env:PATH."
+    Exec { Invoke-Expression "$xmlTransformExe -i $inputPathAndFile -t $transformPathAndFile -o $outputPathAndFile" } "Could not invoke xmltransform, make sure it's found in `$env:PATH."
 }
 
 set-alias xdt Invoke-XmlDocumentTransform
