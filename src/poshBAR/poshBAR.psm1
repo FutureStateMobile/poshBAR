@@ -49,6 +49,7 @@ Push-Location $psScriptRoot
 . .\Expand-ZipFile.ps1
 . .\Format-TaskNameToHost.ps1
 . .\Get-EnvironmentSettings.ps1
+. .\Get-CurrentGitBranchAndSha1.ps1
 . .\Grunt.ps1
 . .\HealthCheck.ps1
 . .\Helpers.ps1
@@ -62,10 +63,13 @@ Push-Location $psScriptRoot
 . .\Lock-Object.ps1
 . .\MSBuild.ps1
 . .\Nuget.ps1
+. .\New-Directory.ps1
 . .\nUnit.ps1
 . .\Set-IISAuthentication.ps1
 . .\Set-IISCustomHeader.ps1
 . .\Invoke-PowershellScriptSigning.ps1
+. .\Read-CredentialsToHashtable.ps1
+. .\Remove-Directory.ps1
 . .\SiteAdministration.ps1
 . .\Specflow.ps1
 . .\SqlHelpers.ps1
@@ -109,6 +113,7 @@ Export-ModuleMember `
           'Get-Applications',
           'Get-AppPool',
           'Get-AppPools',
+          'Get-CurrentGitBranchAndSha1',
           'Get-DatabaseConnection',
           'Get-EnvironmentSettings',
           'Get-PfxCertificate',
@@ -154,13 +159,16 @@ Export-ModuleMember `
           'New-AppPool',
           'New-Certificate',
           'New-CertificateSigningRequest',
+          'New-Directory',
           'New-NugetPackage',
           'New-PfxCertificate',
           'New-PrivateKey',
           'New-PrivateKeyAndCertificateSigningRequest',
           'New-Site',
+          'Read-CredentialsToHashtable',
           'Remove-Application',
           'Remove-AppPool',
+          'Remove-Directory'
           'Remove-Site',
           'RequiredWindowsFeatures',
           'Set-IISAuthentication',
@@ -206,6 +214,7 @@ convertfrom-stringdata @"
     error_specflow_failed = Publishing specflow results  for '{0}' failed.
     error_coverage_failed = Running code coverage for '{0}' failed.
     error_tests_failed = Running tests '{0}' failed.
+    error_failed_execution = Failed to execute '{0}'.
     error_msbuild_compile = Error compiling '{0}'.
     error_specflow_generation = Error generating the specflow feature files for '{0}'.
     error_chutzpah = Error running the chutzpah javascipt tests for '{0}'.
