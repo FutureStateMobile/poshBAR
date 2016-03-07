@@ -83,6 +83,7 @@ Push-Location $psScriptRoot
 . .\SqlHelpers.ps1
 . .\Test-PathExtended.ps1
 . .\Test-RunAsAdmin.ps1
+. .\Test-Verbose.ps1
 . .\TextUtils.ps1
 . .\Update-AssemblyVersions.ps1
 . .\Use-Object.ps1
@@ -194,6 +195,7 @@ Export-ModuleMember `
           'Stop-Site',
           'Test-PathExtended',
           'Test-RunAsAdmin',
+          'Test-Verbose',
           'Update-Application',
           'Update-AppPool',
           'Update-AssemblyVersions',
