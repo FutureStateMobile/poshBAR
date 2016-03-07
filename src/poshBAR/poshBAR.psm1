@@ -1,3 +1,8 @@
+[CmdletBinding()]
+param(
+    [Parameter(Position=0, Mandatory=$false)] [switch] $nologo = $false
+)
+
 $version = '1.0.0' # contains the current version of poshBAR
 $buildNumber = '1' # contains the current build number of poshBAR
 
@@ -12,11 +17,13 @@ $culture = [System.Globalization.CultureInfo]::InvariantCulture
 $currentThread.CurrentCulture = $culture
 $currentThread.CurrentUICulture = $culture
 
-Write-Host @"
+if (-not $nologo){
+    Write-Host @"
 poshBAR version: $version
 poshBar buildNumber: $buildNumber
 Copyright ($([char]0x00A9)) Future State Mobile Inc. & Contributors
 "@
+}
 
 Remove-Item alias:new -ea SilentlyContinue
 Set-Alias new New-Object
@@ -70,6 +77,7 @@ Push-Location $psScriptRoot
 . .\Invoke-PowershellScriptSigning.ps1
 . .\Read-CredentialsToHashtable.ps1
 . .\Remove-Directory.ps1
+. .\Restore-AssemblyVersions.ps1
 . .\SiteAdministration.ps1
 . .\Specflow.ps1
 . .\SqlHelpers.ps1
@@ -171,6 +179,7 @@ Export-ModuleMember `
           'Remove-Directory'
           'Remove-Site',
           'RequiredWindowsFeatures',
+          'Restore-AssemblyVersions',
           'Set-IISAuthentication',
           'Set-IISCustomHeader',
           'Invoke-PowershellScriptSigning',
@@ -191,6 +200,7 @@ Export-ModuleMember `
           'Update-JsonConfigValues',
           'Update-Site',
           'Update-XmlConfigValues',
+          'Update-TokenReplacedFile',
           'Use-Object',
           'Invoke-OracleCommand',
           'Invoke-OracleFile',

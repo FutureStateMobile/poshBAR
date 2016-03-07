@@ -126,4 +126,21 @@ Describe 'TokenReplacement' {
         }                         
     } 
                
+    Context 'Updates the original file' {
+
+        $testFilePath = Join-Path $TestDrive 'testFileToReplace.txt'
+        $testToken = "@@here is a token@@"
+        $originalFileContents = "Here is some content and $testToken to be replaced"
+        [io.file]::WriteAllText($testFilePath,$originalFileContents)
+        $expectedTokenValue = "some value"
+        $expectedOutput = "Here is some content and $expectedTokenValue to be replaced"
+        
+        # execute
+        Update-TokenReplacedFile -fileToTokenReplace $testFilePath  -tokenValues @{ $testToken = $expectedTokenValue }
+        
+        # assert
+        It 'Should have updated the original file with replacments' {            
+            Get-Content -Raw $testFilePath | should be $expectedOutput
+        }
+    }
 }

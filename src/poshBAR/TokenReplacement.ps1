@@ -84,4 +84,33 @@ function Write-TokenReplacedFile {
     [io.file]::WriteAllText($outFile,$fileContents)                             
 }
 
+<#
+    .SYNOPSIS
+        Updates a file by replacing any with tokens with values
+        
+    .PARAMETER fileToTokenReplace
+        File to perform token replacement on
+
+    .PARAMETER tokenValues
+        Hashtable of key value pairs to replaced in file   
+        
+    .EXAMPLE
+        Update-TokenReplacedFile "somePath\someFile.txt"  @{ 'token1Key' = 'token1Value'; 'token2Key' = 'token2Value' }
+        
+    .NOTES
+        The file is updated with the tokens 
+#>
+function Update-TokenReplacedFile {
+    [CmdletBinding()]
+    param(
+        [parameter(Position=0)][string] $fileToTokenReplace,
+        [parameter(position=1)][hashtable] $tokenValues
+    )                      
+    $fileContents = Get-Content -Raw $fileToTokenReplace
+    foreach ($token in $tokenValues.GetEnumerator()) {        
+        $fileContents = $fileContents -replace $token.Name, $token.Value
+    }     
+    [io.file]::WriteAllText($fileToTokenReplace,$fileContents)                             
+}
+
 
