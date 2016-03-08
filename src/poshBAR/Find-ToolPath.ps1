@@ -29,9 +29,11 @@ function Find-ToolPath {
     Write-Verbose "Looking for '$toolNameWithoutExt' on the `$env:PATH"
     if($env:PATH -like "*$toolNameWithoutExt*" ) { 
         $paths = $env:PATH.Split(';',[StringSplitOptions]::RemoveEmptyEntries)
-        $foundPath = $paths | ? { $_ -like "*$toolNameWithoutExt*" } | select -First 1
-        Write-Verbose "Found '$toolName' in '$foundPath'"
-        return $foundPath
+        $foundPath = $paths | ? { (Test-Path $_) -and ($_ -like "*$toolNameWithoutExt*") } | select -First 1
+        if ($foundPath){
+            Write-Verbose "Found '$toolName' in '$foundPath'"
+            return $foundPath
+        }
     }
 
     # try to find it in the current directory

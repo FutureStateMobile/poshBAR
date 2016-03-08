@@ -2,62 +2,79 @@ $ErrorActionPreference = 'Stop'
 
 Describe 'Find Tool Path' { 
     
+    $testPath = "C:\temp\mock"
     # Setup
-    BeforeAll {
+    BeforeEach {
         $originalPath = $env:PATH
+        if (Test-Path $testPath){
+            Remove-Item -Path $testPath -ErrorAction SilentlyContinue
+        }
     }
     
     # Teardown
-    AfterAll {
+    AfterEach {
         $env:PATH = $originalPath
+        if (Test-Path $testPath){
+            Remove-Item -Path $testPath
+        }
     }
-    
+
     Context 'Will handle a valid tool.'{
         # setup
-        $toolName = 'mage'
+        $toolName = 'mage.exe'
        
         # execute
-        $execute = {Find-ToolPath $toolName} 
+        $execute = Find-ToolPath $toolName 
        
         # assert
-        It 'Should not thow for a valid tool.' {
-            $execute | should not throw
-        }
-        
         It 'Should execute the tool and not throw an exception.' {
            {. $toolName -h} | should not throw 
         }
     }
-    
-    Context 'Will handle Mocked tool on PATH' { 
+
+    Context 'Will include an path' { 
         # Setup 
         $toolName = 'mock'
-        $mockToolPath = 'C:\Temp\Mock'
-        $env:PATH += ";$mockToolPath"
+        mkdir $testPath
+        $env:PATH += ";$testPath"
              
         # execute
         $result = Find-ToolPath $toolName  
        
        # assert         
         It 'Should find a mock tool on the path and not throw.' {
-            $result | should be $mockToolPath
+            $result | should be $testPath
         }
     }
     
+    Context 'Will not include a non-exist path' { 
+        # Setup 
+        $toolName = 'mock'
+        $env:PATH += ";$testPath"
+             
+        # execute
+        $execute = {$badResult = Find-ToolPath $toolName}
+
+        It 'Should throw on an invalid tool.' {
+            $execute | should throw
+        }
+    }
+   
     Context 'Will handle tool with exe extension on PATH' { 
         # Setup 
         $toolName = 'mock.exe'
-        $mockToolPath = 'C:\Temp\Mock'
-        $env:PATH += ";$mockToolPath"
+        mkdir $testPath
+        $env:PATH += ";$testPath"
              
         # execute
         $result = Find-ToolPath $toolName  
        
        # assert         
         It 'Should find a mock.exe tool on the path and not throw.' {
-            $result | should be $mockToolPath
+            $result | should be $testPath
         }
     }
+
     Context 'Will handle an invalid tool.' {
         # setup
         $toolName = 'Foo'
