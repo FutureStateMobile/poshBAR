@@ -57,6 +57,7 @@ Push-Location $psScriptRoot
 . .\Format-TaskNameToHost.ps1
 . .\Get-EnvironmentSettings.ps1
 . .\Get-CurrentGitBranchAndSha1.ps1
+. .\Get-ValueFromNuspec.ps1
 . .\Grunt.ps1
 . .\HealthCheck.ps1
 . .\Helpers.ps1
@@ -115,7 +116,6 @@ Export-ModuleMember `
           'Confirm-SiteExists',
           'Exec',
           'Expand-NugetPackage',
-          'Get-VersionFromNuspec',
           'Expand-ZipFile',
           'Format-TaskNameToHost',
           'Get-Application',
@@ -129,6 +129,7 @@ Export-ModuleMember `
           'Get-Site',
           'Get-Sites',
           'Get-TestFileName',
+          'Get-ValueFromNuspec',
           'Get-WindowsFeatures',
           'Install-WebApplication',
           'Install-WebApplicationToFolder',
