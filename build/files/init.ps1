@@ -14,6 +14,9 @@ $baseBuildFile = "$toolsPath\templates\build.ps1"
 if(-not (Test-Path "$rootDir\build.ps1")){
     Write-Host "Copying $baseBuildFile to $rootDir" -f Cyan
     Copy-Item $baseBuildFile $rootDir
+} else {
+    # Do nothing for an existing project
+    exit 0
 }
 
 #copy the base deploy file
