@@ -139,39 +139,3 @@ function Add-XmlConfigValue
     $doc.Save($configFile)
 
 }
-
-<#
-    .DESCRIPTION
-        Will transform one XML doc with another using the standard xdt transform
-
-#>
-function Invoke-XmlDocumentTransform
-{
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory=$true, Position=1)] 
-        [string] $inputPathAndFile,
-        
-        [Parameter(Mandatory=$true, Position=2)]
-        [string] $transformPathAndFile,
-        
-        [Parameter(Mandatory=$false, Position=3)] 
-        [string] $outputPathAndFile,
-
-        [Parameter(Mandatory=$false, Position=4)] 
-        [string] $xmlTransformExe
-    )    
-    Write-Host "Transforming '$inputPathAndFile' with '$transformPathAndFile'."
-    $outputPathAndFile = if($outputPathAndFile) {$outputPathAndFile} else {$inputPathAndFile}
-
-    if (!$xmlTransformExe){
-        Find-ToolPath xmltransform.exe
-        Exec { xmltransform.exe -i $inputPathAndFile -t $transformPathAndFile -o $outputPathAndFile } "Failed to invoke xmltransform"
-    } else {
-        $command = '$xmlTransformExe -i $inputPathAndFile -t $transformPathAndFile -o $outputPathAndFile'
-        Invoke-Expression "& $command"
-    }
-}
-
-set-alias xdt Invoke-XmlDocumentTransform
-set-alias XmlDocumentTransform Invoke-XmlDocumentTransform

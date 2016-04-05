@@ -55,6 +55,7 @@ Push-Location $psScriptRoot
 . .\Expand-NugetPackage.ps1
 . .\Expand-ZipFile.ps1
 . .\Format-TaskNameToHost.ps1
+. .\Find-InParentPath.ps1
 . .\Get-EnvironmentSettings.ps1
 . .\Get-CurrentGitBranchAndSha1.ps1
 . .\Get-ValueFromNuspec.ps1
@@ -68,6 +69,7 @@ Push-Location $psScriptRoot
 . .\Invoke-DeployOctopusNugetPackage.ps1
 . .\Invoke-ElevatedCommand.ps1
 . .\Invoke-ExternalCommand.ps1
+. .\Invoke-XmlDocumentTransform.ps1
 . .\Lock-Object.ps1
 . .\MSBuild.ps1
 . .\Nuget.ps1
@@ -118,6 +120,7 @@ Export-ModuleMember `
           'Expand-NugetPackage',
           'Expand-ZipFile',
           'Format-TaskNameToHost',
+          'Find-InParentPath',
           'Get-Application',
           'Get-Applications',
           'Get-AppPool',
