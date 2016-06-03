@@ -21,11 +21,12 @@ function Remove-Directory
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true, position=0)] [string] $Path,
-        [switch] $Recurse
+        [switch] $Recurse,
+        [switch] $Force
     )
 
     if( (Test-Path -Path $Path -PathType Container) )
     {
-        Remove-Item -Path $Path -Recurse:$Recurse
+        Remove-Item -Path $Path -Recurse:$Recurse -Force:$Force
     }
 }

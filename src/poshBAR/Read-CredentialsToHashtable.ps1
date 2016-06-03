@@ -29,11 +29,12 @@ function Read-CredentialsToHashtable {
     param(
         [parameter(Mandatory=$true,position=0)][string] $usernameKey,
         [parameter(Mandatory=$true,position=1)][string] $passwordKey,
-        [parameter(Mandatory=$false,position=2)][string] $message= "Enter credentials"
+        [parameter(Mandatory=$false,position=2)][string] $message= "Enter credentials",
+        [parameter(Mandatory=$false,position=3)][string] $userName
     )
        
     $credentialHashtable = @{}
-    $credentials = Get-Credential -Message $message
+    $credentials = Get-Credential -Message $message -UserName $userName
     $credentialHashtable[$usernameKey] = $credentials.GetNetworkCredential().Username
     $credentialHashtable[$passwordKey] = $credentials.GetNetworkCredential().Password
     Write-Verbose-Settings $credentialHashtable
