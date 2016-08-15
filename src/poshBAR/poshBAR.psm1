@@ -71,10 +71,12 @@ Push-Location $psScriptRoot
 . .\Invoke-ExternalCommand.ps1
 . .\Invoke-XmlDocumentTransform.ps1
 . .\Lock-Object.ps1
+. .\Merge-Hashtables.ps1
 . .\MSBuild.ps1
 . .\Nuget.ps1
 . .\New-Directory.ps1
 . .\nUnit.ps1
+. .\Publish-SsrsReports.ps1
 . .\Set-IISAuthentication.ps1
 . .\Set-IISCustomHeader.ps1
 . .\Invoke-PowershellScriptSigning.ps1
@@ -168,6 +170,7 @@ Export-ModuleMember `
           'Invoke-XUnit',
           'Invoke-XUnitWithCoverage',
           'Lock-Object',
+          'Merge-Hashtables',
           'New-Application',
           'New-AppPool',
           'New-Certificate',
@@ -178,6 +181,7 @@ Export-ModuleMember `
           'New-PrivateKey',
           'New-PrivateKeyAndCertificateSigningRequest',
           'New-Site',
+          'Publish-SsrsReports',
           'Read-CredentialsToHashtable',
           'Remove-Application',
           'Remove-AppPool',
