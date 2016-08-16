@@ -32,41 +32,18 @@ function Invoke-XmlDocumentTransform
         [string] $destination
     )    
 
-    Write-Host "Transforming '$path' with '$xdtPath'."
+    Write-Verbose "Transforming '$path' with '$xdtPath'."
     if (!$destination) {
         $destination = $path
     }
 
     $modulePath = Split-Path $PSCommandPath -Parent 
-    $xmlTransformPath = Find-InParentPath $modulePath "XmlTransform*"
-    $transformAssembly = (Get-ChildItem -Path $xmlTransformPath -Recurse -Filter "Microsoft.Web.XmlTransform.dll").FullName
-    Add-Type -Path $transformAssembly
-    try
-    {
-        $document = New-Object Microsoft.Web.XmlTransform.XmlTransformableDocument
-        $document.PreserveWhitespace = $true
-        $document.Load($path)
-
-        $xmlTransform = New-Object Microsoft.Web.XmlTransform.XmlTransformation $xdtPath
-
-        $success = $xmlTransform.Apply($document)
-
-        if($success)
-        {
-            $document.Save($destination)
-        }
-    }
-    finally
-    {
-        if( $xmlTransform )
-        {	
-            $xmlTransform.Dispose()
-        }
-        if( $document )
-        {
-            $document.Dispose()
-        }
-    }
+    $xmlTransformFolder = Find-InParentPath $modulePath "XmlTransform*"
+    $xmlTransformExe = (Get-ChildItem -Path $xmlTransformFolder -Recurse -File -Filter "XmlTransform.exe").FullName
+    if (!$xmlTransformExe -or !(Test-Path $xmlTransformExe)) {
+        throw "Could not find XmlTransform executable ($xmlTransformExe) in $xmlTransformFolder"
+    } 
+    Exec { Invoke-Expression "$xmlTransformExe -i $path -t $xdtPath -o $destination"} ("Could not invoke xmltransform")
 }
 
 set-alias xdt Invoke-XmlDocumentTransform

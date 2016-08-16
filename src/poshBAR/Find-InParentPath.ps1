@@ -29,7 +29,7 @@ function Find-InParentPath
         $pathToFind = "$parent\$filter"
         if (Test-Path -Path $pathToFind){
             Write-Verbose "Found $filter in $pathToFind"
-            return $pathToFind
+            return (Get-ChildItem -Path $pathToFind).FullName
         } 
     }
 
