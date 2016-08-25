@@ -6,7 +6,7 @@
         Publish-SsrsReports -ReportsPath "C:\tms.1.1.1\Reports
                             -ReportServerEndpoint "http://repdev3.tcpl.ca/ReportServer/ReportService2010.asmx"  `
                             -ReportServerFolder "/TechnologyManagmentReports"
-                            -Options @{"Include" = "YER.rdl"; "BackupFolder" = "C:\foo"}
+                            -Options @{"IncludeReports" = "YER.rdl"; "BackupFolder" = "C:\foo"}
 
     .PARAMETER ReportsPath
         The location where the report files to deploy 
@@ -21,8 +21,8 @@
     .PARAMETER Options 
         The options is a hashtable that may contain one or more of the following:
     
-         Include  - [string[]] one or more patterns to select which reports to deploy
-         Excluce  - [string[] one or more patters to exclude certain reports
+         IncludeReports  - [string[]] one or more patterns to select which reports to deploy
+         ExcluceReports  - [string[] one or more patters to exclude certain reports
          BackupFolder - [string] folder to download the reports currently on the server
          ReportServiceCredentials [System.Management.Automation.PSCredential] - service
              credentials used to connect to the Report Server.  Defaults to integrated authentication.
@@ -48,8 +48,8 @@ function Publish-SsrsReports
         [parameter(Mandatory=$false,position=3)] [Hashtable] $Options = @{}
 	)
 
-    $Include = $Options.Include
-    $Exclude = $Options.Exclude
+    $Include = $Options.IncludeReports
+    $Exclude = $Options.ExcludeReports
 
     $FilesToUpload = Get-ChildItem $ReportsPath -Recurse -Include $Include -Exclude $Exclude -File
     Write-Verbose ("Reports Path: $ReportsPath, Number of files to upload:{0}" -f $FilesToUpload.Count)
