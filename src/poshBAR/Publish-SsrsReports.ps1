@@ -203,8 +203,8 @@ function Upload-Item ([System.IO.FileInfo] $ItemFile, [string] $ItemType, [strin
     [void]$ReportServerProxy.CreateCatalogItem($ItemType, $ItemName, $ReportFolder, $true, $ItemData, $null, [ref] $Warnings)
 
     if ($Warnings){
-        Write-Warning $Warnings.Message
+        $Warnings | % {Write-Warning $_.Message }
     }
-    Write-Verbose "Uploaded $ItemName"
+    Write-Host "Uploaded $ItemName"
 }
 #endregion 
