@@ -41,6 +41,7 @@ Push-Location $psScriptRoot
 . .\Add-LoopbackFix.ps1
 . .\Assert-That.ps1
 . .\Assert-PSVersion.ps1
+. .\Assert-DotNetVersion.ps1
 . .\Certificates.ps1
 . .\Find-ToolPath.ps1
 . .\ApplicationAdministration.ps1
@@ -58,6 +59,7 @@ Push-Location $psScriptRoot
 . .\Find-InParentPath.ps1
 . .\Get-EnvironmentSettings.ps1
 . .\Get-CurrentGitBranchAndSha1.ps1
+. .\Get-SsrsMetaData.ps1
 . .\Get-ValueFromNuspec.ps1
 . .\Grunt.ps1
 . .\HealthCheck.ps1
@@ -115,6 +117,7 @@ Export-ModuleMember `
           'Approve-Permissions',
           'Assert-That',
           'Assert-PSVersion',
+          'Assert-DotNetVersion',
           'Confirm-ApplicationExists',
           'Confirm-AppPoolExists',
           'Confirm-SiteExists',
@@ -133,6 +136,7 @@ Export-ModuleMember `
           'Get-PfxCertificate',
           'Get-Site',
           'Get-Sites',
+          'Get-SsrsMetaData',
           'Get-TestFileName',
           'Get-ValueFromNuspec',
           'Get-WindowsFeatures',
