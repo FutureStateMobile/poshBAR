@@ -59,7 +59,7 @@ Push-Location $psScriptRoot
 . .\Find-InParentPath.ps1
 . .\Get-EnvironmentSettings.ps1
 . .\Get-CurrentGitBranchAndSha1.ps1
-. .\Get-SsrsMetaData.ps1
+. .\Get-SsrsReportInfo.ps1
 . .\Get-ValueFromNuspec.ps1
 . .\Grunt.ps1
 . .\HealthCheck.ps1
@@ -136,7 +136,7 @@ Export-ModuleMember `
           'Get-PfxCertificate',
           'Get-Site',
           'Get-Sites',
-          'Get-SsrsMetaData',
+          'Get-SsrsReportInfo',
           'Get-TestFileName',
           'Get-ValueFromNuspec',
           'Get-WindowsFeatures',

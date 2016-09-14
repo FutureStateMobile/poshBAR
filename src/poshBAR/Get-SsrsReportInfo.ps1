@@ -1,10 +1,10 @@
 <#
     .DESCRIPTION
-        Retrieve SSRS metadata
+        Retrieve SSRS Report info  
 
     .EXAMPLE
-        Get-SsrsMetadata -ReportServerEndpoint "http://localhost/ReportServer/ReportService2010.asmx"  `
-                            -ReportServerFolder "/TechnologyManagmentReports"
+        Get-SsrsReportInfo -ReportServerEndpoint "http://localhost/ReportServer/ReportService2010.asmx"  `
+                           -ReportServerFolder "/TechnologyManagmentReports"
 
     .PARAMETER ReportServerEndpoint
         The url of the Reporting Services web service end point 
@@ -20,7 +20,7 @@
     .RETURNS 
         SSRS Meta data object that contains name, type, etc.
 #>
-function Get-SsrsMetaData
+function Get-SsrsReportInfo
 {
     [CmdletBinding()]
     param(
