@@ -25,9 +25,6 @@ function Expand-ZipFile
     )
 
     $ErrorActionPreference = "Stop"
-    $guid = [guid]::NewGuid()
-    $tempDir = "$($env:TEMP)\$guid"
-    md $tempDir | Out-null
 
     if (!(Test-Path $destinationFolder)) {
         md $destinationFolder | Out-Null
@@ -35,7 +32,24 @@ function Expand-ZipFile
         Remove-Item "$destinationFolder\*" -recurse -Force -ea silentlyContinue
     }
 
+    if ($PSVersionTable.PSVersion.Major -ge 5) {
+
+        $zipFileInfo = dir $zipFileName
+        $hasZipExtension = $zipFileInfo.extension -match ".zip"
+        if (-not $hasZipExtension) {
+            $zipFileInfo = Add-ZipExtension $zipFileInfo
+        }
+
+        Expand-Archive -Path $zipFileInfo -DestinationPath $destinationFolder
+
+        if (-not $hasZipExtension) {
+            Rename-Item -Path $zipFileInfo -NewName $zipFileInfo.Name.Replace(".zip", "")
+        }
+        return 
+    }
+
     try {
+        $tempDir = New-TempDirectory
         [System.Reflection.Assembly]::LoadWithPartialName("System.IO.Compression.FileSystem") | Out-Null
         [System.IO.Compression.ZipFile]::ExtractToDirectory($zipFileName, $tempDir)
 
@@ -61,9 +75,23 @@ function Expand-ZipFile
         $dst     = $destinationFolder
 
         Rename-Item $newZipFileName $zipFileName
-    } finally {
-        if ($archive) {
-            $archive.Dispose()
-        }
     }
 }
+
+function New-TempDirectory {
+    param()
+    $guid = [guid]::newGuid()
+    $tempDir = "$($env:TEMP)\$guid"
+    md $tempDir | Out-null
+    $tempDir
+}
+
+function Add-ZipExtension {
+    param(
+        [System.IO.FileInfo] $zipFileInfo
+    )
+    $newName = "$($zipFileInfo.Name).zip"
+    Rename-Item -Path $zipFileInfo -NewName $newName
+    dir -Path "$($zipFileInfo.Fullname).zip"
+}
+
