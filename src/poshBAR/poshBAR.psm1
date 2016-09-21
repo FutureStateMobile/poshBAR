@@ -77,6 +77,7 @@ Push-Location $psScriptRoot
 . .\MSBuild.ps1
 . .\Nuget.ps1
 . .\New-Directory.ps1
+. .\New-GitTag.ps1
 . .\nUnit.ps1
 . .\Publish-SsrsReports.ps1
 . .\Set-IISAuthentication.ps1
@@ -180,6 +181,7 @@ Export-ModuleMember `
           'New-Certificate',
           'New-CertificateSigningRequest',
           'New-Directory',
+          'New-GitTag',
           'New-NugetPackage',
           'New-PfxCertificate',
           'New-PrivateKey',
